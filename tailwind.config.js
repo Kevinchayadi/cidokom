@@ -14,11 +14,16 @@ export default {
       colors: {
         'primary': {
           'DEFAULT': '#004d00',
+          'dark': '#003e00',
+          'dark-two':'#003700',
           'background': '#fafcfa',
           'accent': '#85b474',
-          'aHover': '#9EC988',
-          'text': '##001100',
-        }
+          'aHover': '#6a905d',
+          'text-dark': '#001100',
+          'text-dark-hover': '#222722',
+          'text-light': '#ffffff',
+          'text-light-hover': '#999999',
+        },
       },
     },
   },

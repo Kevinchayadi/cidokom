@@ -1,0 +1,36 @@
+use Illuminate\Database\Eloquent\Model;
+
+class KandangPen extends Model
+{
+    protected $keyType = 'string';  // ID menggunakan string
+    public $incrementing = false;   // Tidak menggunakan auto-increment
+
+    // Override boot method untuk generate custom ID
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            // Format ID custom: ckd-{id_kandang}:{id_pen}-str_pad
+            // Contoh: ckd-1:5-0001
+
+            // Dapatkan id_kandang dan id_pen dari model
+            $idKandang = $model->id_kandang;
+            $idPen = $model->id_pen;
+
+            // Hitung jumlah data yang sudah ada dengan id_kandang dan id_pen
+            $dataCount = self::where('id_kandang', $idKandang)
+                             ->where('id_pen', $idPen)
+                             ->count();
+
+            // Nomor urut berikutnya dihitung dari jumlah data (dimulai dari 1)
+            $nextNumber = $dataCount + 1;
+
+            // Generate nomor urut dengan padding 4 digit, misal 0001
+            $paddedNumber = str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+
+            // Gabungkan menjadi ID custom
+            $model->id = "ckd-{$idKandang}:{$idPen}-{$paddedNumber}";
+        });
+    }
+}

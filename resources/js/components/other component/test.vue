@@ -47,6 +47,33 @@
                 </table>
             </div>
         </div>
+        <thead>
+            <tr>
+                <!-- Kolom "Unit" dan "Farm" dengan rowspan untuk mencakup dua baris -->
+                <th rowspan="3">Unit</th>
+                <th rowspan="3">Farm</th>
+                <!-- Kolom "Strain" dengan colspan 2 untuk "Female" dan "Male" -->
+                <th colspan="4">Strain</th>
+
+                <th rowspan="3">jikalau</th>
+                <th rowspan="3">jika</th>
+                <th colspan="3" rowspan="2">foodtype</th>
+            </tr>
+            <tr>
+                <!-- Sub-header untuk "Female" dan "Male" yang berada di bawah "Strain" -->
+                <th colspan="2">Female</th>
+                <th colspan="2">Male</th>
+            </tr>
+            <tr>
+                <th>die</th>
+                <th>reject</th>
+                <th>die</th>
+                <th>reject</th>
+                <th>type1</th>
+                <th>type2</th>
+                <th>type3</th>
+            </tr>
+        </thead>
 
         <!-- Component Bawah -->
         <div class="flex-1 bg-gray-100  overflow-x-auto overflow-y-auto">

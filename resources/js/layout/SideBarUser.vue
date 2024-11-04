@@ -1,0 +1,65 @@
+<template>
+  <div class="relative flex min-h-screen overflow-hidden ">
+
+    <div v-if="isSidebarOpen" @click="toggleSidebar" class="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"></div>
+
+    <!-- Sidebar -->
+    <div :class="sidebarClasses" >
+      <button @click="toggleSidebar" class="p-2 absolute top-2 right-2 " >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 stroke-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <NavbarUser />
+    </div>
+
+    <!-- Main Content Area -->
+    <div :class="mainContentClasses">
+      <div class="w-full bg-primary">
+        <button @click="toggleSidebar" class=" " :class="{ 'opacity-0 pointer-events-none': isSidebarOpen }">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 fill-white stroke-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+      <div class="max-w-full">
+        <FormTemplate>
+          <slot>
+            
+          </slot>
+        </FormTemplate>
+
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { computed, ref } from 'vue';
+import FormTemplate from '../layout/FormTemplate.vue'
+import NavbarUser from '../components/displayComponent/NavbarUser.vue';
+
+const isSidebarOpen = ref(false);
+
+function toggleSidebar() {
+  isSidebarOpen.value = !isSidebarOpen.value;
+}
+
+const sidebarClasses = computed(() => {
+  return `
+    fixed  inset-y-0 left-0 z-30 w-64 bg-primary shadow-md transform 
+    ${isSidebarOpen.value ? 'translate-x-0' : '-translate-x-full'} 
+    transition-transform duration-100 md:duration-0 ease-in-out 
+  `;
+});
+
+const mainContentClasses = computed(() => {
+  return `
+    flex-1  transition-transform duration-100 md:duration-0 ease-in-out 
+    ${isSidebarOpen.value ? 'md:translate-x-64 md:max-w-[calc(100%-16rem)]' : 'md:translate-x-0'}
+
+  `;
+});
+</script>
+
+
