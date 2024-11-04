@@ -1,5 +1,6 @@
 import './bootstrap';
 import'../css/app.css';
+// import '@datatables.net-dt/css/jquery.dataTables.css';
 // import { route } from 'ziggy-js';
 
 import { createApp, h } from 'vue'

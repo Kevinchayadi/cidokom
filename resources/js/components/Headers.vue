@@ -1,5 +1,5 @@
 <template lang="">
-    <h1 class="text-center font-bold text-4xl mb-2">{{ tittle.toUpperCase() }}</h1>
+    <h1 class="text-center font-bold  text-4xl mb-2">{{ tittle.toUpperCase() }}</h1>
 </template>
 <script setup>
     const props = defineProps({

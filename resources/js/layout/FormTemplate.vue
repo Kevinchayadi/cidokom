@@ -13,14 +13,14 @@
 </script>
 <style>
 .backcustom {
-    background: #051937; 
+    /* background: #051937;  */
     background: -webkit-linear-gradient( to top, #051937, #002e4b, #004248, #00532f,#435e07); 
     background: linear-gradient(to to top, #051937, #002e4b, #004248, #00532f,#435e07);
 
 }
 
 .glassBackground{
-    background: rgba(80, 80, 80, 0.537);
+    background: rgba(164, 164, 164, 0.537);
     -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(10px);
     border: 2px solid rgba(255, 255, 255, 0.312);
