@@ -5,60 +5,61 @@
             <InputFragment
                 v-model="femaleDie"
                 name="femaleDie"
-                content="ayam betina mati"
+                content="female die"
                 type="number"
             />
             <InputFragment
                 v-model="femaleReject"
                 name="femaleReject"
-                content="ayam betina keluar"
+                content="female reject"
                 type="number"
             />
             <InputFragment
                 v-model="maleDie"
                 name="maleDie"
-                content="ayam jantan mati"
+                content="male die"
                 type="number"
             />
             <InputFragment
                 v-model="maleReject"
                 name="maleReject"
-                content="ayam jantan keluar"
+                content="male reject"
                 type="number"
             />
             <InputFragment
                 v-model="eggMorning"
                 name="eggMorning"
-                content="telur pagi"
+                content="morning egg"
                 type="number"
             />
             <InputFragment
                 v-model="eggAfternoon"
                 name="eggAfternoon"
-                content="telur sore"
+                content="afternoon egg"
                 type="number"
             />
             <InputFragment
                 v-model="broken"
                 name="broken"
-                content="telur rusak"
+                content="broken egg"
                 type="number"
             />
             <InputFragment
                 v-model="abnormal"
                 name="abnormal"
-                content="telur abnormal"
+                content="abnormal egg"
                 type="number"
             />
             <InputFragment
                 v-model="feed"
                 name="feed"
-                content="pakan"
+                content="total feed(in Kilograms)"
                 type="number"
             />
             <InputFragment
                 v-model="feedName"
                 name="feedName"
+                content="Feed name"
                 type="dropdown"
                 :data="feedOptions"
             />

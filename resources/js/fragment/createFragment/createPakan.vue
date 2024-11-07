@@ -2,7 +2,7 @@
     <div class="w-[80%]">
         <Headers tittle="Add Admin" />
         <form @submit.prevent="handleSubmit">
-            <InputFragment v-model="form.nama_pakan"  name="namaPakan" content="nama pakan" type="string" />
+            <InputFragment v-model="form.nama_pakan"  name="namaPakan" content="Feed Name" type="string" />
             <InputFragment v-model="form.qty" name="qty" content="quantity" type="number" />
             <InputFragment name="Harga" type="number" />
 

@@ -12,12 +12,12 @@
             <InputFragment
                 v-model="explode"
                 name="explode"
-                content="pecah"
+                content="explode"
                 type="number"
             />
             <Showdata
-                name="hatchability"
-                content="sisa telur"
+                name="hatcher"
+                content="Hatcher"
                 type="number"
                 :value="hatcher"
             />

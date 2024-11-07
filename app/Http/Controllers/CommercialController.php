@@ -21,6 +21,12 @@ class CommercialController extends Controller
         $commercial = Commercial::with('commercialDetails')->get();
         return Inertia::render('user/commercial', compact('commercial'));
     }
+    
+    public function adminIndex()
+    {
+        $commercial = Commercial::with('commercialDetails')->get();
+        return Inertia::render('admin/commercial', compact('commercial'));
+    }
 
     public function createCommercial()
     {

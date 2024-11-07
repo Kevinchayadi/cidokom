@@ -20,6 +20,8 @@ return new class extends Migration
             $table->integer('age')->nullable()->nullable();
             $table->decimal('total_cost', 15, 2)->nullable(); 
             $table->decimal('unit_Cost', 15, 2)->nullable(); 
+            $table->decimal('cost_total', 15, 2)->nullable();
+            $table->decimal('cost_unit', 15, 2)->nullable();
             $table->string('move_to')->nullable();
             $table->string('status')->nullable()->default('active');
             $table->timestamps();

@@ -19,6 +19,12 @@ class HatcheryController extends Controller
         // dd($hatchery);
         return Inertia::render('user/Hatchery', compact('hatchery'));
     }
+    public function adminIndex()
+    {
+        $hatchery = Hatchery::with('hatcheryDetails')->where('status', 'active')->get()->toArray();
+        // dd($hatchery);
+        return Inertia::render('admin/Hatchery', compact('hatchery'));
+    }
 
     public function createHatchery()
     {
@@ -34,7 +40,7 @@ class HatcheryController extends Controller
         // dd($request);
         $validator = Validator::make($request->all(), [
             'id_pen' => 'required|integer',
-            'machine_name' => 'required|string',
+            'id_machine' => 'required',
             'total_setting' => 'required|integer',
         ]);
 
@@ -44,7 +50,7 @@ class HatcheryController extends Controller
 
         $input = $request->validate([
             'id_pen' => 'required|integer',
-            'machine_name' => 'required|string',
+            'id_machine' => 'required|string',
         ]);
         // Menambahkan tanggal setting
         $input['setting_date'] = Carbon::now();

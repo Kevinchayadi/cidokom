@@ -5,11 +5,11 @@
             <InputFragment
                 v-model="deadInEgg"
                 name="dead_in_egg"
-                content="mati dalam telur"
+                content="dead in egg"
                 type="number"
             /><Showdata
                 name="hatchability"
-                content="sisa telur"
+                content="Hatchability"
                 type="number"
                 :value="hatchability"
             />
@@ -21,7 +21,7 @@
             />
             <Showdata
                 name="saleable"
-                content="siap Jual"
+                content="Saleable"
                 type="number"
                 :value="saleable"
             />

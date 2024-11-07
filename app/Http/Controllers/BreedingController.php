@@ -17,6 +17,12 @@ class BreedingController extends Controller
         $breeding = Breeding::with('BreedingDetails')->get();
         return Inertia::render('user/Breeding', compact('breeding'));
     }
+    public function adminIndex()
+    {
+        $breeding = Breeding::with('BreedingDetails')->get();
+        return Inertia::render('admin/Breeding', compact('breeding'));
+    }
+
 
     public function createBreeding()
     {
@@ -92,5 +98,13 @@ class BreedingController extends Controller
         Breeding_detail::create($input);
 
         return redirect()->route('user.breeding')->with('success', 'berhasil membuat kandang Breeding baru');
+    }
+    public function adminDashboar(){
+        $breeding = Breeding::get();
+        return Inertia::render('admin/Dashboard', compact('breeding'));
+    }
+    public function getBreedingDetail($id){
+        $breeding = Breeding_detail::with('breeding')->where('id_breeding', $id)->get()->toArray();
+        return [$id,1];
     }
 }

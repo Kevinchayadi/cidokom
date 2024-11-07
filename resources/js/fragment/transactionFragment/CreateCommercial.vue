@@ -5,25 +5,26 @@
             <InputFragment
                 v-model="id_pen"
                 name="id_pen"
+                content="code pen"
                 type="dropdown"
                 :datas="penList"
             />
             <InputFragment
                 v-model="entryDate"
                 name="entryDate"
-                content="Tanggal perpindahan"
+                content="date move"
                 type="date"
             />
             <InputFragment
                 v-model="entry_population"
                 name="entry_population"
-                content="Jumlah Ayam"
+                content="total population"
                 type="number"
             />
             <InputFragment
                 v-model="umur"
                 name="umur"
-                content="Umur"
+                content="age"
                 type="number"
 
             />

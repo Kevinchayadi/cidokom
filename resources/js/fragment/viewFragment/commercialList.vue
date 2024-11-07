@@ -1,7 +1,7 @@
 <template>
   <div class="w-full d-flex">
     <div class="items-center justify-between ">
-      <Header tittle="Commerce List" />
+      <Header tittle="List kandang Penjualan" />
       <FormButton name="add new" @click="createForm" class="text-sm mb-2"/>
     </div>
     <table class="w-full">

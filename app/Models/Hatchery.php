@@ -15,7 +15,7 @@ class Hatchery extends Model
     protected $fillable = [
         'id_hatchery',
         'id_pen',
-        'machine_name',
+        'id_machine',
         'setting_date',
         'candling_date',
         'pull_chicken_date',
@@ -40,9 +40,9 @@ class Hatchery extends Model
             $time = Carbon::now()->format('dmy');
     
             
-            $count = Hatchery::where('id_pen', $model->id_pen)->count() + 1;
+            // $count = Hatchery::where('id_pen', $model->id_pen)->count() + 1;
 
-            $count_formatted = str_pad($count, 3, '0', STR_PAD_LEFT);
+            $count_formatted = str_pad($model->id_machine, 2, '0', STR_PAD_LEFT);
     
             $model->id_hatchery = 'HTC-' . $time . '-' . $count_formatted;
         });

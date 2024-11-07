@@ -2,7 +2,7 @@
     <div class="w-[80%]">
         <Headers tittle="Buat Kandang" />
         <form @submit.prevent="handleSubmit">
-            <InputFragment v-model="form.nama_kandang" name="nama_kandang" content="nama Kandang" type="text" />
+            <InputFragment v-model="form.nama_kandang" name="nama_kandang" content="code kandang" type="text" />
             <InputFragment v-model="form.jenis_kandang" content="Jenis kandang" type="dropdown" :datas="jenisKandang" />
 
             <div class="w-full flex text-center justify-center">
@@ -22,10 +22,8 @@
 import { ref } from "vue";
 
     const jenisKandang = [
-    { id: "breeding", name: "indukan" },
-    { id: "doc", name: "kandang doc" },
-    { id: "commerce", name: "penjualan" },
-    { id: "pembesaran", name: "kandang pembesaran" },
+    { id: "breeding", name: "breeding" },
+    { id: "commerce", name: "commercial" },
 ];  
     const form = ref({
         nama_kandang: '',

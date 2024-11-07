@@ -10,4 +10,8 @@ class DashboardController extends Controller
     function userIndex(){
         return Inertia::render('user/Dashboard');
     }
+
+    function adminIndex(){
+        return Inertia::render('admin/Dashboard');
+    }
 }

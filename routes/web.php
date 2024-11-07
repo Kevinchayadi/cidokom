@@ -17,8 +17,19 @@ Route::get('/home',function(){
     return inertia::render('Home');
 });
 
+Route::prefix('admin')->group(function(){
+    Route::get('/dashboard', [DashboardController::class, 'adminIndex'])->name('admin.dashboard');
 
-Route::prefix('user')->middleware(['auth'])->group(function(){
+    Route::get('/hatchery', [HatcheryController::class, 'adminIndex'])->name('admin.hatchery');
+
+    Route::get('/breeding', [BreedingController::class, 'adminIndex'])->name('admin.breeding');
+    Route::get('/breeding-detail/{id}', [BreedingController::class, 'getBreedingDetail']);
+
+    Route::get('commercial', [CommercialController::class, 'adminIndex'])->name('admin.commercial');
+});
+
+
+Route::prefix('user')->middleware(['auth','isUser'])->group(function(){
     Route::get('/dashboard',[DashboardController::class, 'userIndex'])->name('user.dashboard');
 
     Route::get('/ayam', [AyamController::class, 'userIndex'])->name('user.ayamList');

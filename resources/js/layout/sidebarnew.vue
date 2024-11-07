@@ -66,7 +66,7 @@
         computed,
         ref
     } from 'vue';
-import TwoTableSide from './TwoTableSide.vue';
+import TwoTableSide from '../fragment/TwoTableSide.vue';
 
     const isSidebarOpen = ref(true);
 

@@ -1,5 +1,6 @@
 <template>
     <div class="w-full d-flex">
+        <Headers tittle="List Penetasan Telur" />
         <FormButton name="add new" @click="createForm" class="text-sm mb-2" />
         <table class="w-full">
             <tbody>
@@ -30,6 +31,7 @@
     import {
         router
     } from '@inertiajs/vue3';
+import Headers from '../../components/Headers.vue';
 
     const props = defineProps({
         hatchery: {

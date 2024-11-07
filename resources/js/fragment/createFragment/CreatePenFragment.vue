@@ -2,7 +2,7 @@
     <div class="w-[80%]">
         <Headers tittle="Buat Pen" />
         <form @submit.prevent="handleSubmit">
-            <InputFragment v-model="form.id_kandang" name="id_kandang" type="dropdown" :datas="kandanglist" />
+            <InputFragment v-model="form.id_kandang" name="id_kandang" content="code kandang" type="dropdown" :datas="kandanglist" />
             <InputFragment v-model="form.code_pen" name="code_pen" content="code pen" type="string" />
 
             <div class="w-full flex text-center justify-center">

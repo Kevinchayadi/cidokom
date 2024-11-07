@@ -1,38 +1,38 @@
 <template>
     <div class="w-[80%]">
-        <Headers tittle="Create Commercial" />
+        <Headers tittle="Create Breeding" />
         <form @submit.prevent="handleSubmit">
             <InputFragment v-model="pen" name="pen" type="dropdown" :datas="penList" />
             <InputFragment
                 v-model="ayamJantan"
                 name="ayamJantan"
-                content="Ayam Jantan"
+                content="male Chicken"
                 type="dropdown"
                 :datas="ayamList"
             />
             <InputFragment
                 v-model="ayamBetina"
                 name="ayamBetina"
-                content="Ayam Betina"
+                content="Female Chicken"
                 type="dropdown"
                 :datas="ayamList"
             />
             <InputFragment
                 v-model="qtyJantan"
                 name="qtyJantan"
-                content="Jumlah Ayam Jantan"
+                content="quantity male chicken"
                 type="number"
             />
             <InputFragment
                 v-model="qtyBetina"
                 name="qtyBetina"
-                content="Jumlah Ayam Betina"
+                content="quantity female chicken"
                 type="number"
             />
             <InputFragment
                 v-model="umur"
                 name="umur"
-                content="Umur"
+                content="age"
                 type="number"
             />
             <!-- <InputFragment

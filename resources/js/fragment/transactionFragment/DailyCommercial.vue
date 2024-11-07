@@ -5,31 +5,31 @@
             <InputFragment
                 v-model="depreciation_die"
                 name="depreciation_die"
-                content="ayam yang mati"
+                content="die"
                 type="number"
             />
             <InputFragment
                 v-model="depreciation_afkir"
                 name="depreciation_afkir"
-                content="ayam yang afkir"
+                content="afkir"
                 type="number"
             />
             <InputFragment
                 v-model="depreciation_panen"
                 name="depreciation_panen"
-                content="ayam yang keluar/panen"
+                content="harvest(sold)"
                 type="number"
             />
             <InputFragment
                 v-model="feed"
                 name="feed"
-                content="jumlah makan"
+                content="feed (in kilograms)"
                 type="number"
             />
             <InputFragment
                 v-model="feed_name"
                 name="feed_name"
-                content="nama pakan"
+                content="Feed name"
                 type="dropdown"
                 :datas="FeedList"
             />

@@ -1,12 +1,12 @@
 <template>
     <div class="w-[80%]">
-        <Headers tittle="Buat Ayam" />
+        <Headers tittle="Create Chicken" />
         <form @submit.prevent="handleSubmit">
-            <InputFragment v-model="form.code_ayam" name="code_ayam" content="Kode Ayam" type="text" />
+            <InputFragment v-model="form.code_ayam" name="code_ayam" content="Code Ayam" type="text" />
 
-            <InputFragment v-model="form.strain_male" name="strain_male" content="Induk Jantan" type="dropdown" :datas="ayamlist" />
+            <InputFragment v-model="form.strain_male" name="strain_male" content="Strain Male" type="dropdown" :datas="ayamlist" />
 
-            <InputFragment v-model="form.strain_female" name="strain_female" content="Induk Betina" type="dropdown" :datas="ayamlist" />
+            <InputFragment v-model="form.strain_female" name="strain_female" content="Strain Female" type="dropdown" :datas="ayamlist" />
 
             <div class="w-full flex text-center justify-center">
                 <FormButton name="Submit" custom="text-center w-[80%] py-4 mt-4" />

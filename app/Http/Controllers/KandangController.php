@@ -23,7 +23,7 @@ class KandangController extends Controller
                         'nama_kandang' => 'required|string|max:255', 
                         'jenis_kandang' => 'required|string',
                     ]);
-                    $kandang['nama_kandang'] = strtoupper($kandang['nama_kandang']);
+        $kandang['nama_kandang'] = strtoupper($kandang['nama_kandang']);
         Kandang::create($kandang);
 
         return redirect()->route('user.kandangList')->with('success', 'Berhasil membuat jenis ayam baru!!');

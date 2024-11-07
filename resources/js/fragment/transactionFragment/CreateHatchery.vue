@@ -1,18 +1,19 @@
 <template>
     <div class="w-[80%]">
-        <Headers tittle="Add Hatchery" />
+        <Headers tittle="create Hatchery" />
         <form @submit.prevent="handleSubmit">
             <InputFragment
                 v-model="pen"
                 name="asal pen"
                 type="dropdown"
+                content="code pen"
                 :datas="penList"
             />
 
             <InputFragment
                 v-model="hatcheryMachine"
                 name="hatchery_machine"
-                content="mesin penetasan"
+                content="machine name"
                 type="dropdown"
                 :datas="hatcheryMachineOptions"
             />
@@ -20,6 +21,7 @@
             <InputFragment
                 v-model="totalSetting"
                 name="total_setting"
+                content="total setting"
                 type="number"
             />
             
@@ -81,7 +83,7 @@ const handleSubmit = () => {
     "/user/hatchery/create",
     {
         id_pen: pen.value,
-        machine_name: hatcheryMachine.value,
+        id_machine: hatcheryMachine.value,
         total_setting: totalSetting.value,
     },
     {

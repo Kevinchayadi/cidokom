@@ -1,5 +1,6 @@
 <template>
   <div class="w-full d-flex">
+    <Headers tittle="List kandang Indukan" />
     <FormButton name="add new" @click="createForm" class="text-sm mb-2"/>
     <table class="w-full">
       <tbody>
@@ -23,6 +24,7 @@
 import { computed } from 'vue';
 import FormButton from '../../components/inputComponent/FormButton.vue';
 import { router } from '@inertiajs/vue3';
+import Headers from '../../components/Headers.vue';
 
   const props = defineProps({
     breeding: {

@@ -1,95 +1,155 @@
 <template>
-  <div>
-    <!-- Menu buttons -->
-    <div class="flex justify-start ">
-      <button
-        class=" border border-grey-700 mx-1 bg-gray-200  text-primary-text-dark px-2 rounded hover:text-primary-text-dark-hover"
-        @click="selectItem"
-      >
-        Select
-      </button>
-      <button
-        class=" border border-grey-700 mx-1 bg-gray-200  text-primary-text-dark px-2 rounded hover:text-primary-text-dark-hover"
-        @click="editItem"
-        :disabled="!selectedId"
-      >
-        Edit
-      </button>
-      <button
-        class=" border border-grey-700 mx-1 bg-gray-200  text-primary-text-dark px-2 rounded hover:text-primary-text-dark-hover"
-        @click="deleteItem"
-        :disabled="!selectedId"
-      >
-        Delete
-      </button>
-      <button
-        class=" border border-grey-700 mx-1 bg-gray-200  text-primary-text-dark px-2 rounded hover:text-primary-text-dark-hover"
-        @click="downloadItem"
-        :disabled="!selectedId"
-      >
-        Download
-      </button>
-    </div>
+  <div class="table-container">
+      <!-- Menu buttons -->
 
-    <!-- Table -->
-    <table class=" divide-y divide-gray-300">
-      <thead class="bg-blue-300">
-        <tr>
-          <th
-            scope="col"
-            class=" left-0 z-20"
-            :class="classTR"
-          >
-            ID
-          </th>
-          <th
-            scope="col"
-            class=" left-[80px] z-20"
-            :class="classTR"
-          >
-            Name
-          </th>
-          <th
-            scope="col"
-           :class="classTR"
-          >
-            Action
-          </th>
-        </tr>
-      </thead>
-      <tbody class="bg-gray-100 divide-y divide-gray-200">
-        <tr
-          v-for="(item, index) in items"
-          :key="item.id"
-          :class="{
-            'bg-gray-300': selectedId === item.id,
-            'hover:bg-gray-200': selectedId !== item.id,
-          }"
-          @click="selectRow(item.id)"
-          class="cursor-pointer"
-        >
-          <td class=" sticky left-0" :class="classTD">{{ item.id }}</td>
-          <td class=" sticky left-[80px] ":class="classTD">{{ item.name }}</td>
-          <td class="" :class="classTD">
-            <button class="text-indigo-600 hover:text-indigo-900">Details</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+
+      <!-- Table -->
+      <table class=" divide-y divide-x divide-gray-300">
+          <thead class="bg-blue-300">
+              <tr>
+                  <!-- ID Column (sticky) -->
+                  <th
+                      class=" md:left-0 bg-blue-300"
+                      :class="classesth"
+                      style="min-width: 100px; z-index: 2">
+                      ID
+                  </th>
+                  <!-- Name Column (sticky) -->
+                  <th
+                      class="  md:left-[100px] bg-blue-300"
+                      :class="classesth"
+                      style="min-width: 200px; z-index: 2">
+                      Name
+                  </th>
+                  <!-- Action Column (sticky) -->
+                  <th
+                      class="  md:left-[300px] bg-blue-300"
+                      :class="classesth"
+                      style="min-width: 150px; z-index: 2">
+                      Action
+                  </th>
+                  <!-- Additional Columns -->
+                  <th class=" bg-blue-300"
+                      :class="classesth">
+                      Additional 1
+                  </th>
+                  <th class=" bg-blue-300"
+                      :class="classesth">
+                      Additional 2
+                  </th>
+                  <th class=" bg-blue-300"
+                      :class="classesth">
+                      Additional 3
+                  </th>
+                  <th class=" bg-blue-300"
+                      :class="classesth">
+                      Additional 4
+                  </th>
+                  <th class=" bg-blue-300"
+                      :class="classesth">
+                      Additional 1
+                  </th>
+                  <th class=" bg-blue-300"
+                      :class="classesth">
+                      Additional 2
+                  </th>
+                  <th class=" bg-blue-300"
+                      :class="classesth">
+                      Additional 3
+                  </th>
+                  <th class=" bg-blue-300"
+                      :class="classesth">
+                      Additional 4
+                  </th>
+                  <th class=" bg-blue-300"
+                      :class="classesth">
+                      Additional 1
+                  </th>
+                  <th class=" bg-blue-300"
+                      :class="classesth">
+                      Additional 2
+                  </th>
+                  <th class=" bg-blue-300"
+                      :class="classesth">
+                      Additional 3
+                  </th>
+                  <th class=" bg-blue-300"
+                      :class="classesth">
+                      Additional 4
+                  </th>
+              </tr>
+          </thead>
+          <tbody class="bg-gray-100 divide-y divide-gray-200 custom-scroll">
+              <tr
+  v-for="(item, index) in itemsBawah"
+  :key="item.id"
+  :class="{
+      'bg-gray-300': selectedId === item.id,
+      'hover:bg-gray-200': selectedId !== item.id,
+  }"
+  @click="selectRow(item.id)"
+  class="cursor-pointer">
+  
+  <!-- ID Column (sticky) -->
+  <td
+      class="  md:sticky  md:left-0"
+      :class="{'bg-gray-300': selectedId === item.id, 'bg-white': selectedId !== item.id,  [classestd]: true}"
+      style="min-width: 100px">
+      {{ item.id }}
+  </td>
+
+  <!-- Name Column (sticky) -->
+  <td
+      class="  md:sticky  md:left-[100px]"
+      :class="{'bg-gray-300': selectedId === item.id, 'bg-white': selectedId !== item.id,  [classestd]: true}"
+      style="min-width: 200px">
+      {{ item.name }}
+  </td>
+
+  <!-- Action Column (sticky) -->
+  <td
+      class="  md:sticky  md:left-[300px]"
+      :class="{'bg-gray-300': selectedId === item.id, 'bg-white': selectedId !== item.id,  [classestd]: true}"
+      style="min-width: 150px">
+      <button class="text-indigo-600 hover:text-indigo-900">
+          Details
+      </button>
+  </td>
+
+  <!-- Additional Data Columns -->
+  <td class="" :class="{'bg-gray-300': selectedId === item.id, 'bg-white': selectedId !== item.id,  [classestd]: true}">Data A</td>
+  <td class="" :class="{'bg-gray-300': selectedId === item.id, 'bg-white': selectedId !== item.id,  [classestd]: true}">Data B</td>
+  <td class="" :class="{'bg-gray-300': selectedId === item.id, 'bg-white': selectedId !== item.id,  [classestd]: true}">Data C</td>
+  <td class="" :class="{'bg-gray-300': selectedId === item.id, 'bg-white': selectedId !== item.id,  [classestd]: true}">Data D</td>
+</tr>
+
+          </tbody>
+      </table>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref } from "vue";
 
 const selectedId = ref(null);
+const classesth = ' text-left text-xs font-medium text-gray-700 uppercase tracking-wider sticky top-0 min-w-[100px]'
 
-const classTR = 'px-1 text-left  text-xxs text-white font-medium text-gray-700 uppercase tracking-wider sticky top-0  w-[80px]'
-const classTD = 'px-1 text-xxs  text-gray-900  w-[80px]'
+const classestd = 'p-1 text-xs text-gray-900 min-w-[100px]'
+const buttonclasses = 'border border-grey-700 bg-gray-200 text-primary-text-dark rounded hover:text-primary-text-dark-hover sticky top-0'
 
-
-
-const items = ref([
+const itemsBawah = ref([
+  { id: 1, name: 'Item One' },
+  { id: 2, name: 'Item Two' },
+  { id: 3, name: 'Item Three' },
+  { id: 1, name: 'Item One' },
+  { id: 2, name: 'Item Two' },
+  { id: 3, name: 'Item Three' },
+  { id: 1, name: 'Item One' },
+  { id: 2, name: 'Item Two' },
+  { id: 3, name: 'Item Three' },
+  { id: 1, name: 'Item One' },
+  { id: 2, name: 'Item Two' },
+  { id: 3, name: 'Item Three' },
   { id: 1, name: 'Item One' },
   { id: 2, name: 'Item Two' },
   { id: 3, name: 'Item Three' },
@@ -100,66 +160,54 @@ const selectRow = (id) => {
 };
 
 const selectItem = () => {
-  console.log('Selected:', selectedId.value);
+  console.log("Selected:", selectedId.value);
 };
 
 const editItem = () => {
-  console.log('Edit:', selectedId.value);
+  console.log("Edit:", selectedId.value);
 };
 
 const deleteItem = () => {
-  console.log('Delete:', selectedId.value);
+  console.log("Delete:", selectedId.value);
 };
 
 const downloadItem = () => {
-  console.log('Download:', selectedId.value);
+  console.log("Download:", selectedId.value);
 };
 </script>
-
-
-
 
 <style scoped>
 html,
 body,
 #app {
-    height: 100%;
+  height: 100%;
 }
 
 /* Style untuk scrollbar */
 ::-webkit-scrollbar {
-    width: 12px;
-    /* Lebar scrollbar untuk vertikal */
-    height: 12px;
-    /* Tinggi scrollbar untuk horizontal */
+  width: 12px;
+  height: 12px;
 }
 
-/* Style untuk track */
 ::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
+  background: #f1f1f1;
+  border-radius: 10px;
 }
 
-/* Style untuk thumb (bagian geser scrollbar) */
 ::-webkit-scrollbar-thumb {
-    background-color: #888;
-    /* Warna thumb */
-    border-radius: 10px;
-    border: 3px solid transparent;
+  background-color: #888;
+  border-radius: 10px;
+  border: 3px solid transparent;
 }
 
-/* Warna thumb saat dihover */
 ::-webkit-scrollbar-thumb:hover {
-    background-color: #555;
+  background-color: #555;
 }
 
-/* Custom Scrollbar untuk bagian tabel */
+/* Custom Scrollbar for the table */
 .custom-scroll {
-    max-height: 500px;
-    /* Sesuaikan dengan tinggi tabel yang diinginkan */
-    overflow-y: auto;
-    /* Scroll vertikal */
-    overflow-x: hidden;
-    /* Nonaktifkan scroll horizontal */
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: auto;
 }
 </style>
