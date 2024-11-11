@@ -23,6 +23,7 @@ return new class extends Migration
             $table->decimal('cost_total', 15, 2)->nullable();
             $table->decimal('cost_unit', 15, 2)->nullable();
             $table->string('move_to')->nullable();
+            $table->string('inputBy');
             $table->string('status')->nullable()->default('active');
             $table->timestamps();
         });

@@ -19,7 +19,7 @@ class Commercial_detail extends Model
         'depreciation_panen',
         'feed',
         'feed_name',
-        'id_admin',
+        'inputBy'
 
     ];
 

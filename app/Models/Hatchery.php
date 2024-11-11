@@ -19,10 +19,11 @@ class Hatchery extends Model
         'setting_date',
         'candling_date',
         'pull_chicken_date',
-        'input_by',
-        'input_at',
+        'cost_total',
+        'cost_unit',
         'move_to',
-        'status'
+        'status',
+        'inputBy'
     ];
     
     

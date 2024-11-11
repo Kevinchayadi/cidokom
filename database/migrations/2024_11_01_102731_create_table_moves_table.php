@@ -15,9 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('current_pen');
             $table->string('destination_pen');
-            
-
-            
             $table->timestamps();
         });
     }

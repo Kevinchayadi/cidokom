@@ -75,7 +75,7 @@ const depreciation_die = ref(0);
 const depreciation_afkir = ref(0);
 const depreciation_panen = ref(0);
 const feed = ref(0);
-const feed_name = ref('GF-11');
+const feed_name = ref('');
 
 // Handle form submission
 const handleSubmit = () => {

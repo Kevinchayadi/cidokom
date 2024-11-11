@@ -7,6 +7,7 @@ use App\Http\Controllers\CommercialController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HatcheryController;
 use App\Http\Controllers\KandangController;
+use App\Http\Controllers\PakanController;
 use App\Http\Controllers\PenController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -41,7 +42,7 @@ Route::prefix('user')->middleware(['auth','isUser'])->group(function(){
     Route::post('/kandang/create', [KandangController::class,'storeKandang'])->name('user.kandang.store');
 
     Route::get('/pen', [PenController::class, 'userIndex'])->name('user.penList');
-    Route::get('/penList/{id}', [PenController::class, 'kandangPen'])->name('user.penList.id');
+    Route::get('/pen/{id}', [PenController::class, 'kandangPen'])->name('user.penList.id');
     Route::get('/pen/create', [PenController::class, 'createPen'])->name('user.pen.create');
     Route::post('/pen/create', [PenController::class,'storePen'])->name('user.pen.store');
 
@@ -67,6 +68,7 @@ Route::prefix('user')->middleware(['auth','isUser'])->group(function(){
     Route::get('/hatchery/finalInput/{id}', [HatcheryController::class, 'finalInputHatchery'])->name('user.hatchery.finalInput');
     Route::post('/hatchery/finalInput', [HatcheryController::class,'finalInputedHatchery'])->name('user.hatchery.finalInputed');
     
+    Route::get('/pakan', [PakanController::class, 'userIndex'])->name('user.pakan');
     Route::get('/logout',[AuthController::class, 'logout'])->name('user.logout');
 });
 

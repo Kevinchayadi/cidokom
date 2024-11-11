@@ -1,6 +1,6 @@
 <template>
     <SideBarUser>
-        <CreateHatchery :pen="pen"/>
+        <CreateHatchery :pen="pen" :machine="machine"/>
     </SideBarUser>
 </template>
 
@@ -12,6 +12,9 @@ import { onMounted } from 'vue';
 
 const props =defineProps({
     pen:{
+        type:Array
+    },
+    machine:{
         type:Array
     }
 })

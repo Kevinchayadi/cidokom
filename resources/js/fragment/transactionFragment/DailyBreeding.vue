@@ -51,6 +51,12 @@
                 type="number"
             />
             <InputFragment
+                v-model="sale"
+                name="sale"
+                content="sale egg"
+                type="number"
+            />
+            <InputFragment
                 v-model="feed"
                 name="feed"
                 content="total feed(in Kilograms)"
@@ -61,7 +67,7 @@
                 name="feedName"
                 content="Feed name"
                 type="dropdown"
-                :data="feedOptions"
+                :datas="pakanList"
             />
 
             <input name="admin" type="hidden" value="admin_name" />
@@ -77,20 +83,31 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { router } from "@inertiajs/vue3";
 
 import InputFragment from "../../components/InputFragment.vue";
 import FormButton from "../../components/inputComponent/FormButton.vue";
 import Headers from "../../components/Headers.vue";
+import { useStore } from "vuex";
 
 // Define the state for each input
 const props = defineProps({
     id_breeding: {
         type: String,
         required: true
+    },
+    pakan:{
+        type: Array,
+        required: true
     }
 })
+const pakanList = computed(() =>
+  props.pakan.map(item => ({
+  id: item.nama_pakan,
+  name: item.nama_pakan
+})));
+const store = useStore();
 
 const femaleDie = ref(0);
 const femaleReject = ref(0);
@@ -100,9 +117,12 @@ const eggMorning = ref(0);
 const eggAfternoon = ref(0);
 const broken = ref(0);
 const abnormal = ref(0);
+const sale = ref(0)
 const feed = ref(0);
-const feedName = ref("GF11");
-
+const feedName = ref('');
+const total_age = computed(() => {
+  return eggMorning.value + eggAfternoon.value - broken.value - abnormal.value - sale.value;
+});
 // Handle form submission
 const handleSubmit = () => {
     router.post("/user/breeding/input", {
@@ -115,8 +135,11 @@ const handleSubmit = () => {
         egg_afternoon: eggAfternoon.value,
         broken: broken.value,
         abnormal: abnormal.value,
+        sale: sale.value,
+        total_egg: total_age.value,
         feed: feed.value,
         feed_name: feedName.value,
+        inputBy: store.getters.user.name
  
     });
 };

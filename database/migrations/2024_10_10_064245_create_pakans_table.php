@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nama_pakan');
             $table->unsignedBigInteger('qty');
+            $table->unsignedBigInteger('harga');
             $table->timestamps();
         });
     }

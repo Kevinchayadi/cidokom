@@ -58,7 +58,8 @@ import { router } from "@inertiajs/vue3";
 import InputFragment from "../../components/InputFragment.vue";
 import FormButton from "../../components/inputComponent/FormButton.vue";
 import Headers from "../../components/Headers.vue";
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
+import { mapGetters, useStore } from 'vuex';
 
 const props = defineProps({
     pen: {
@@ -67,6 +68,9 @@ const props = defineProps({
     ayam: {
         type: Array,
     },
+    auth: {
+        type: Object,
+    },
 });
 
 const penList = computed(() =>
@@ -74,6 +78,8 @@ const penList = computed(() =>
   id: item.id,
   name: `(${item.kandang.nama_kandang}) ${item.code_pen}`
 })));
+
+const store = useStore();
 
 const ayamList = computed(() =>
   props.ayam.map(item => ({
@@ -91,6 +97,7 @@ const vaksin = ref("");
 const status = ref("active");
 
 const handleSubmit = () => {
+    
     router.post("/user/breeding/create", {
         id_pen: pen.value,
         code_ayam_jantan: ayamJantan.value,
@@ -98,7 +105,8 @@ const handleSubmit = () => {
         jumlah_jantan: qtyJantan.value,
         jumlah_betina: qtyBetina.value,
         age: umur.value,
-        vaksin: vaksin.value
+        vaksin: vaksin.value,
+        inputBy : store.getters.user.name
     });
 };
 </script>

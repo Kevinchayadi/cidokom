@@ -18,7 +18,7 @@ class Commercial extends Model
         'age',
         'total_cost',
         'unit_cost',
-        'id_admin',
+        'inputBy',
         'status'
 
     ];

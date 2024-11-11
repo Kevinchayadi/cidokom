@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('hatcheries', function (Blueprint $table) {
             $table->string('id_hatchery')->unique()->primary();
             $table->unsignedBigInteger('id_pen');
-            $table->string('id_machine');
+            $table->unsignedBigInteger('id_machine');
             $table->date('setting_date')->nullable();
             $table->date('candling_date')->nullable();
             $table->date('pull_chicken_date')->nullable();
@@ -22,6 +22,7 @@ return new class extends Migration
             $table->decimal('cost_unit', 15, 2)->nullable();
             $table->string('move_to')->nullable();
             $table->string('status')->nullable()->default('active');
+            $table->string('inputBy');
             $table->timestamps();
         });
     }

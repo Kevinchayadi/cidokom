@@ -5,13 +5,20 @@ namespace App\Http\Controllers;
 use App\Models\Ayam;
 use App\Models\Breeding;
 use App\Models\Breeding_detail;
+use App\Models\Pakan;
 use App\Models\Pen;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Services\CountService;
 
 class BreedingController extends Controller
 {
+    protected $countService;
+    public function __construct(CountService $countService)
+    {
+        $this->countService = $countService;
+    }
     public function userIndex()
     {
         $breeding = Breeding::with('BreedingDetails')->get();
@@ -23,16 +30,17 @@ class BreedingController extends Controller
         return Inertia::render('admin/Breeding', compact('breeding'));
     }
 
-
     public function createBreeding()
     {
+       
         $pen = Pen::with('kandang')
+            ->where('status', 'active')
             ->whereHas('kandang', function ($query) {
                 $query->where('jenis_kandang', 'breeding');
             })
             ->get();
         $ayam = Ayam::get();
-        return Inertia::render('user/FormCreateBreeding',['pen' => $pen, 'ayam' => $ayam]);
+        return Inertia::render('user/FormCreateBreeding', ['pen' => $pen, 'ayam' => $ayam]);
     }
     public function storeBreeding(Request $request)
     {
@@ -45,17 +53,26 @@ class BreedingController extends Controller
             'jumlah_jantan' => 'required|integer',
             'jumlah_betina' => 'required|integer',
             'age' => 'required|integer',
+            'inputBy'=> 'required',
         ]);
         // dd($request);
         Breeding::create($input);
+
+        Pen::where('id', $input['id_pen'])->update([
+            'status' => 'inactive'
+        ]);
 
         return redirect()->route('user.breeding')->with('success', 'berhasil membuat kandang Breeding baru');
     }
 
     public function inputBreeding($id)
     {
-        return Inertia::render('user/FormDailyBreeding',['id_breeding' => $id]);
+        $pakan = Pakan::get()->toArray();
+        // dd($pakan);
+        return Inertia::render('user/FormDailyBreeding', ['id_breeding' => $id, 'pakan'=> $pakan]);
+        
     }
+
 
     public function inputedBreeding(Request $request)
     {
@@ -70,17 +87,22 @@ class BreedingController extends Controller
             'egg_afternoon' => 'required|integer|min:0',
             'broken' => 'required|integer|min:0',
             'abnormal' => 'required|integer|min:0',
+            'sale' => 'required|integer',
+            'total_egg' => 'required',
             'feed' => 'required|numeric|min:0',
             'feed_name' => 'required|string',
+            'inputBy'=> 'required',
         ]);
         // dd($request);
 
         $Breeding = Breeding::find($input['id_breeding']);
+        $pakan = Pakan::where('nama_pakan', $input['feed_name'])->firstOrFail();
+
         if (!$Breeding) {
             return response()->json(['error' => 'Data Breeding tidak ditemukan'], 404);
         }
         $input['begining_population'] = $Breeding->begining_population;
-        $input['date'] = $Breeding->date;
+        
 
         $previousDetail = Breeding_detail::where('id_breeding', $input['id_breeding'])
             ->latest('created_at')
@@ -95,16 +117,26 @@ class BreedingController extends Controller
             $input['last_female'] = $calculate_female;
         }
 
+        $current_cost =  $this->countService->dailyBreeding($pakan, $input['feed'],$input['total_egg']+$input['sale']);
+        $Breeding->update([
+            'cost_total' => $Breeding->cost_total + ($current_cost * $input['total_egg'])
+        ]);
+
+
+        
+
         Breeding_detail::create($input);
 
         return redirect()->route('user.breeding')->with('success', 'berhasil membuat kandang Breeding baru');
     }
-    public function adminDashboar(){
+    public function adminDashboar()
+    {
         $breeding = Breeding::get();
         return Inertia::render('admin/Dashboard', compact('breeding'));
     }
-    public function getBreedingDetail($id){
+    public function getBreedingDetail($id)
+    {
         $breeding = Breeding_detail::with('breeding')->where('id_breeding', $id)->get()->toArray();
-        return [$id,1];
+        return [$id, 1];
     }
 }

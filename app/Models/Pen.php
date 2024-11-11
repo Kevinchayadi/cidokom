@@ -10,7 +10,9 @@ class Pen extends Model
     use HasFactory;
     protected $fillable = [
         'id_kandang',
-        'code_pen'
+        'code_pen',
+        'total_egg',
+        'total_cost'
     ];
 
     public function kandang(){

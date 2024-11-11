@@ -44,6 +44,7 @@ class CommercialController extends Controller
             'entryDate' => 'required|date',
             'entry_population' => 'required|integer|min:1',
             'age' => 'required|integer|min:0',
+            'inputBy'=> 'required',
         ]);
         $input['last_population'] = $input['entry_population'];
 
@@ -70,6 +71,7 @@ class CommercialController extends Controller
             'depreciation_panen' => 'nullable|integer|min:0',
             'feed' => 'required|integer',
             'feed_name' => 'required',
+            'inputBy'=> 'required',
         ]);
         // dd($request);
 

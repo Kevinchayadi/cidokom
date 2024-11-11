@@ -14,12 +14,16 @@ class Breeding extends Model
     protected $fillable = [
         'id_breeding',
         'id_pen',
+        'cost_induk',
         'code_ayam_jantan',
         'code_ayam_betina',
         'jumlah_jantan',
         'jumlah_betina',
+        'cost_total',
+        'cost_unit',
         'age',
-        'status'
+        'status',
+        'inputBy'
     ];
 
     public function breedingDetails()

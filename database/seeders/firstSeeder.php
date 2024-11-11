@@ -3,6 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\Ayam;
+use App\Models\Kandang;
+use App\Models\Machine;
+use App\Models\Pakan;
+use App\Models\Pen;
 use App\Models\role;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -51,6 +55,78 @@ class firstSeeder extends Seeder
             'strain_female'=>'SENTUL',
             'strain_male'=>'SENTUL',
         ]);
-        
+        Machine::create([
+            'machine_name' => 'Machine1'
+        ]);
+        Machine::create([
+            'machine_name' => 'Machine2'
+        ]);
+        Machine::create([
+            'machine_name' => 'Machine3'
+        ]);
+        Machine::create([
+            'machine_name' => 'Machine4'
+        ]);
+        Machine::create([
+            'machine_name' => 'Machine5'
+        ]);
+        Kandang::create([
+            'nama_kandang' => 'BRD1',
+            'jenis_kandang' => 'breeding' 
+        ]);
+        Kandang::create([
+            'nama_kandang' => 'CMR1',
+            'jenis_kandang' => 'commerce' 
+        ]);
+        Kandang::create([
+            'nama_kandang' => 'BRD2',
+            'jenis_kandang' => 'breeding' 
+        ]);
+        Kandang::create([
+            'nama_kandang' => 'CMR2',
+            'jenis_kandang' => 'commerce' 
+        ]);
+        Pen::create([
+            'id_kandang'=> 1,
+            'code_pen' => 'pen1'
+        ]);
+        Pen::create([
+            'id_kandang'=> 1,
+            'code_pen' => 'pen2'
+        ]);
+        Pen::create([
+            'id_kandang'=> 2,
+            'code_pen' => 'pen1'
+        ]);
+        Pen::create([
+            'id_kandang'=> 2,
+            'code_pen' => 'pen2'
+        ]);
+        Pen::create([
+            'id_kandang'=> 3,
+            'code_pen' => 'pen1'
+        ]);
+        Pen::create([
+            'id_kandang'=> 3,
+            'code_pen' => 'pen2'
+        ]);
+        Pen::create([
+            'id_kandang'=> 4,
+            'code_pen' => 'pen1'
+        ]);
+        Pen::create([
+            'id_kandang'=> 4,
+            'code_pen' => 'pen2'
+        ]);
+        Pakan::create([
+            'nama_pakan' => 'GF-11',
+            'qty' => 1000,
+            'harga' => 10000
+        ]);
+        Pakan::create([
+            'nama_pakan' => 'GF-12',
+            'qty' => 250,
+            'harga' => 7000
+        ]);
     }
 }

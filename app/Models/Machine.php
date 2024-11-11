@@ -10,7 +10,7 @@ class Machine extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nama_kandang',
-        'jenis_kandang'
+        'machine_name',
+        'status'
     ];
 }

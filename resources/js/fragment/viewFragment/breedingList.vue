@@ -1,6 +1,6 @@
 <template>
   <div class="w-full d-flex">
-    <Headers tittle="List kandang Indukan" />
+    <Headers tittle="Breeding List" />
     <FormButton name="add new" @click="createForm" class="text-sm mb-2"/>
     <table class="w-full">
       <tbody>

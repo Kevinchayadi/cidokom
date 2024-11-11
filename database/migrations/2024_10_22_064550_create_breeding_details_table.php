@@ -25,8 +25,11 @@ return new class extends Migration
             $table->decimal('percentage', 5, 2)->nullable();
             $table->integer('broken')->nullable();
             $table->integer('abnormal')->nullable();
+            $table->integer('sale')->nullable();
+            $table->integer('total_egg')->nullable();
             $table->string('feed')->nullable();
             $table->string('feed_name')->nullable();
+            $table->string('inputBy');
             $table->timestamps();
         });
     }

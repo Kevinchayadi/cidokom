@@ -22,7 +22,7 @@ class Breeding_detail extends Model
         'abnormal',
         'feed',
         'feed_name',
-        'id_admin'
+        'inputBy'
     ];
 
     public function breeding()

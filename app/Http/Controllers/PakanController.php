@@ -10,7 +10,7 @@ class PakanController extends Controller
 {
     function userIndex(){
         $pakan = Pakan::get();
-        return Inertia::render('user/pakanList', compact($pakan),['successMessage' => session('success')]);
+        return Inertia::render('user/pakanList', compact('pakan'));
     }
     
     function createPakan(){

@@ -18,7 +18,8 @@ class Hatchery_detail extends Model
         'dead_in_egg',
         'hatchability',
         'doc_afkir',
-        'saleable'
+        'saleable',
+        'inputBy'
     ];
 
     public function hatchery(){

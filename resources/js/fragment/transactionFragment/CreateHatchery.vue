@@ -15,7 +15,7 @@
                 name="hatchery_machine"
                 content="machine name"
                 type="dropdown"
-                :datas="hatcheryMachineOptions"
+                :datas="machineList"
             />
 
             <InputFragment
@@ -52,6 +52,10 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    machine: {
+        type: Array,
+        default: () => [],
+    }
 });
 
 const penList = computed(() =>
@@ -59,21 +63,28 @@ const penList = computed(() =>
   id: item.id,
   name: `(${item.kandang.nama_kandang}) ${item.code_pen}`
 })));
+
+const machineList = computed(() =>
+  props.machine.map(item => ({
+  id: item.id,
+  name: item.machine_name
+})));
+
 const pen = ref("");
 const hatcheryMachine = ref("");
 const totalSetting = ref(0);
 
 const hatcheryMachineOptions = ref([
     {
-        id: "Machine 1",
+        id: 1,
         name: "Machine 1",
     },
     {
-        id: "Machine 2",
+        id: 2,
         name: "Machine 2",
     },
     {
-        id: "Machine 3",
+        id: 3,
         name: "Machine 3",
     },
 ]);

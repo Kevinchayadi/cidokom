@@ -57,6 +57,10 @@
             name: "Logout",
             path: route("user.logout")
         },
+        {
+            name: "pakan",
+            path: route("user.pakan")
+        },
 
     ]);
 

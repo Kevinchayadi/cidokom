@@ -22,6 +22,7 @@ return new class extends Migration
             $table->integer('depreciation_panen')->nullable();
             $table->integer('feed')->nullable();
             $table->string('feed_name')->nullable();
+            $table->string('inputBy');
             $table->string('id_vaksin')->nullable();
             $table->timestamps();
         });

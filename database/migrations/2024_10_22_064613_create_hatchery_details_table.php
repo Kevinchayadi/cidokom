@@ -22,6 +22,7 @@ return new class extends Migration
             $table->integer('hatchability')->nullable();
             $table->integer('doc_afkir')->nullable();
             $table->integer('saleable')->nullable();
+            $table->string('inputBy');
             $table->timestamps();
         });
     }

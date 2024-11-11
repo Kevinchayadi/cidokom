@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('id_kandang');
             $table->string('code_pen'); 
+            $table->unsignedBigInteger('total_egg')->nullable();
+            $table->unsignedBigInteger('total_cost')->nullable();
+            $table->string('status')->default('active');
             $table->timestamps();
         });
     }
