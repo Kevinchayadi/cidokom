@@ -4,8 +4,8 @@
 
 
         <!-- Table -->
-        <table class=" divide-y divide-x divide-gray-300">
-            <thead class="bg-blue-300">
+        <table class=" divide-y divide-x divide-gray-300 border-collapse">
+            <thead class="bg-blue-300 shadow-lg">
                 <tr>
                     <!-- ID Column (sticky) -->
                     <th class=" md:left-0 bg-blue-300 z-20" rowspan="2" :class="classesth">
@@ -80,19 +80,19 @@
 
                     <!-- ID Column (sticky) -->
                     <td class="  md:sticky  md:left-0"
-                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white': selectedId !== item.id, [classestd]: true }">
+                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item.id, [classestd]: true }">
                         {{ item . id }}
                     </td>
 
                     <!-- Name Column (sticky) -->
                     <td class="  md:sticky  md:left-[100px]"
-                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white': selectedId !== item.id, [classestd]: true }">
+                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item.id, [classestd]: true }">
                         {{ item . name }}
                     </td>
 
                     <!-- Action Column (sticky) -->
                     <td class=" "
-                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white': selectedId !== item.id, [classestd]: true }"
+                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item.id, [classestd]: true }"
                         style="min-width: 150px">
                         <button class="text-indigo-600 hover:text-indigo-900">
                             Details
@@ -101,16 +101,16 @@
 
                     <!-- Additional Data Columns -->
                     <td class=""
-                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white': selectedId !== item.id, [classestd]: true }">
+                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100 ': selectedId !== item.id, [classestd]: true }">
                         Data A</td>
                     <td class=""
-                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white': selectedId !== item.id, [classestd]: true }">
+                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item.id, [classestd]: true }">
                         Data B</td>
                     <td class=""
-                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white': selectedId !== item.id, [classestd]: true }">
+                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item.id, [classestd]: true }">
                         Data C</td>
                     <td class=""
-                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white': selectedId !== item.id, [classestd]: true }">
+                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item.id, [classestd]: true }">
                         Data D</td>
                 </tr>
 
@@ -127,11 +127,11 @@
 
     const selectedId = ref(null);
     const classesth =
-        ' text-center  text-xs font-medium text-gray-700 uppercase tracking-wider sticky top-0 min-w-[100px] '
+        ' text-center  text-xs border-gray-300 font-medium text-gray-700 uppercase tracking-wider  sticky top-0 min-w-[100px] shadow-[inset_1px_-1px_1px_white]'
     const classesth2 =
-        ' text-center  text-xs font-medium text-gray-700 uppercase tracking-wider sticky top-[18px] min-w-[100px] '
+        ' text-center  text-xs font-medium border-gray-300 text-gray-700 uppercase tracking-wider  sticky top-[18px] min-w-[100px] shadow-[inset_1px_-1px_1px_white]'
 
-    const classestd = 'p-1 text-xs  border-primary-black text-gray-900 text-center min-w-[100px]'
+    const classestd = 'p-1 text-xs  text-gray-900 text-center min-w-[100px]'
     const buttonclasses =
         'border border-grey-700 bg-gray-200 text-primary-text-dark rounded hover:text-primary-text-dark-hover sticky top-0'
 

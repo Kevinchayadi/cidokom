@@ -120,7 +120,7 @@ const abnormal = ref(0);
 const sale = ref(0)
 const feed = ref(0);
 const feedName = ref('');
-const total_age = computed(() => {
+const total_egg = computed(() => {
   return eggMorning.value + eggAfternoon.value - broken.value - abnormal.value - sale.value;
 });
 // Handle form submission
@@ -136,7 +136,7 @@ const handleSubmit = () => {
         broken: broken.value,
         abnormal: abnormal.value,
         sale: sale.value,
-        total_egg: total_age.value,
+        total_egg: total_egg.value,
         feed: feed.value,
         feed_name: feedName.value,
         inputBy: store.getters.user.name

@@ -13,6 +13,10 @@
                         <div v-else-if="data.hatchery_details?.[0]?.saleable === null">
                             <button :class="buttonClasses" @click="twentyonedays(data.id_hatchery)">input (21 Days)</button>
                         </div>
+                        <div v-else="data.hatchery_details?.[0]?.saleable === null">
+                            <button :class="buttonClasses" @click="moveTo(data.id_hatchery)">moveTo</button>
+                        </div>
+                    
                     </td>
                 </tr>
             </tbody>
@@ -56,6 +60,9 @@ import Headers from '../../components/Headers.vue';
     };
 
     const twentyonedays = (id) => {
+        router.get(`/user/hatchery/finalInput/${id}`)
+    };
+    const moveTo = (id) => {
         router.get(`/user/hatchery/finalInput/${id}`)
     };
 

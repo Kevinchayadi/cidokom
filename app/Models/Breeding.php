@@ -19,8 +19,6 @@ class Breeding extends Model
         'code_ayam_betina',
         'jumlah_jantan',
         'jumlah_betina',
-        'cost_total',
-        'cost_unit',
         'age',
         'status',
         'inputBy'

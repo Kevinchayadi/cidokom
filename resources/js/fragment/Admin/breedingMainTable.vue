@@ -23,19 +23,21 @@
         </div>
 
         <!-- Component Bawah -->
-        <div class="row-span-10 bg-gray-100 h-[70vh]  overflow-x-auto overflow-y-auto p-0 m-0">
+        <div class="row-span-10 bg-gray-100 h-[62vh]  overflow-x-auto overflow-y-auto p-0 m-0">
             <div
-                class="text-xs w-full bg-primary text-primary-text-light z-20 p-0 m-0 text-xxs  border-t-2 border-t-black sticky top-0 left-0">
-                dailyReport
+                class="text-xs w-full bg-primary pl-2 text-primary-text-light z-20 p-0 m-0 text-xxs  border-t-2 border-t-black sticky top-0 left-0">
+                Daily Report
             </div>
             <div v-if="showdata === null">
                 <p class="text-sm p-1 text-primary-text-light-hover pointer-events-none">select one table!</p>
             </div>
             <div v-else-if="showdata === 1">
-                <OnlyTable />
+                <!-- <OnlyTable /> -->
+                <!-- <BreedingBotomTable /> -->
             </div>
             <div v-else>
-                loading...
+                <!-- loading... -->
+                <BreedingBotomTable />
             </div>
             <!-- <h1 class="text-xl font-bold mb-2">Component Bawah</h1> -->
 
@@ -50,9 +52,10 @@
         ref
     } from 'vue';
     // import Table from '../fragment/Table.vue'
-    import OnlyTable from '../fragment/OnlyTable.vue';
+    import OnlyTable from '../OnlyTable.vue';
     import axios from 'axios';
 import BreedingHeaderTable from './breedingHeaderTable.vue';
+import BreedingBotomTable from './breedingBotomTable.vue';
 
     const selectedId = ref(null);
     const buttonclasses = '  text-primary-text-light rounded hover:text-primary-text-light-hover sticky top-0 px-2'

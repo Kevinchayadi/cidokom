@@ -8,7 +8,7 @@
             <!-- Sidebar -->
             <div :class="sidebarClasses" class="bg-primary shadow-sm">
                 <div class=" mb-2 mt-1 mx-2 md:h-screen">
-                    <div class="flex justify-end ">
+                    <div class="flex justify-end  ">
                         <button @click="toggleSidebar"
                             class="px-2 md:border md:border-black rounded-full hover:border-gray-600 ">
 
@@ -23,6 +23,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
                             </svg>
                         </button>
+                        
                     </div>
 
                     <nav class=" space-y-2  m-4 md:h-full align-center">
@@ -40,20 +41,22 @@
 
             <!-- Main Content Area -->
             <div :class="mainContentClasses" class="h-screen  ">
-                <div class="flex justify-end md:justify-start">
+                <div class="flex justify-end md:justify-start bg-primary">
                     <button @click="toggleSidebar"
-                        class="px-3 py-1 border border-black rounded bg-primary-accent hover:bg-primary-aHover"
-                        :class="{ 'hidden md:block md:opacity-0 ': isSidebarOpen }" :disabled="isSidebarOpen">
+                        class="px-3 py-1  bg-primary hover:bg-primary-aHover"
+                        :class="{ 'hidden ': isSidebarOpen }" :disabled="isSidebarOpen">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                             stroke="white" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
                     </button>
+                    <h1 class="text-white">PARUNG HIJAU PERKASA - ADMIN SIDE</h1>
                 </div>
 
                 <div >
-                    <TwoTableSide />
-   
+                    <slot>
+            
+                    </slot>
                 </div>
             </div>
         </div>

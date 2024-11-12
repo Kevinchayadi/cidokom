@@ -17,6 +17,10 @@ class Commercial_detail extends Model
         'depreciation_die',
         'depreciation_afkir',
         'depreciation_panen',
+        'move_to',
+        'total_move',
+        'receive_from',
+        'total_recieve',
         'feed',
         'feed_name',
         'inputBy'

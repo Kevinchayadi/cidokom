@@ -18,11 +18,12 @@
                 :datas="machineList"
             />
 
-            <InputFragment
+            <Showdata
                 v-model="totalSetting"
                 name="total_setting"
                 content="total setting"
                 type="number"
+                :value="totalSetting"
             />
             
 
@@ -32,6 +33,8 @@
                 <FormButton
                     name="Submit"
                     custom=" text-center w-[80%] py-4 mt-4"
+                    :disabled="totalSetting === 0"
+                    
                 />
             </div>
         </form>
@@ -39,13 +42,15 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { router } from "@inertiajs/vue3";
 
 // Komponen-komponen yang diimpor
 import InputFragment from "../../components/InputFragment.vue";
 import FormButton from "../../components/inputComponent/FormButton.vue";
 import Headers from "../../components/Headers.vue";
+import Showdata from "../../components/showdata.vue";
+import { useStore } from "vuex";
 
 const props = defineProps({
     pen: {
@@ -57,6 +62,8 @@ const props = defineProps({
         default: () => [],
     }
 });
+
+const store = useStore();
 
 const penList = computed(() =>
   props.pen.map(item => ({
@@ -74,20 +81,23 @@ const pen = ref("");
 const hatcheryMachine = ref("");
 const totalSetting = ref(0);
 
-const hatcheryMachineOptions = ref([
-    {
-        id: 1,
-        name: "Machine 1",
-    },
-    {
-        id: 2,
-        name: "Machine 2",
-    },
-    {
-        id: 3,
-        name: "Machine 3",
-    },
-]);
+watch(pen, async (newPenValue, oldPenValue) => {
+    if (newPenValue) {
+        try {
+            console.log(pen.value)
+            const response = await axios.get(`/user/getegg/${pen.value}`);
+            totalSetting.value = response.data;
+            console.log("Selected data:", totalSetting.value);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    } else {
+        // Reset totalSetting jika tidak ada pen yang dipilih
+        totalSetting.value = 0;
+    }
+});
+
+
 
 const handleSubmit = () => {
     router.post(
@@ -96,6 +106,7 @@ const handleSubmit = () => {
         id_pen: pen.value,
         id_machine: hatcheryMachine.value,
         total_setting: totalSetting.value,
+        inputBy : store.getters.user.name
     },
     {
         onError: (errors) => {

@@ -20,8 +20,13 @@ class Breeding_detail extends Model
         'egg_afternoon',
         'broken',
         'abnormal',
+        'sale',
+        'total_egg',
+        'cost_unit',
+        'cost_total',
         'feed',
         'feed_name',
+        'status',
         'inputBy'
     ];
 

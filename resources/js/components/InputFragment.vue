@@ -7,6 +7,10 @@
         <Label :name="name" :content="content" />
         <TextArea :name="name" :placeholder="placeholder" v-model="internalValue" />
     </div>
+    <div v-else-if="type === 'multiple'" :class="classes">
+        <Label :name="name" :content="content" />
+        <Multiple :name="name" :datas="datas" v-model="internalValue" />
+    </div>
     <div v-else :class="classes">
         <Label :name="name" :content="content" />
         <Input :name="name" :type="type" :placeholder="placeholder" v-model="internalValue"/>
@@ -19,6 +23,7 @@ import Label from "./inputComponent/Label.vue";
 import TextArea from "./inputComponent//TextArea.vue";
 import DropDown from "./DropDown.vue";
 import { ref, watch } from "vue";
+import Multiple from "./other component/multiple.vue";
 
 const props = defineProps({
     name: {
@@ -41,7 +46,7 @@ const props = defineProps({
         default: null,
     },
     modelValue: {
-        type: [String, Number],
+        type: [String, Number, Array],
         default: ""
     }
 });
@@ -49,16 +54,27 @@ const props = defineProps({
 const emit = defineEmits(["update:modelValue"]);
 
 
-const internalValue = ref(props.modelValue);
+const internalValue = ref(Array.isArray(props.modelValue) ? [...props.modelValue] : props.modelValue);
 
-// Watch for changes to internalValue and emit them to the parent
 watch(internalValue, (newVal) => {
-    emit("update:modelValue", newVal);
+    const isDifferent = Array.isArray(newVal)
+        ? JSON.stringify(newVal) !== JSON.stringify(props.modelValue)
+        : newVal !== props.modelValue;
+
+    if (isDifferent) {
+        emit("update:modelValue", newVal);
+    }
 });
 
-// Watch for changes from the parent to sync with internalValue
+
 watch(() => props.modelValue, (newVal) => {
-    internalValue.value = newVal;
+    const isDifferent = Array.isArray(newVal)
+        ? JSON.stringify(newVal) !== JSON.stringify(internalValue.value)
+        : newVal !== internalValue.value;
+
+    if (isDifferent) {
+        internalValue.value = Array.isArray(newVal) ? [...newVal] : newVal;
+    }
 });
 
 const classes = "my-4";

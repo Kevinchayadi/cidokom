@@ -32,14 +32,14 @@
             <InputFragment
                 v-model="umur"
                 name="umur"
-                content="age"
+                content="age (in days)"
                 type="number"
             />
             <!-- <InputFragment
                 v-model="vaksin"
                 name="vaksin"
-                type="dropdown"
-                data="[]"
+                type="multiple"
+                :datas="vaksinList"
             /> -->
             <input value="active" type="text" hidden />
 
@@ -73,6 +73,12 @@ const props = defineProps({
     },
 });
 
+const vaksinList = computed(() => [
+    { id: 1, name: "Vaccine A" },
+    { id: 2, name: "Vaccine B" },
+    { id: 3, name: "Vaccine C" }
+]);
+
 const penList = computed(() =>
   props.pen.map(item => ({
   id: item.id,
@@ -93,8 +99,7 @@ const ayamBetina = ref("");
 const qtyJantan = ref(0);
 const qtyBetina = ref(0);
 const umur = ref(0);
-const vaksin = ref("");
-const status = ref("active");
+const vaksin = ref([]);
 
 const handleSubmit = () => {
     

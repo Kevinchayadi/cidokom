@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Breeding;
+use App\Models\Breeding_detail;
 use App\Models\Hatchery;
 use App\Models\Hatchery_detail;
 use App\Models\Machine;
@@ -14,10 +16,20 @@ use Inertia\Inertia;
 
 class HatcheryController extends Controller
 {
+    public function getegg($id)
+    {
+        try {
+            $breeding = Breeding::with('breedingDetails')->where('id_pen', $id)->where('status', 'active')->firstorfail();
+            $totalEggs = $breeding->breedingDetails->where('status', 'active')->sum('total_egg');
+            return $totalEggs;
+        } catch (\Throwable $th) {
+            return response()->json(['error' => 'pen data not found!'], 404);
+        }
+    }
     public function userIndex()
     {
         $hatchery = Hatchery::with('hatcheryDetails')->where('status', 'active')->get()->toArray();
-        
+
         // dd($hatchery);
         return Inertia::render('user/Hatchery', compact('hatchery'));
     }
@@ -34,8 +46,11 @@ class HatcheryController extends Controller
             ->whereHas('kandang', function ($query) {
                 $query->where('jenis_kandang', 'breeding');
             })
-            ->get();
-        $machine = Machine::get();
+            ->whereHas('breeding', function ($query) {
+                $query->where('status', 'active');
+            })->get();
+            
+        $machine = Machine::where('status','active')->get();
         return Inertia::render('user/FormCreateHatchery', ['pen' => $pen, 'machine' => $machine]);
     }
     public function storeHatchery(Request $request)
@@ -45,8 +60,9 @@ class HatcheryController extends Controller
             'id_pen' => 'required|integer',
             'id_machine' => 'required|integer',
             'total_setting' => 'required|integer',
-            'inputBy'=> 'required',
+            'inputBy' => 'required',
         ]);
+        
 
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
@@ -55,11 +71,11 @@ class HatcheryController extends Controller
         $input = $request->validate([
             'id_pen' => 'required|integer',
             'id_machine' => 'required|integer',
-            'inputBy'=> 'required',
+            'inputBy' => 'required',
         ]);
-        
+
         Machine::where('id', $input['id_machine'])->update([
-            'status' => 'inactive'
+            'status' => 'inactive',
         ]);
         // Menambahkan tanggal setting
         $input['setting_date'] = Carbon::now();
@@ -67,20 +83,31 @@ class HatcheryController extends Controller
         // Validasi input kedua
         $input2 = $request->validate([
             'total_setting' => 'required|integer',
+            'inputBy' => 'required',
         ]);
 
         // Mulai transaksi
         DB::beginTransaction();
 
         try {
+            $breeding = Breeding::with('breedingDetails')->where('id_pen', $input['id_pen'])->where('status', 'active')->firstorfail();
+            
             // Membuat entitas Hatchery
+            $input['cost_total'] = Breeding_detail::where('id_breeding', $breeding->id_breeding)
+            ->where('status', 'active')
+            ->sum('cost_unit');
             $hatchery = Hatchery::create($input);
             // dd($hatchery->id_hatchery);
             // Mengaitkan id_hatchery dengan Hatchery_detail
             $input2['id_hatchery'] = $hatchery->id_hatchery;
             // dd($input2);
             Hatchery_detail::create($input2);
-
+            Breeding_detail::where('id_breeding', $breeding->id_breeding)
+            ->where('status', 'active')
+            ->update([
+                'status' => 'inactive', // Mengubah status ke 'inactive', sesuaikan jika ingin 'active'
+            ]);
+            
             // Commit transaksi jika semua berhasil
             DB::commit();
 
@@ -108,7 +135,6 @@ class HatcheryController extends Controller
             'infertile' => 'required',
             'explode' => 'required',
             'hatcher' => 'required',
-            
         ]);
 
         $hatcheryDetail = Hatchery_detail::with('hatchery')
@@ -182,7 +208,6 @@ class HatcheryController extends Controller
             'hatchability' => $input['hatchability'],
             'doc_afkir' => $input['doc_afkir'],
             'saleable' => $input['saleable'],
-            
         ]);
 
         return redirect()->route('user.hatchery')->with('success', 'berhasil membuat kandang Breeding baru');

@@ -18,4 +18,7 @@ class Pen extends Model
     public function kandang(){
         return $this->belongsTo(Kandang::class, 'id_kandang', 'id');
     }
+    public function breeding(){
+        return $this->hasMany(Breeding::class, 'id_pen', 'id');
+    }
 }

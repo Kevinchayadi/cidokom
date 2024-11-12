@@ -1,5 +1,5 @@
 <template>
-    <button :class="[background,  buttonClass, custom]" type="submit">
+    <button :class="[background,  buttonClass, custom] ":disabled="disabled" type="submit">
         {{ name }}
     </button>
 </template>
@@ -18,8 +18,11 @@ import { ref } from 'vue';
         custom:{
             type:String,
             default:''
+        },
+        disabled:{
+            type:Boolean,
+            default:false
         }
-        
     })
     const buttonClass = ref('text-white font-bold py-2 px-4 rounded-full bg-black-300 text-2xl my-2')
 

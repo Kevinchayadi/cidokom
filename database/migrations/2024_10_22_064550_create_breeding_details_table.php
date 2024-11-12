@@ -27,8 +27,11 @@ return new class extends Migration
             $table->integer('abnormal')->nullable();
             $table->integer('sale')->nullable();
             $table->integer('total_egg')->nullable();
+            $table->decimal('cost_unit', 15, 2)->nullable();
+            $table->decimal('cost_total', 15, 2)->nullable();
             $table->string('feed')->nullable();
             $table->string('feed_name')->nullable();
+            $table->string('status')->nullable()->default('active');
             $table->string('inputBy');
             $table->timestamps();
         });

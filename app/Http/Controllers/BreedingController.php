@@ -27,7 +27,8 @@ class BreedingController extends Controller
     public function adminIndex()
     {
         $breeding = Breeding::with('BreedingDetails')->get();
-        return Inertia::render('admin/Breeding', compact('breeding'));
+        
+        return Inertia::render('admin/breeding', ['breeding' => $breeding]);
     }
 
     public function createBreeding()
@@ -44,7 +45,7 @@ class BreedingController extends Controller
     }
     public function storeBreeding(Request $request)
     {
-        // dd($request);
+        dd($request);
         // dd($request);
         $input = $request->validate([
             'id_pen' => 'required',
@@ -93,7 +94,7 @@ class BreedingController extends Controller
             'feed_name' => 'required|string',
             'inputBy'=> 'required',
         ]);
-        // dd($request);
+        // dd($input['total_egg']);
 
         $Breeding = Breeding::find($input['id_breeding']);
         $pakan = Pakan::where('nama_pakan', $input['feed_name'])->firstOrFail();
@@ -117,14 +118,11 @@ class BreedingController extends Controller
             $input['last_female'] = $calculate_female;
         }
 
-        $current_cost =  $this->countService->dailyBreeding($pakan, $input['feed'],$input['total_egg']+$input['sale']);
-        $Breeding->update([
-            'cost_total' => $Breeding->cost_total + ($current_cost * $input['total_egg'])
-        ]);
+        $current_cost =  $this->countService->costegg($pakan, $input['feed'],$input['total_egg']+$input['sale']);
+        $input['cost_unit'] = $current_cost * $input['total_egg'];
+        $input['cost_total'] = $current_cost * ($input['total_egg']+$input['sale']);
 
-
-        
-
+        // dd($input);
         Breeding_detail::create($input);
 
         return redirect()->route('user.breeding')->with('success', 'berhasil membuat kandang Breeding baru');

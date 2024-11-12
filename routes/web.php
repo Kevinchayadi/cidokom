@@ -9,6 +9,7 @@ use App\Http\Controllers\HatcheryController;
 use App\Http\Controllers\KandangController;
 use App\Http\Controllers\PakanController;
 use App\Http\Controllers\PenController;
+use App\Models\Hatchery;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -27,10 +28,12 @@ Route::prefix('admin')->group(function(){
     Route::get('/breeding-detail/{id}', [BreedingController::class, 'getBreedingDetail']);
 
     Route::get('commercial', [CommercialController::class, 'adminIndex'])->name('admin.commercial');
+    Route::get('/logout',[AuthController::class, 'logout'])->name('user.logout');
 });
 
 
 Route::prefix('user')->middleware(['auth','isUser'])->group(function(){
+    Route::get('/getegg/{id}', [HatcheryController::class, 'getegg']);
     Route::get('/dashboard',[DashboardController::class, 'userIndex'])->name('user.dashboard');
 
     Route::get('/ayam', [AyamController::class, 'userIndex'])->name('user.ayamList');
@@ -51,6 +54,7 @@ Route::prefix('user')->middleware(['auth','isUser'])->group(function(){
     Route::post('/breeding/create', [BreedingController::class,'storeBreeding'])->name('user.breeding.store');
     Route::get('/breeding/input/{id}', [BreedingController::class, 'inputBreeding'])->name('user.breeding.input');
     Route::post('/breeding/input', [BreedingController::class,'inputedBreeding'])->name('user.breeding.inputed');
+
     
     Route::get('/commercial', [CommercialController::class, 'userIndex'])->name('user.commercial');
     Route::get('/commercial/create', [CommercialController::class, 'createCommercial'])->name('user.commercial.create');

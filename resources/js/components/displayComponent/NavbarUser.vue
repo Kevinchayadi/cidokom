@@ -1,6 +1,6 @@
 <template>
     
-    <nav class="space-y-2 m-4 md:h-full align-center">
+    <nav class="space-y-2 m-4  align-center">
         <div v-if="auth">
             <h1>{{ auth . user . username }}</h1>
         </div>
@@ -54,13 +54,14 @@
             path: route("user.penList")
         },
         {
-            name: "Logout",
-            path: route("user.logout")
-        },
-        {
             name: "pakan",
             path: route("user.pakan")
         },
+        {
+            name: "Logout",
+            path: route("user.logout")
+        },
+        
 
     ]);
 
