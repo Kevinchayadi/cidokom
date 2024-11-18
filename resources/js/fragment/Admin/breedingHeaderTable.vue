@@ -8,11 +8,11 @@
             <thead class="bg-blue-300 shadow-lg">
                 <tr>
                     <!-- ID Column (sticky) -->
-                    <th class=" md:left-0 bg-blue-300 z-20" rowspan="2" :class="classesth">
+                    <th class=" md:left-0 bg-blue-300 z-20" rowspan="2" :class="classesth" style="min-width: 150px;">
                         Cost Center
                     </th>
                     <!-- Name Column (sticky) -->
-                    <th class="  md:left-[100px] bg-blue-300 z-20" rowspan="2" :class="classesth">
+                    <th class="  md:left-[150px] bg-blue-300 z-20" rowspan="2" :class="classesth">
                         Pen
                     </th>
                     <!-- Action Column (sticky) -->
@@ -35,7 +35,7 @@
                     <th class=" bg-blue-300" colspan="2" :class="classesth">
                         Age
                     </th>
-                    <th class=" bg-blue-300" rowspan="2" :class="classesth">
+                    <th class=" bg-blue-300" rowspan="2" :class="classesth" style="min-width: 200px;">
                         Laying
                     </th>
                     <th class=" bg-blue-300" rowspan="2" :class="classesth">
@@ -70,48 +70,88 @@
                     </th>
                 </tr>
             </thead>
-            <tbody class="bg-gray-100 divide-y divide-gray-200 custom-scroll">
-                <tr v-for="(item, index) in itemsBawah" :key="item.id"
+            <tbody class="bg-gray-100 divide-y  divide-gray-200 custom-scroll">
+                <tr v-for="item in data" :key="item.costCenter"
                     :class="{
-                        'bg-gray-300': selectedId === item.id,
-                        'hover:bg-gray-200': selectedId !== item.id,
+                        'bg-gray-300': selectedId === item.costCenter,
+                        'bg-gray-300': selectedId !== item.costCenter,
                     }"
-                    @click="selectRow(item.id)" class="cursor-pointer">
+                    @click="selectRow(item.costCenter)" class="cursor-pointer">
 
                     <!-- ID Column (sticky) -->
                     <td class="  md:sticky  md:left-0"
-                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item.id, [classestd]: true }">
-                        {{ item . id }}
+                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
+                                .costCenter, [classestd]: true }" style="min-width: 150px;">
+                        {{ item . costCenter }}
                     </td>
 
                     <!-- Name Column (sticky) -->
-                    <td class="  md:sticky  md:left-[100px]"
-                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item.id, [classestd]: true }">
-                        {{ item . name }}
+                    <td class="  md:sticky  md:left-[150px]"
+                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
+                                .costCenter, [classestd]: true }">
+                        {{ item . pen }}
                     </td>
-
-                    <!-- Action Column (sticky) -->
                     <td class=" "
-                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item.id, [classestd]: true }"
-                        style="min-width: 150px">
-                        <button class="text-indigo-600 hover:text-indigo-900">
-                            Details
-                        </button>
+                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
+                                .costCenter, [classestd]: true }">
+                        {{ item.entryDate }}
                     </td>
-
-                    <!-- Additional Data Columns -->
                     <td class=""
-                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100 ': selectedId !== item.id, [classestd]: true }">
-                        Data A</td>
+                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white  ': selectedId !== item
+                                .costCenter, [classestd]: true }">
+                        {{ item.lastupdate }}    
+                    </td>
+                    <td class=" "
+                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
+                                .costCenter, [classestd]: true }">
+                        {{ item.female_strain }}
+                    </td>
                     <td class=""
-                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item.id, [classestd]: true }">
-                        Data B</td>
+                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white  ': selectedId !== item
+                                .costCenter, [classestd]: true }">
+                        {{ item.male_strain }}    
+                    </td>
+                    <td class=" "
+                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
+                                .costCenter, [classestd]: true }">
+                        {{ item.female_population }}
+                    </td>
                     <td class=""
-                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item.id, [classestd]: true }">
-                        Data C</td>
+                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white  ': selectedId !== item
+                                .costCenter, [classestd]: true }">
+                        {{ item.male_population }}    
+                    </td>
+                    <td class=" "
+                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
+                                .costCenter, [classestd]: true }">
+                        {{ item.last_female }}
+                    </td>
                     <td class=""
-                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item.id, [classestd]: true }">
-                        Data D</td>
+                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white  ': selectedId !== item
+                                .costCenter, [classestd]: true }">
+                        {{ item.last_male }}    
+                    </td>
+                    <td class=" "
+                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
+                                .costCenter, [classestd]: true }">
+                        {{ item.age }}
+                    </td>
+                    <td class=""
+                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white  ': selectedId !== item
+                                .costCenter, [classestd]: true }">
+                        {{ item.week }}    
+                    </td>
+                    <td class=" "
+                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
+                                .costCenter, [classestd]: true }">
+                        {{ item.laying }}
+                    </td>
+                    <td class=""
+                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white  ': selectedId !== item
+                                .costCenter, [classestd]: true }">
+                        {{ item.status }}    
+                    </td>
+                   
                 </tr>
 
             </tbody>
@@ -122,80 +162,46 @@
 <script setup>
     import {
         ref,
-        defineEmits
+        defineEmits,
+        onMounted,
+        computed
     } from "vue";
 
     const selectedId = ref(null);
     const classesth =
-        ' text-center  text-xs border-gray-300 font-medium text-gray-700 uppercase tracking-wider  sticky top-0 min-w-[100px] shadow-[inset_1px_-1px_1px_white]'
+        ' text-center  text-xs border-gray-300 font-medium text-gray-700 uppercase tracking-wider  sticky top-0 min-w-[80px] shadow-[inset_1px_-1px_1px_white]'
     const classesth2 =
-        ' text-center  text-xs font-medium border-gray-300 text-gray-700 uppercase tracking-wider  sticky top-[18px] min-w-[100px] shadow-[inset_1px_-1px_1px_white]'
+        ' text-center  text-xs font-medium border-gray-300 text-gray-700 uppercase tracking-wider  sticky top-[18px] min-w-[80px] shadow-[inset_1px_-1px_1px_white]'
 
-    const classestd = 'p-1 text-xs  text-gray-900 text-center min-w-[100px]'
+    const classestd = 'p-1 text-xs border-grey-200 text-gray-900 text-table text-center min-w-[80px] shadow-[inset_1px_-1px_1px_rgba(128,128,128,0.2)]'
     const buttonclasses =
         'border border-grey-700 bg-gray-200 text-primary-text-dark rounded hover:text-primary-text-dark-hover sticky top-0'
 
-    const itemsBawah = ref([{
-            id: 1,
-            name: 'Item One'
-        },
-        {
-            id: 2,
-            name: 'Item Two'
-        },
-        {
-            id: 3,
-            name: 'Item Three'
-        },
-        {
-            id: 1,
-            name: 'Item One'
-        },
-        {
-            id: 2,
-            name: 'Item Two'
-        },
-        {
-            id: 3,
-            name: 'Item Three'
-        },
-        {
-            id: 1,
-            name: 'Item One'
-        },
-        {
-            id: 2,
-            name: 'Item Two'
-        },
-        {
-            id: 3,
-            name: 'Item Three'
-        },
-        {
-            id: 1,
-            name: 'Item One'
-        },
-        {
-            id: 2,
-            name: 'Item Two'
-        },
-        {
-            id: 3,
-            name: 'Item Three'
-        },
-        {
-            id: 1,
-            name: 'Item One'
-        },
-        {
-            id: 2,
-            name: 'Item Two'
-        },
-        {
-            id: 3,
-            name: 'Item Three'
-        },
-    ]);
+    const props = defineProps({
+        breeding: {
+            type: Array,
+        }
+    })
+    const data = computed(()=>
+        props.breeding.map(item =>({
+            costCenter : item.id_breeding,
+            pen : item.pen.code_pen,
+            entryDate: new Date(item.created_at).toISOString().split('T')[0],
+            lastupdate: new Date(item.updated_at).toISOString().split('T')[0],
+            female_strain: item.code_ayam_betina,
+            male_strain: item.code_ayam_jantan,
+            female_population: item.jumlah_betina,
+            male_population: item.jumlah_jantan,
+            last_female: item.breeding_details[0].last_female,
+            last_male: item.breeding_details[0].last_male,
+            age: item.age,
+            week: Math.floor(item.age / 7),
+            laying:'',
+            status:item.status,
+
+    })))
+
+
     const emit = defineEmits(['update:selectedId']);
 
     const selectRow = (id) => {

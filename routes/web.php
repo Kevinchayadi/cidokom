@@ -28,7 +28,7 @@ Route::prefix('admin')->group(function(){
     Route::get('/breeding-detail/{id}', [BreedingController::class, 'getBreedingDetail']);
 
     Route::get('commercial', [CommercialController::class, 'adminIndex'])->name('admin.commercial');
-    Route::get('/logout',[AuthController::class, 'logout'])->name('user.logout');
+    Route::get('/logout',[AuthController::class, 'logout'])->name('admin.logout');
 });
 
 
@@ -40,14 +40,14 @@ Route::prefix('user')->middleware(['auth','isUser'])->group(function(){
     Route::get('/ayam/create', [AyamController::class, 'createAyam'])->name('user.ayam.create');
     Route::post('/ayam/create', [AyamController::class,'storeAyam'])->name('user.ayam.store');
 
-    Route::get('/kandang', [KandangController::class, 'userIndex'])->name('user.kandangList');
-    Route::get('/kandang/create', [KandangController::class, 'createKandang'])->name('user.kandang.create');
-    Route::post('/kandang/create', [KandangController::class,'storeKandang'])->name('user.kandang.store');
+    Route::get('/farm', [KandangController::class, 'userIndex'])->name('user.kandangList');
+    Route::get('/farm/create', [KandangController::class, 'createKandang'])->name('user.kandang.create');
+    Route::post('/farm/create', [KandangController::class,'storeKandang'])->name('user.kandang.store');
 
     Route::get('/pen', [PenController::class, 'userIndex'])->name('user.penList');
-    Route::get('/pen/{id}', [PenController::class, 'kandangPen'])->name('user.penList.id');
     Route::get('/pen/create', [PenController::class, 'createPen'])->name('user.pen.create');
     Route::post('/pen/create', [PenController::class,'storePen'])->name('user.pen.store');
+    Route::get('/pen/{id}', [PenController::class, 'kandangPen'])->name('user.penList.id');
 
     Route::get('/breeding', [BreedingController::class, 'userIndex'])->name('user.breeding');
     Route::get('/breeding/create', [BreedingController::class, 'createBreeding'])->name('user.breeding.create');

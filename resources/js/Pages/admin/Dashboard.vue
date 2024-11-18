@@ -1,7 +1,7 @@
 <!-- App.vue -->
 <template>
 
-    <Sidebarnew/>
+    <Sidebarnew title="Dashboard"></Sidebarnew>
     <!-- <BreedingHeaderTable /> -->
   
 </template>

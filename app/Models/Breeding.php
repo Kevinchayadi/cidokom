@@ -28,6 +28,10 @@ class Breeding extends Model
     {
         return $this->hasMany(Breeding_detail::class, 'id_breeding');
     }
+    public function pen()
+    {
+        return $this->belongsTo(Pen::class, 'id_pen', 'id');
+    }
 
     protected static function boot()
     {

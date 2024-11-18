@@ -46,7 +46,7 @@
             path: route("user.ayamList")
         },
         {
-            name: "Kandang",
+            name: "farm",
             path: route("user.kandangList")
         },
         {

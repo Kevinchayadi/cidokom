@@ -19,7 +19,7 @@
         <!-- Component Atas -->
         <div class="row-span-2  text-white h-[30vh]  overflow-x-auto overflow-y-auto">
             <!-- <Table  :dataselected="selectedRow" /> -->
-            <BreedingHeaderTable @update:selectedId="selectedRow" />
+            <BreedingHeaderTable @update:selectedId="selectedRow" :breeding="breeding" />
         </div>
 
         <!-- Component Bawah -->
@@ -33,11 +33,13 @@
             </div>
             <div v-else-if="showdata === 1">
                 <!-- <OnlyTable /> -->
-                <!-- <BreedingBotomTable /> -->
+                <BreedingBotomTable :selectedData="selectedData"/>
             </div>
             <div v-else>
-                <!-- loading... -->
-                <BreedingBotomTable />
+                <p class="text-gray-400 ps-2">
+                    loading...
+                </p>
+                <!-- <BreedingBotomTable /> -->
             </div>
             <!-- <h1 class="text-xl font-bold mb-2">Component Bawah</h1> -->
 
@@ -54,8 +56,8 @@
     // import Table from '../fragment/Table.vue'
     import OnlyTable from '../OnlyTable.vue';
     import axios from 'axios';
-import BreedingHeaderTable from './breedingHeaderTable.vue';
-import BreedingBotomTable from './breedingBotomTable.vue';
+    import BreedingHeaderTable from './breedingHeaderTable.vue';
+    import BreedingBotomTable from './breedingBotomTable.vue';
 
     const selectedId = ref(null);
     const buttonclasses = '  text-primary-text-light rounded hover:text-primary-text-light-hover sticky top-0 px-2'
@@ -66,17 +68,36 @@ import BreedingBotomTable from './breedingBotomTable.vue';
         console.log("Selected ID dari child:", selectedId.value);
     };
 
+    const props = defineProps({
+        breeding: {
+            type: Array,
+        }
+    })
+
+    const selectedData = ref([]);
+
     const selectItem = async () => {
         showdata.value = 0
         console.log(selectedId.value)
-        try {
-            const response = await axios.get(`/breeding-detail/${selectedId.value}`);
-            breedingDetail.value = response.data;
-            console.log("Selected data:", breedingDetail.value);
-            showdata.value = 1
-        } catch (error) {
-            console.error("Error fetching data:", error);
+        const item = props.breeding.find(b => b.id_breeding === selectedId.value);
+        if (item) {
+            selectedData.value = item; // Menyimpan data yang ditemukan ke selectedData
+            console.log("Selected data:", selectedData.value);
+            setTimeout(() => {
+            showdata.value = 1;  
+        }, 500);
+        } else {
+            console.error("No data found for id_breeding:", selectedId.value);
         }
+
+        // try {
+        //     const response = await axios.get(`/breeding-detail/${selectedId.value}`);
+        //     breedingDetail.value = response.data;
+        //     console.log("Selected data:", breedingDetail.value);
+        //     showdata.value = 1
+        // } catch (error) {
+        //     console.error("Error fetching data:", error);
+        // }
     };
 
     const editItem = () => {

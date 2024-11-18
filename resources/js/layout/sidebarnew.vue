@@ -26,15 +26,7 @@
                         
                     </div>
 
-                    <nav class=" space-y-2  m-4 md:h-full align-center">
-                        <a href="#"
-                            class="block text-primary-text-light hover:text-primary-text-light-hover">Home</a>
-                        <a href="#"
-                            class="block text-primary-text-light hover:text-primary-text-light-hover">About</a>
-                        <a href="#" class="block text-primary-text-light hover:text-primary-text-light-hover ">
-                            Contact
-                        </a>
-                    </nav>
+                    <NavbarAdmin />
                 </div>
 
             </div>
@@ -50,7 +42,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
                     </button>
-                    <h1 class="text-white">PARUNG HIJAU PERKASA - ADMIN SIDE</h1>
+                    <h1 class="text-white">PARUNG HIJAU PERKASA - {{ title.toUpperCase() }}</h1>
                 </div>
 
                 <div >
@@ -70,7 +62,14 @@
         ref
     } from 'vue';
 import TwoTableSide from '../fragment/TwoTableSide.vue';
+import NavbarAdmin from '../components/displayComponent/NavbarAdmin.vue';
 
+     const props = defineProps({
+        title:{
+            type: String,
+            default: 'Admin Side'
+        }
+     })
     const isSidebarOpen = ref(true);
 
     function toggleSidebar() {

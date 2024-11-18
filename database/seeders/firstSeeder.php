@@ -72,52 +72,66 @@ class firstSeeder extends Seeder
         ]);
         Kandang::create([
             'nama_kandang' => 'BRD1',
+            'lokasi_kandang' => 'cidokom',
             'jenis_kandang' => 'breeding' 
         ]);
         Kandang::create([
             'nama_kandang' => 'CMR1',
+            'lokasi_kandang' => 'cidokom',
             'jenis_kandang' => 'commerce' 
         ]);
-        Kandang::create([
-            'nama_kandang' => 'BRD2',
-            'jenis_kandang' => 'breeding' 
-        ]);
-        Kandang::create([
-            'nama_kandang' => 'CMR2',
-            'jenis_kandang' => 'commerce' 
-        ]);
-        Pen::create([
-            'id_kandang'=> 1,
-            'code_pen' => 'pen1'
-        ]);
-        Pen::create([
-            'id_kandang'=> 1,
-            'code_pen' => 'pen2'
-        ]);
-        Pen::create([
-            'id_kandang'=> 2,
-            'code_pen' => 'pen1'
-        ]);
-        Pen::create([
-            'id_kandang'=> 2,
-            'code_pen' => 'pen2'
-        ]);
-        Pen::create([
-            'id_kandang'=> 3,
-            'code_pen' => 'pen1'
-        ]);
-        Pen::create([
-            'id_kandang'=> 3,
-            'code_pen' => 'pen2'
-        ]);
-        Pen::create([
-            'id_kandang'=> 4,
-            'code_pen' => 'pen1'
-        ]);
-        Pen::create([
-            'id_kandang'=> 4,
-            'code_pen' => 'pen2'
-        ]);
+        // Kandang::create([
+        //     'nama_kandang' => 'BRD2',
+        //     'jenis_kandang' => 'breeding' 
+        // ]);
+        // Kandang::create([
+        //     'nama_kandang' => 'CMR2',
+        //     'jenis_kandang' => 'commerce' 
+        // ]);
+        // Pen::create([
+        //     'id_kandang'=> 1,
+        //     'code_pen' => '1A'
+        // ]);
+        // Pen::create([
+        //     'id_kandang'=> 1,
+        //     'code_pen' => '1B'
+        // ]);
+        // Pen::create([
+        //     'id_kandang'=> 1,
+        //     'code_pen' => '1C'
+        // ]);
+        // Pen::create([
+        //     'id_kandang'=> 1,
+        //     'code_pen' => '2A'
+        // ]);
+        // Pen::create([
+        //     'id_kandang'=> 1,
+        //     'code_pen' => '2B'
+        // ]);
+        // Pen::create([
+        //     'id_kandang'=> 2,
+        //     'code_pen' => '1A'
+        // ]);
+        // Pen::create([
+        //     'id_kandang'=> 2,
+        //     'code_pen' => '1B'
+        // ]);
+        // Pen::create([
+        //     'id_kandang'=> 2,
+        //     'code_pen' => '2A'
+        // ]);
+        // Pen::create([
+        //     'id_kandang'=> 2,
+        //     'code_pen' => '2B'
+        // ]);
+        // Pen::create([
+        //     'id_kandang'=> 2,
+        //     'code_pen' => '3A'
+        // ]);
+        // Pen::create([
+        //     'id_kandang'=> 2,
+        //     'code_pen' => '3B'
+        // ]);
         Pakan::create([
             'nama_pakan' => 'GF-11',
             'qty' => 1000,

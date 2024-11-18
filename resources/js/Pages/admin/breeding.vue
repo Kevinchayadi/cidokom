@@ -1,7 +1,7 @@
 <template>
-    <Sidebarnew>
+    <Sidebarnew title="breeding">
 
-        <BreedingMainTable />
+        <BreedingMainTable :breeding="breeding"/>
     </Sidebarnew>
 </template>
 
@@ -13,11 +13,14 @@ const props = defineProps({
     auth: {
         type: Object,
         required: true
+    },
+    breeding:{
+        type: Array,
     }
 })
-onMounted(()=>{
-    console.log(props.auth.user.name)
-})
+// onMounted(()=>{
+//     console.log(props.breeding)
+// })
 
 </script>
 

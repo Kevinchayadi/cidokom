@@ -27,6 +27,12 @@ return new class extends Migration
             $table->integer('abnormal')->nullable();
             $table->integer('sale')->nullable();
             $table->integer('total_egg')->nullable();
+            $table->integer('move_to')->nullable();
+            $table->integer('total_female_move')->nullable();
+            $table->integer('total_male_move')->nullable();
+            $table->integer('receive_from')->nullable();
+            $table->integer('total_female_receive')->nullable();
+            $table->integer('total_male_receive')->nullable();
             $table->decimal('cost_unit', 15, 2)->nullable();
             $table->decimal('cost_total', 15, 2)->nullable();
             $table->string('feed')->nullable();

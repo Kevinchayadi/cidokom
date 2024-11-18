@@ -19,7 +19,7 @@
         <!-- Component Atas -->
         <div class="row-span-2  text-white h-[30vh]  overflow-x-auto overflow-y-auto">
             <!-- <Table  :dataselected="selectedRow" /> -->
-            <BreedingHeaderTable @update:selectedId="selectedRow" />
+            <HatcheryHeaderTable @update:selectedId="selectedRow" :hatchery="hatchery"/>
         </div>
 
         <!-- Component Bawah -->
@@ -34,10 +34,11 @@
             <div v-else-if="showdata === 1">
                 <!-- <OnlyTable /> -->
                 <!-- <BreedingBotomTable /> -->
+                <HatcheryBotomTable :selectedData="selectedData"/>
+
             </div>
             <div v-else>
-                <!-- loading... -->
-                <BreedingBotomTable />
+                loading...
             </div>
             <!-- <h1 class="text-xl font-bold mb-2">Component Bawah</h1> -->
 
@@ -56,27 +57,50 @@
     import axios from 'axios';
 import BreedingHeaderTable from './breedingHeaderTable.vue';
 import BreedingBotomTable from './breedingBotomTable.vue';
+import HatcheryHeaderTable from './hatcheryHeaderTable.vue';
+import HatcheryBotomTable from './hatcheryBotomTable.vue';
 
     const selectedId = ref(null);
     const buttonclasses = '  text-primary-text-light rounded hover:text-primary-text-light-hover sticky top-0 px-2'
     const breedingDetail = ref([])
     const showdata = ref(null);
+
+    const props = defineProps({
+        hatchery:{
+            type: Array,
+            required: true
+        }
+    })
+
     const selectedRow = (id) => {
         selectedId.value = id;
         console.log("Selected ID dari child:", selectedId.value);
     };
+    const selectedData = ref([]);
 
     const selectItem = async () => {
         showdata.value = 0
         console.log(selectedId.value)
-        try {
-            const response = await axios.get(`/breeding-detail/${selectedId.value}`);
-            breedingDetail.value = response.data;
-            console.log("Selected data:", breedingDetail.value);
-            showdata.value = 1
-        } catch (error) {
-            console.error("Error fetching data:", error);
+        const item = props.hatchery.find(b => b.id_hatchery === selectedId.value);
+        if (item) {
+            selectedData.value = item; // Menyimpan data yang ditemukan ke selectedData
+            console.log("Selected data:", selectedData.value);
+            setTimeout(() => {
+            showdata.value = 1;  
+        }, 500);
+        } else {
+            console.error("No data found for id_breeding:", selectedId.value);
         }
+        // showdata.value = 0
+        // console.log(selectedId.value)
+        // try {
+        //     const response = await axios.get(`/breeding-detail/${selectedId.value}`);
+        //     breedingDetail.value = response.data;
+        //     console.log("Selected data:", breedingDetail.value);
+        //     showdata.value = 1
+        // } catch (error) {
+        //     console.error("Error fetching data:", error);
+        // }
     };
 
     const editItem = () => {

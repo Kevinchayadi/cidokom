@@ -13,11 +13,11 @@ class MachineController extends Controller
         return Inertia::render('user/MachineList', compact('machine'));
     }
     
-    function createPakan(){
+    function createMachine(){
         return Inertia::render('user/FormCreateMachine');
     }
     
-    function storePakan(Request $request){
+    function storemachinen(Request $request){
         dd($request);
         $machine = $request->validate([
             'machine_name' => ['require'],

@@ -18,4 +18,8 @@ class countService
         $eggCost = $cost/$egg;
         return $eggCost;
     }
+    public function costChicken(float $current, int $total){
+        $cost = $current / $total;
+        return $cost;
+    }
 }

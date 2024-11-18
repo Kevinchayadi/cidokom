@@ -51,6 +51,7 @@ import { router } from "@inertiajs/vue3";
 import InputFragment from "../../components/InputFragment.vue";
 import FormButton from "../../components/inputComponent/FormButton.vue";
 import Headers from "../../components/Headers.vue";
+import { useStore } from "vuex";
 
 const props = defineProps({
     id_commercial: {
@@ -62,6 +63,7 @@ const props = defineProps({
         required: true,
     },
 });
+const store = useStore();
 
 const FeedList = computed(() =>
     props.feed.map(item => ({
@@ -86,6 +88,7 @@ const handleSubmit = () => {
         depreciation_panen: depreciation_panen.value,
         feed: feed.value,
         feed_name: feed_name.value,
+        inputBy : store.getters.user.name
     });
 };
 </script>

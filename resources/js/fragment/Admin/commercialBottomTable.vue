@@ -8,175 +8,183 @@
             <thead class="">
                 <tr>
                     <!-- ID Column (sticky) -->
-                    <th class=" md:left-0  z-20" rowspan="3" :class="classesth">
+                    <th class=" md:left-0  z-20" rowspan="2" :class="classesth">
                         No.
                     </th>
                     <!-- Name Column (sticky) -->
-                    <th class="  md:left-[100px]  z-20" rowspan="3" :class="classesth">
+                    <th class="  md:left-[100px]  z-20" rowspan="2" :class="classesth">
                         Date
                     </th>
                     <!-- Action Column (sticky) -->
-                    <th class="   "colspan="2" rowspan="2"  :class="classesth" >
+                    <th class="   " rowspan="2" :class="classesth">
                         Begining Population
                     </th>
                     <!-- Additional Columns -->
-                    <th colspan="2" rowspan="2" :class="classesth">
+                    <th rowspan="2" :class="classesth">
                         Last population
                     </th>
-                    <th  colspan="4" :class="classesth">
+                    <th colspan="3" :class="classesth">
                         depreciation
                     </th>
-                    <th  colspan="3"  rowspan="2" :class="classesth">
+                    <th colspan="2" :class="classesth">
                         Move
                     </th>
-                    <th  colspan="3" rowspan="2" :class="classesth">
-                        Recieve
+                    <th colspan="2" :class="classesth">
+                        Receive
                     </th>
-                    <th  colspan="11" rowspan="2" :class="classesth">
-                        Egg Production
-                    </th>
-                    <th colspan="2" rowspan="2" :class="classesth">
+                    <th colspan="3" :class="classesth">
                         Feed
                     </th>
-                    <th  rowspan="3" :class="classesth">
-                        input By
+                    <th rowspan="2" :class="classesth">
+                        Input by
+                    </th>
+                    <th rowspan="2" :class="classesth">
+                        vaksin
                     </th>
                 </tr>
                 <tr>
                     <!-- ID Column (sticky) -->
-                    <th  colspan="2" :class="classesth2">
-                        Female
+                    <th :class="classesth2">
+                        die
                     </th>
-                    <th  colspan="2" :class="classesth2">
-                        Male
+                    <th :class="classesth2">
+                        afkir
+                    </th>
+                    <th :class="classesth2">
+                        panen
+                    </th>
+                    <th :class="classesth2">
+                        move to
+                    </th>
+                    <th :class="classesth2">
+                        total move
+                    </th>
+                    <th :class="classesth2">
+                        receive from
+                    </th>
+                    <th :class="classesth2">
+                        total receive
+                    </th>
+                    <th :class="classesth2">
+                        total feed
+                    </th>
+                    <th :class="classesth2">
+                        percantage
+                    </th>
+                    <th :class="classesth2">
+                        feed name
                     </th>
                 </tr>
-                <tr>
-                    <th   :class="classesth3">
-                        Female
-                    </th>
-                    <th   :class="classesth3">
-                        Male
-                    </th><th   :class="classesth3">
-                        Female
-                    </th>
-                    <th   :class="classesth3">
-                        Male
-                    </th>
-                    <!-- ID Column (sticky) -->
-                    <th  :class="classesth3">
-                        Die
-                    </th>
-                    <th  :class="classesth3">
-                        Reject
-                    </th>
-                    <th  :class="classesth3">
-                        Die
-                    </th>
-                    <th  :class="classesth3">
-                        Reject
-                    </th>
-                    <th  :class="classesth3">
-                        destination
-                    </th>
-                    <th  :class="classesth3">
-                        female
-                    </th>
-                    <th  :class="classesth3">
-                        male
-                    </th>
-                    <th  :class="classesth3">
-                        destination
-                    </th>
-                    <th  :class="classesth3">
-                        female
-                    </th>
-                    <th  :class="classesth3">
-                        male
-                    </th>
-                    <th  :class="classesth3">
-                        morning
-                    </th>
-                    <th  :class="classesth3">
-                        afternoon
-                    </th>
-                    <th  :class="classesth3">
-                        total
-                    </th>
-                    <th  :class="classesth3">
-                        percantage
-                    </th>
-                    <th  :class="classesth3">
-                        cracked
-                    </th>
-                    <th  :class="classesth3">
-                        percantage
-                    </th>
-                    <th  :class="classesth3">
-                        abnormal
-                    </th>
-                    <th  :class="classesth3">
-                        percantage
-                    </th>
-                    <th  :class="classesth3">
-                        sale
-                    </th>
-                    <th  :class="classesth3">
-                        HE
-                    </th>
-                    <th  :class="classesth3">
-                        percantage
-                    </th>
-                    <th  :class="classesth3">
-                        feed(kg)
-                    </th><th  :class="classesth3">
-                        percantage
-                    </th>
 
-                </tr>
             </thead>
             <tbody class="bg-gray-100 divide-y divide-gray-200 custom-scroll">
-                <tr v-for="(item, index) in itemsBawah" :key="item.id"
+                <tr v-for="(item, index) in data" :key="index"
                     :class="{
                         'bg-gray-300': selectedId === item.id,
                         'hover:bg-gray-200': selectedId !== item.id,
-                    }"
-                    >
+                    }">
 
                     <!-- ID Column (sticky) -->
                     <td class="  md:sticky  md:left-0"
-                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item.id, [classestd]: true }">
-                        {{ item . id }}
+                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item
+                                .id, [classestd]: true }">
+                        {{ index+1 }}
                     </td>
 
                     <!-- Name Column (sticky) -->
                     <td class="  md:sticky  md:left-[100px]"
-                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item.id, [classestd]: true }">
-                        {{ item . name }}
+                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item
+                                .id, [classestd]: true }">
+                        {{ item.date  }}
                     </td>
 
                     <!-- Action Column (sticky) -->
                     <td class=" "
-                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item.id, [classestd]: true }"
-                        >
-                        <button class="text-indigo-600 hover:text-indigo-900">
-                            Details
-                        </button>
+                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item
+                                .id, [classestd]: true }">
+                        
+                            {{ selectedData.entry_population }}
+                    </td>
+                    <td class=" "
+                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item
+                                .id, [classestd]: true }">
+                        
+                            {{ selectedData.last_population }}
+                    </td>
+                    <td class=" "
+                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item
+                                .id, [classestd]: true }">
+                        
+                            {{ item.die }}
+                    </td>
+                    <td class=" "
+                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item
+                                .id, [classestd]: true }">
+                        
+                            {{ item.afkir }}
+                    </td>
+                    <td class=" "
+                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item
+                                .id, [classestd]: true }">
+                        
+                            {{ item.panen }}
+                    </td>
+                    <td class=" "
+                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item
+                                .id, [classestd]: true }">
+                        
+                            {{ item.moveTo }}
+                    </td>
+                    <td class=" "
+                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item
+                                .id, [classestd]: true }">
+                        
+                            {{ item.totalMove }}
+                    </td>
+                    <td class=" "
+                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item
+                                .id, [classestd]: true }">
+                        
+                            {{ item.receiveFrom }}
+                    </td>
+                    <td class=" "
+                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item
+                                .id, [classestd]: true }">
+                        
+                            {{ item.totalReceive }}
+                    </td>
+                    <td class=" "
+                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item
+                                .id, [classestd]: true }">
+                        
+                            {{ item.totalFeed }}
+                    </td>
+                    <td class=" "
+                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item
+                                .id, [classestd]: true }">
+                        
+                            {{ item.percentage }}
+                    </td>
+                    <td class=" "
+                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item
+                                .id, [classestd]: true }">
+                        
+                            {{ item.feedName }}
+                    </td>
+                    <td class=" "
+                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item
+                                .id, [classestd]: true }">
+                        
+                            {{ item.inputBy }}
+                    </td>
+                    <td class=" "
+                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item
+                                .id, [classestd]: true }">
+                        
+                            {{ item.vaksin }}
                     </td>
 
-                    <!-- Additional Data Columns -->
-                    <td class=""
-                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100 ': selectedId !== item.id, [classestd]: true }">
-                        Data A</td>
-                    <td class=""
-                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item.id, [classestd]: true }">
-                        Data B</td>
-                    <td class=""
-                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item.id, [classestd]: true }">
-                        Data C</td>
-                    <td class=""
-                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item.id, [classestd]: true }">
-                        Data D</td>
+                    
                 </tr>
 
             </tbody>
@@ -187,7 +195,9 @@
 <script setup>
     import {
         ref,
-        defineEmits
+        defineEmits,
+        computed,
+        onMounted
     } from "vue";
 
     const selectedId = ref(null);
@@ -202,6 +212,37 @@
     const buttonclasses =
         'border border-grey-700 bg-gray-200 text-primary-text-dark rounded hover:text-primary-text-dark-hover sticky top-0'
 
+    const props = defineProps({
+        selectedData: {
+            type: Object,
+            defaults: []
+        }
+    })
+
+    const detailData = ref(props.selectedData.commercial_details ?? [])
+
+    onMounted(() => {
+        console.log(detailData.value);
+    })
+
+    const data = computed(() =>
+        detailData.value.map(item => ({
+            date: new Date(item.created_at).toISOString().split('T')[0],
+            beginningPopulation: item.beginningPopulation,
+            lastPopulation: item.lastPopulation,
+            die: item.depreciation_die,
+            afkir: item.depreciation_afkir,
+            panen: item.depreciation_panen,
+            moveTo: item.move_to,
+            totalMove: item.total_move,
+            receiveFrom: item.receive_from,
+            totalReceive: item.total_receive,
+            totalFeed: item.feed,
+            percentage: (((item.feed * 1000) / item.last_population)).toFixed(2) + ' gr',
+            feedName: item.feed_name,
+            inputBy: item.inputBy,
+            vaksin:''
+        })))
     const itemsBawah = ref([{
             id: 1,
             name: 'Item One'
@@ -303,7 +344,6 @@
             name: 'Item Three'
         },
     ]);
-
 </script>
 
 <style scoped>

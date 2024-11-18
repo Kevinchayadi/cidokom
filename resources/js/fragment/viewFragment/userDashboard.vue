@@ -1,6 +1,6 @@
 <template>
     <div class=" m-4 md:h-full w-[80%] justify-center text-center align-center">
-        <Headers tittle="dashboard" class="mb-10 text-primary"/>
+        <Headers tittle="dashboard" class="mb-10 text-primary" />
         <div :class="menuClasses" v-for="data in routes" :key="data.path">
             <Link :href="data.path" :class="classes">
             {{ data . name . toUpperCase() }}
@@ -22,7 +22,7 @@
     import {
         route
     } from "ziggy-js";
-import Headers from "../../components/Headers.vue";
+    import Headers from "../../components/Headers.vue";
 
     const props = defineProps({
         auth: Object,
@@ -33,12 +33,13 @@ import Headers from "../../components/Headers.vue";
     };
 
     const routes = ref([{
-            name: "Hatchery",
-            path: route("user.hatchery")
-        },
-        {
             name: "Breeding",
             path: route("user.breeding")
+
+        },
+        {
+            name: "Hatchery",
+            path: route("user.hatchery")
         },
         {
             name: "Commercial",

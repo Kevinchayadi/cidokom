@@ -10,6 +10,7 @@ export default {
     extend: {
       fontSize: {
         'xxs' : '0.5rem',
+        'table' : '0.7rem',
       },
       colors: {
         'primary': {

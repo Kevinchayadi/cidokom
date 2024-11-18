@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('afkirs', function (Blueprint $table) {
+        Schema::create('pakan_transactions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_pen');
-            $table->integer('population');
-            $table->decimal('cost_unit', 15, 2)->nullable();
-            $table->string('inputBy');
+            $table->unsignedBigInteger('id_pakan');
+            $table->integer('qty');
+            $table->decimal('harga_pembelian', 2);
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('afkirs');
+        Schema::dropIfExists('pakan_transactions');
     }
 };

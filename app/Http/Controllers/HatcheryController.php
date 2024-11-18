@@ -35,9 +35,9 @@ class HatcheryController extends Controller
     }
     public function adminIndex()
     {
-        $hatchery = Hatchery::with('hatcheryDetails')->where('status', 'active')->get()->toArray();
+        $hatchery = Hatchery::with('hatcheryDetails','machine','pen')->where('status', 'active')->get()->toArray();
         // dd($hatchery);
-        return Inertia::render('admin/Hatchery', compact('hatchery'));
+        return Inertia::render('admin/hatchery', compact('hatchery'));
     }
 
     public function createHatchery()

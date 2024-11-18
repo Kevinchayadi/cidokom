@@ -24,11 +24,15 @@ class BreedingController extends Controller
         $breeding = Breeding::with('BreedingDetails')->get();
         return Inertia::render('user/Breeding', compact('breeding'));
     }
-    public function adminIndex()
+    public function adminIndex() 
     {
-        $breeding = Breeding::with('BreedingDetails')->get();
-        
-        return Inertia::render('admin/breeding', ['breeding' => $breeding]);
+        $breeding = Breeding::with(['BreedingDetails' => function ($query) {
+            $query->orderBy('created_at', 'desc'); // Mengurutkan berdasarkan 'created_at' dari yang terbaru
+        }, 'pen'])->get();
+        foreach ($breeding as $item) {
+           $item->age = floor($item->age + Carbon::now()->diffInDays(Carbon::parse($item->created_at)));
+        }
+        return Inertia::render('admin/breeding', compact('breeding'));
     }
 
     public function createBreeding()
@@ -45,7 +49,7 @@ class BreedingController extends Controller
     }
     public function storeBreeding(Request $request)
     {
-        dd($request);
+        // dd($request);
         // dd($request);
         $input = $request->validate([
             'id_pen' => 'required',
@@ -69,8 +73,9 @@ class BreedingController extends Controller
     public function inputBreeding($id)
     {
         $pakan = Pakan::get()->toArray();
+        $pen = Pen::with('kandang')->get();
         // dd($pakan);
-        return Inertia::render('user/FormDailyBreeding', ['id_breeding' => $id, 'pakan'=> $pakan]);
+        return Inertia::render('user/FormDailyBreeding', ['id_breeding' => $id, 'pakan'=> $pakan, 'pen'=>$pen]);
         
     }
 

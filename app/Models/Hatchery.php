@@ -30,6 +30,14 @@ class Hatchery extends Model
     {
         return $this->hasMany(Hatchery_detail::class,'id_hatchery','id_hatchery');
     }
+    public function machine()
+    {
+        return $this->belongsTo(Machine::class,'id_machine','id');
+    }
+    public function pen()
+    {
+        return $this->belongsTo(Pen::class,'id_pen','id');
+    }
 
     protected static function boot()
     {

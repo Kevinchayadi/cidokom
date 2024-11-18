@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('kandangs', function (Blueprint $table) {
             $table->id();
             $table->string('nama_kandang');
+            $table->string('lokasi_kandang');
             $table->string('jenis_kandang');
             
             $table->softDeletes();

@@ -11,6 +11,7 @@ class Kandang extends Model
 
     protected $fillable = [
         'nama_kandang',
+        'lokasi_kandang',
         'jenis_kandang'
     ];
 

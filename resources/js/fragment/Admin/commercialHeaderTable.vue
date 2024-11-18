@@ -8,110 +8,128 @@
             <thead class="bg-blue-300 shadow-lg">
                 <tr>
                     <!-- ID Column (sticky) -->
-                    <th class=" md:left-0 bg-blue-300 z-20" rowspan="2" :class="classesth">
+                    <th class=" md:left-0 bg-blue-300 z-20" rowspan="2" :class="classesth" style="min-width: 150px;">
                         Cost Center
                     </th>
                     <!-- Name Column (sticky) -->
-                    <th class="  md:left-[100px] bg-blue-300 z-20" rowspan="2" :class="classesth">
+                    <th class="  md:left-[150px] bg-blue-300 z-20" rowspan="2" :class="classesth">
                         Pen
                     </th>
                     <!-- Action Column (sticky) -->
-                    <th class="   bg-blue-300" rowspan="2" :class="classesth" style="min-width: 100px;">
+                    <th class="   bg-blue-300" rowspan="2" :class="classesth" style="min-width: 80px;">
                         Entry Date
                     </th>
                     <!-- Additional Columns -->
                     <th class=" bg-blue-300" rowspan="2" :class="classesth">
                         Last Update
                     </th>
-                    <th class=" bg-blue-300" colspan="2" :class="classesth">
-                        Strain
-                    </th>
-                    <th class=" bg-blue-300" colspan="2" :class="classesth">
+                    <th class=" bg-blue-300" rowspan="2" :class="classesth">
                         Entry Population
                     </th>
-                    <th class=" bg-blue-300" colspan="2" :class="classesth">
+                    <th class=" bg-blue-300" rowspan="2" :class="classesth">
                         Last Population
                     </th>
-                    <th class=" bg-blue-300" colspan="2" :class="classesth">
+                    <th class=" bg-blue-300" rowspan="2" :class="classesth">
                         Age
                     </th>
-                    <th class=" bg-blue-300" rowspan="2" :class="classesth">
-                        Laying
+                    <th class=" bg-blue-300" colspan="2" :class="classesth">
+                        Cost
+                    </th>
+                    <th class=" bg-blue-300" rowspan="2" :class="classesth" style="min-width: 250px;">
+                        remark
                     </th>
                     <th class=" bg-blue-300" rowspan="2" :class="classesth">
-                        Status
+                        input By
+                    </th>
+                    <th class=" bg-blue-300" rowspan="2" :class="classesth">
+                        status
                     </th>
                 </tr>
                 <tr>
                     <!-- ID Column (sticky) -->
                     <th class=" bg-blue-300" :class="classesth2">
-                        Female
+                        total cost
                     </th>
                     <th class=" bg-blue-300" :class="classesth2">
-                        Male
+                        unit cost
                     </th>
-                    <th class=" bg-blue-300" :class="classesth2">
-                        Female
-                    </th>
-                    <th class=" bg-blue-300" :class="classesth2">
-                        Male
-                    </th>
-                    <th class=" bg-blue-300" :class="classesth2">
-                        Female
-                    </th>
-                    <th class=" bg-blue-300" :class="classesth2">
-                        Male
-                    </th>
-                    <th class=" bg-blue-300" :class="classesth2">
-                        Days
-                    </th>
-                    <th class=" bg-blue-300" :class="classesth2">
-                        Week
-                    </th>
+
                 </tr>
             </thead>
             <tbody class="bg-gray-100 divide-y divide-gray-200 custom-scroll">
-                <tr v-for="(item, index) in itemsBawah" :key="item.id"
+                <tr v-for="item in data" :key="item.costCenter"
                     :class="{
-                        'bg-gray-300': selectedId === item.id,
-                        'hover:bg-gray-200': selectedId !== item.id,
+                        'bg-gray-300': selectedId === item.costCenter,
+                        'hover:bg-gray-200': selectedId !== item.costCenter,
                     }"
-                    @click="selectRow(item.id)" class="cursor-pointer">
+                    @click="selectRow(item.costCenter)" class="cursor-pointer">
 
                     <!-- ID Column (sticky) -->
                     <td class="  md:sticky  md:left-0"
-                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item.id, [classestd]: true }">
-                        {{ item . id }}
+                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
+                                .costCenter, [classestd]: true }" style="min-width: 150px;">
+                        {{ item . costCenter }}
                     </td>
 
                     <!-- Name Column (sticky) -->
-                    <td class="  md:sticky  md:left-[100px]"
-                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item.id, [classestd]: true }">
-                        {{ item . name }}
+                    <td class="  md:sticky  md:left-[150px]"
+                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
+                                .costCenter, [classestd]: true }">
+                        {{ item . pen }}
                     </td>
 
                     <!-- Action Column (sticky) -->
                     <td class=" "
-                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item.id, [classestd]: true }"
-                        style="min-width: 150px">
-                        <button class="text-indigo-600 hover:text-indigo-900">
-                            Details
-                        </button>
+                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
+                                .costCenter, [classestd]: true }">
+                       {{item.entryDate}}
+                    </td>
+                    <td class=" "
+                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
+                                .costCenter, [classestd]: true }">
+                       {{item.lastUpdate}}
+                    </td>
+                    <td class=" "
+                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
+                                .costCenter, [classestd]: true }">
+                       {{item.entryPopulation}}
+                    </td>
+                    <td class=" "
+                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
+                                .costCenter, [classestd]: true }">
+                       {{item.lastPopulation}}
+                    </td>
+                    <td class=" "
+                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
+                                .costCenter, [classestd]: true }">
+                       {{item.age}}
+                    </td>
+                    <td class=" "
+                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
+                                .costCenter, [classestd]: true }">
+                       {{item.totalCost}}
+                    </td>
+                    <td class=" "
+                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
+                                .costCenter, [classestd]: true }">
+                       {{item.unitCost}}
+                    </td>
+                    <td class=" "
+                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
+                                .costCenter, [classestd]: true }">
+                       {{item.remark}}
+                    </td>
+                    <td class=" "
+                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
+                                .costCenter, [classestd]: true }">
+                       {{item.inputBy}}
+                    </td>
+                    <td class=" "
+                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
+                                .costCenter, [classestd]: true }">
+                       {{item.status}}
                     </td>
 
-                    <!-- Additional Data Columns -->
-                    <td class=""
-                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100 ': selectedId !== item.id, [classestd]: true }">
-                        Data A</td>
-                    <td class=""
-                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item.id, [classestd]: true }">
-                        Data B</td>
-                    <td class=""
-                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item.id, [classestd]: true }">
-                        Data C</td>
-                    <td class=""
-                        :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white border border-gray-100': selectedId !== item.id, [classestd]: true }">
-                        Data D</td>
                 </tr>
 
             </tbody>
@@ -122,18 +140,42 @@
 <script setup>
     import {
         ref,
-        defineEmits
+        defineEmits,
+        computed
     } from "vue";
 
     const selectedId = ref(null);
     const classesth =
-        ' text-center  text-xs border-gray-300 font-medium text-gray-700 uppercase tracking-wider  sticky top-0 min-w-[100px] shadow-[inset_1px_-1px_1px_white]'
+        ' text-center  text-xs border-gray-300 font-medium text-gray-700 uppercase tracking-wider  sticky top-0 min-w-[80px] shadow-[inset_1px_-1px_1px_white]'
     const classesth2 =
-        ' text-center  text-xs font-medium border-gray-300 text-gray-700 uppercase tracking-wider  sticky top-[18px] min-w-[100px] shadow-[inset_1px_-1px_1px_white]'
+        ' text-center  text-xs font-medium border-gray-300 text-gray-700 uppercase tracking-wider  sticky top-[18px] min-w-[80px] shadow-[inset_1px_-1px_1px_white]'
 
-    const classestd = 'p-1 text-xs  text-gray-900 text-center min-w-[100px]'
+    const classestd = 'p-1 text-table  text-gray-900 text-center min-w-[80px] shadow-[inset_1px_-1px_1px_rgba(128,128,128,0.2)]'
     const buttonclasses =
         'border border-grey-700 bg-gray-200 text-primary-text-dark rounded hover:text-primary-text-dark-hover sticky top-0'
+
+    const props = defineProps({
+        commercial: {
+            type: Array,
+        }
+    })
+    const data = computed(() =>
+        props.commercial.map(item => ({
+            costCenter: item.id_commercial,
+            pen: item.pen.code_pen,
+            entryDate: item.entryDate,
+            lastUpdate: new Date(item.updated_at).toISOString().split('T')[0],
+            entryPopulation: item.entry_population,
+            lastPopulation: item.last_population,
+            age: item.age,
+            totalCost: item.total_cost,
+            unitCost: item.unit_cost,
+            remark: '',
+            inputBy: item.input_by,
+            status: item.status,
+
+
+        })))
 
     const itemsBawah = ref([{
             id: 1,

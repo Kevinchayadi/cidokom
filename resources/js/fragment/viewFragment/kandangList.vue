@@ -51,7 +51,7 @@ const detail = (id) => {
 // Fungsi untuk membuka form tambah kandang
 const createForm = () => {
   console.log('Add new button clicked');
-  router.get('/user/kandang/create')
+  router.get('/user/farm/create')
 };
 
 </script>

@@ -17,7 +17,7 @@ class Commercial extends Model
         'last_population',
         'age',
         'total_cost',
-        'unit_cost',
+        'unit_Cost',
         'inputBy',
         'status'
 
@@ -26,6 +26,10 @@ class Commercial extends Model
     public function commercialDetails()
     {
         return $this->hasMany(Commercial_detail::class, 'id_commercial', 'id_commercial');
+    }
+    public function pen()
+    {
+        return $this->belongsTo(Pen::class, 'id_pen', 'id');
     }
 
     protected static function boot()

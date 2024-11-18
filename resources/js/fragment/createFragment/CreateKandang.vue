@@ -1,8 +1,9 @@
 <template>
     <div class="w-[80%]">
-        <Headers tittle="Buat Kandang" />
+        <Headers tittle="Buat Kandang farm" />
         <form @submit.prevent="handleSubmit">
             <InputFragment v-model="form.nama_kandang" name="nama_kandang" content="code kandang" type="text" />
+            <InputFragment v-model="form.lokasi_kandang" name="lokasi_kandang" content="Lokasi Kandang" type="text" />
             <InputFragment v-model="form.jenis_kandang" content="Jenis kandang" type="dropdown" :datas="jenisKandang" />
 
             <div class="w-full flex text-center justify-center">
@@ -24,14 +25,16 @@ import { ref } from "vue";
     const jenisKandang = [
     { id: "breeding", name: "breeding" },
     { id: "commerce", name: "commercial" },
+    { id: "afkir", name: "afkir" },
 ];  
     const form = ref({
         nama_kandang: '',
+        lokasi_kandang:'',
         jenis_kandang: ''
     })
 
     const handleSubmit = () => {
-        router.post("/user/kandang/create", form.value);
+        router.post("/user/farm/create", form.value);
     };
 </script>
 <style></style>

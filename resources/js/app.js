@@ -21,10 +21,10 @@ createInertiaApp({
       // Ambil `user` dari props paling awal
       const user = props.initialPage.props.auth?.user; // Optional chaining jika auth kosong
       if (user) {
-          console.log("User dari props:", user);
+        //   console.log("User dari props:", user);
           store.commit('SET_USER', user); // Set `user` ke `store` paling awal
       } else {
-          console.log("tidak");
+        //   console.log("tidak");
       }
 
       // Lanjutkan dengan inisialisasi aplikasi setelah `user` disimpan

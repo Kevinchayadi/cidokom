@@ -45,6 +45,7 @@ import InputFragment from "../../components/InputFragment.vue";
 import FormButton from "../../components/inputComponent/FormButton.vue";
 import Headers from "../../components/Headers.vue";
 import { computed, ref } from "vue";
+import { useStore } from "vuex";
 
 const props = defineProps({
     pen: {
@@ -52,6 +53,7 @@ const props = defineProps({
         default: []
     }
 });
+const store = useStore();
 
 const penList = computed(() =>
   props.pen.map(item => ({
@@ -71,7 +73,7 @@ const handleSubmit = () => {
         entryDate: entryDate.value,
         entry_population: entry_population.value,
         age: umur.value,
-        status: status.value,
+        inputBy : store.getters.user.name
     });
 };
 </script>

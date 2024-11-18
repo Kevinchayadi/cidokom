@@ -22,9 +22,9 @@ return new class extends Migration
             $table->integer('depreciation_panen')->nullable();
             $table->integer('move_to')->nullable();
             $table->integer('total_move')->nullable();
-            $table->integer('feed')->nullable();
             $table->integer('receive_from')->nullable();
             $table->integer('total_receive')->nullable();
+            $table->integer('feed')->nullable();
             $table->string('feed_name')->nullable();
             $table->string('inputBy');
             $table->string('id_vaksin')->nullable();
