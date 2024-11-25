@@ -27,6 +27,25 @@
                 type="number"
             />
             <InputFragment
+                v-model="move"
+                name="move"
+                content="Move to"
+                type="dropdown"
+                :datas="penList"
+            />
+            <InputFragment
+                v-model="maleMove"
+                name="maleMove"
+                content="male move"
+                type="number"
+            />
+            <InputFragment
+                v-model="femaleMove"
+                name="femaleMove"
+                content="female move"
+                type="number"
+            />
+            <InputFragment
                 v-model="eggMorning"
                 name="eggMorning"
                 content="morning egg"
@@ -100,19 +119,30 @@ const props = defineProps({
     pakan:{
         type: Array,
         required: true
-    }
+    },
+    pen: {
+        type: Array,
+    },
 })
 const pakanList = computed(() =>
   props.pakan.map(item => ({
   id: item.nama_pakan,
   name: item.nama_pakan
 })));
+const penList = computed(() =>
+  props.pen.map(item => ({
+  id: item.id,
+  name: `(${item.kandang.nama_kandang}) ${item.code_pen}`
+})));
 const store = useStore();
 
 const femaleDie = ref(0);
 const femaleReject = ref(0);
 const maleDie = ref(0);
+const move = ref(0);
 const maleReject = ref(0);
+const maleMove = ref(0);
+const femaleMove = ref(0);
 const eggMorning = ref(0);
 const eggAfternoon = ref(0);
 const broken = ref(0);
@@ -137,10 +167,25 @@ const handleSubmit = () => {
         abnormal: abnormal.value,
         sale: sale.value,
         total_egg: total_egg.value,
+        move_to: move.value,
+        total_female_move: femaleMove.value,
+        total_male_move: maleMove.value,
         feed: feed.value,
         feed_name: feedName.value,
         inputBy: store.getters.user.name
  
+    }).then(response => {
+        // Jika berhasil, Anda bisa menangani respons sukses di sini
+        console.log("Data berhasil dikirim:", response);
+        alert("Data berhasil dikirim!");
+    })
+    .catch(error => {
+        // Jika ada error, tampilkan alert
+        if (error.response && error.response.data.error) {
+            alert(error.response.data.error); // Menampilkan error yang diterima dari server
+        } else {
+            alert("Terjadi kesalahan saat mengirim data. Silakan coba lagi."); // Menangani error umum
+        }
     });
 };
 </script>

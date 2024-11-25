@@ -21,6 +21,25 @@
                 type="number"
             />
             <InputFragment
+                v-model="move"
+                name="move"
+                content="Move to"
+                type="dropdown"
+                :datas="penList"
+            />
+            <InputFragment
+                v-model="maleMove"
+                name="maleMove"
+                content="male move"
+                type="number"
+            />
+            <InputFragment
+                v-model="femaleMove"
+                name="femaleMove"
+                content="female move"
+                type="number"
+            />
+            <InputFragment
                 v-model="feed"
                 name="feed"
                 content="feed (in kilograms)"
@@ -62,6 +81,10 @@ const props = defineProps({
         type: Array,
         required: true,
     },
+    pen: {
+        type: Array,
+        default:()=>[]
+    },
 });
 const store = useStore();
 
@@ -71,11 +94,20 @@ const FeedList = computed(() =>
         name: item.nama_pakan
     }))
 );
+const penList = computed(() =>
+  props.pen.map(item => ({
+  id: item.id,
+  name: `(${item.kandang.nama_kandang}) ${item.code_pen}`
+})));
+
 // Define the state for each input
 const id_commercial = ref(props.id_commercial);
 const depreciation_die = ref(0);
 const depreciation_afkir = ref(0);
 const depreciation_panen = ref(0);
+const move = ref(0);
+const femaleMove = ref(0);
+const maleMove = ref(0);
 const feed = ref(0);
 const feed_name = ref('');
 
@@ -86,6 +118,9 @@ const handleSubmit = () => {
         depreciation_die: depreciation_die.value,
         depreciation_afkir: depreciation_afkir.value,
         depreciation_panen: depreciation_panen.value,
+        move_to: move.value,
+        total_female_move: femaleMove.value,
+        total_male_move: maleMove.value,
         feed: feed.value,
         feed_name: feed_name.value,
         inputBy : store.getters.user.name

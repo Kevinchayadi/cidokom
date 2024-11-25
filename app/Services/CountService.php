@@ -20,6 +20,7 @@ class countService
     }
     public function costChicken(float $current, int $total){
         $cost = $current / $total;
+        // dd($cost);
         return $cost;
     }
 }

@@ -1,6 +1,6 @@
 <template>
     <SideBarUser>
-        <DailyBreeding :id_breeding="id_breeding" :pakan="pakan"/>
+        <DailyBreeding :id_breeding="id_breeding" :pakan="pakan" :pen="pen"/>
     </SideBarUser>
     
 </template>
@@ -16,6 +16,10 @@ const props = defineProps({
         required: true
     },
     pakan:{
+        type: Array,
+        required: true
+    },
+    pen:{
         type: Array,
         required: true
     }

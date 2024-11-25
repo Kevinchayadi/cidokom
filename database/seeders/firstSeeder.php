@@ -2,7 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\Afkir;
 use App\Models\Ayam;
+use App\Models\Breeding;
+use App\Models\Commercial;
 use App\Models\Kandang;
 use App\Models\Machine;
 use App\Models\Pakan;
@@ -80,6 +83,149 @@ class firstSeeder extends Seeder
             'lokasi_kandang' => 'cidokom',
             'jenis_kandang' => 'commerce' 
         ]);
+        Kandang::create([
+            'nama_kandang' => 'AFK1',
+            'lokasi_kandang' => 'cidokom',
+            'jenis_kandang' => 'afkir' 
+        ]);
+        Pen::create([
+            'id_kandang'=> 1,
+            'code_pen' => '1'
+        ]);
+        Pen::create([
+            'id_kandang'=> 1,
+            'code_pen' => '2'
+        ]);
+        Pen::create([
+            'id_kandang'=> 1,
+            'code_pen' => '3'
+        ]);
+        Pen::create([
+            'id_kandang'=> 1,
+            'code_pen' => '4'
+        ]);
+        Pen::create([
+            'id_kandang'=> 1,
+            'code_pen' => '5'
+        ]);
+        Pen::create([
+            'id_kandang'=> 1,
+            'code_pen' => '6'
+        ]);
+        Pen::create([
+            'id_kandang'=> 1,
+            'code_pen' => '7'
+        ]);
+        Pen::create([
+            'id_kandang'=> 2,
+            'code_pen' => 'DOC'
+        ]);
+        Pen::create([
+            'id_kandang'=> 2,
+            'code_pen' => 'PEMBESARAN'
+        ]);
+        Pen::create([
+            'id_kandang'=> 2,
+            'code_pen' => 'UMBARAN'
+        ]);
+        Pen::create([
+            'id_kandang'=> 3,
+            'code_pen' => 'AFKIR'
+        ]);
+        Pen::create([
+            'id_kandang'=> 3,
+            'code_pen' => 'KARANTINA'
+        ]);
+
+        Breeding::create([
+            'id_pen' => 1,
+            'code_ayam_jantan' => 'KUB',
+            'code_ayam_betina' => 'KUB',
+            'jumlah_jantan' => 79,
+            'jumlah_betina' => 286,
+            'age' => '21',
+            'inputBy'=> 'user',
+        ]);
+        Breeding::create([
+            'id_pen' => 2,
+            'code_ayam_jantan' => 'KUB',
+            'code_ayam_betina' => 'KUB',
+            'jumlah_jantan' => 26,
+            'jumlah_betina' => 121,
+            'age' => '21',
+            'inputBy'=> 'user',
+        ]);
+        Breeding::create([
+            'id_pen' => 3,
+            'code_ayam_jantan' => 'KUB',
+            'code_ayam_betina' => 'KUB',
+            'jumlah_jantan' => 17,
+            'jumlah_betina' => 129,
+            'age' => '21',
+            'inputBy'=> 'user',
+        ]);
+        Breeding::create([
+            'id_pen' => 4,
+            'code_ayam_jantan' => 'KUB',
+            'code_ayam_betina' => 'KUB',
+            'jumlah_jantan' => 35,
+            'jumlah_betina' => 260,
+            'age' => '21',
+            'inputBy'=> 'user',
+        ]);
+        Breeding::create([
+            'id_pen' => 5,
+            'code_ayam_jantan' => 'KUB',
+            'code_ayam_betina' => 'KUB',
+            'jumlah_jantan' => 33 ,
+            'jumlah_betina' => 161,
+            'age' => '21',
+            'inputBy'=> 'user',
+        ]);
+        Breeding::create([
+            'id_pen' => 6,
+            'code_ayam_jantan' => 'KUB',
+            'code_ayam_betina' => 'KUB',
+            'jumlah_jantan' => 27,
+            'jumlah_betina' => 212,
+            'age' => '21',
+            'inputBy'=> 'user',
+        ]);
+        Breeding::create([
+            'id_pen' => 7,
+            'code_ayam_jantan' => 'KUB',
+            'code_ayam_betina' => 'KUB',
+            'jumlah_jantan' => 12,
+            'jumlah_betina' => 99,
+            'age' => '21',
+            'inputBy'=> 'user',
+        ]);
+        Commercial::create([
+            'id_pen' => 8,
+            'entry_population' =>1036,
+            'age' => 0,
+            'inputBy'=> 'user',
+        ]);
+        Commercial::create([
+            'id_pen' => 9,
+            'entry_population' =>859,
+            'age' => 0,
+            'inputBy'=> 'user',
+        ]);
+        Commercial::create([
+            'id_pen' => 10,
+            'entry_population' =>843,
+            'age' => 0,
+            'inputBy'=> 'user',
+        ]);
+        Afkir::create([
+            'id_pen' => 12,
+            'male' => 7,
+            'female' => 68,
+            
+        ]);
+        
+
         // Kandang::create([
         //     'nama_kandang' => 'BRD2',
         //     'jenis_kandang' => 'breeding' 

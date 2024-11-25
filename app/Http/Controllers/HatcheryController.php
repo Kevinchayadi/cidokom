@@ -212,4 +212,17 @@ class HatcheryController extends Controller
 
         return redirect()->route('user.hatchery')->with('success', 'berhasil membuat kandang Breeding baru');
     }
+
+    public function move($id)
+    {
+        $pen = Pen::with('kandang')
+        ->whereHas('kandang', function ($query) {
+            $query->where('jenis_kandang', 'commerce');
+        })
+        ->whereHas('commercial', function ($query) {
+            $query->where('status', 'active');
+        })->get();
+        // $hatcheryDetail = Hatchery_detail::where('id_hatchery', $id)->firstOrFail();
+        return Inertia::render('user/moveHatchery', [ 'pen'=>$pen]);
+    }
 }

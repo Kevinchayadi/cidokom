@@ -13,10 +13,13 @@ return new class extends Migration
     {
         Schema::create('table_moves', function (Blueprint $table) {
             $table->id();
-            $table->string('current_pen');
-            $table->string('destination_pen');
-            $table->string('total');
-            $table->string('gender')->nullable()->default('random');
+            $table->unsignedBigInteger('current_pen');
+            $table->unsignedBigInteger('destination_pen');
+            $table->unsignedBigInteger('totalMale');
+            $table->unsignedBigInteger('totalFemale');
+            $table->decimal('maleCost',15,2)->nullable();
+            $table->decimal('femaleCost',15,2)->nullable();
+            $table->string('status')->nullable()->default('active');
             $table->timestamps();
         });
     }

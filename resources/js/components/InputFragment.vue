@@ -7,9 +7,13 @@
         <Label :name="name" :content="content" />
         <TextArea :name="name" :placeholder="placeholder" v-model="internalValue" />
     </div>
-    <div v-else-if="type === 'multiple'" :class="classes">
+    <div v-else-if="type === 'multipleCB'" :class="classes">
         <Label :name="name" :content="content" />
         <Multiple :name="name" :datas="datas" v-model="internalValue" />
+    </div>
+    <div v-else-if="type === 'multipleDP'" :class="classes">
+        <Label :name="name" :content="content" />
+        <MulipleSelected :name="name" :datas="datas" v-model="internalValue" />
     </div>
     <div v-else :class="classes">
         <Label :name="name" :content="content" />
@@ -24,6 +28,7 @@ import TextArea from "./inputComponent//TextArea.vue";
 import DropDown from "./DropDown.vue";
 import { ref, watch } from "vue";
 import Multiple from "./other component/multiple.vue";
+import MulipleSelected from "./other component/mulipleSelected.vue";
 
 const props = defineProps({
     name: {
@@ -39,15 +44,14 @@ const props = defineProps({
     },
     datas: {
         type: Array,
-        default: [],
+        default: () => [],
     },
     content:{
         type: String,
         default: null,
     },
     modelValue: {
-        type: [String, Number, Array],
-        default: ""
+        type: [String, Number, Array]
     }
 });
 
@@ -57,6 +61,7 @@ const emit = defineEmits(["update:modelValue"]);
 const internalValue = ref(Array.isArray(props.modelValue) ? [...props.modelValue] : props.modelValue);
 
 watch(internalValue, (newVal) => {
+    // console.log(internalValue)
     const isDifferent = Array.isArray(newVal)
         ? JSON.stringify(newVal) !== JSON.stringify(props.modelValue)
         : newVal !== props.modelValue;

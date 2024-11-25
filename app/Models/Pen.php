@@ -21,4 +21,7 @@ class Pen extends Model
     public function breeding(){
         return $this->hasMany(Breeding::class, 'id_pen', 'id');
     }
+    public function commercial(){
+        return $this->hasMany(Commercial::class, 'id_pen', 'id');
+    }
 }

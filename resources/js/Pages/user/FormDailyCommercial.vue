@@ -1,6 +1,6 @@
 <template>
     <SideBarUser>
-        <DailyCommercial  :id_commercial="id_commercial" :feed="feed"/>
+        <DailyCommercial  :id_commercial="id_commercial" :feed="feed" :pen="pen"/>
     </SideBarUser>
 </template>
 
@@ -17,6 +17,9 @@ import { onMounted } from 'vue';
         feed:{
             type: Array,
             required: true
+        },
+        pen:{
+            type: Array
         }
     })
 

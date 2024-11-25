@@ -14,9 +14,17 @@ return new class extends Migration
         Schema::create('afkirs', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('id_pen');
-            $table->integer('population');
-            $table->decimal('cost_unit', 15, 2)->nullable();
-            $table->string('inputBy');
+            $table->integer('male')->nullable();
+            $table->integer('female')->nullable();
+            $table->decimal('male_cost', 15, 2)->nullable();
+            $table->decimal('female_cost', 15, 2)->nullable();
+            $table->integer('feed_male')->nullable();
+            $table->integer('feed_female')->nullable();
+            $table->integer('male_come')->nullable();
+            $table->integer('female_come')->nullable();
+            $table->integer('male_out')->nullable();
+            $table->integer('female_out')->nullable();
+
             $table->timestamps();
         });
     }

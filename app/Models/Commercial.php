@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 class Commercial extends Model
 {
     use HasFactory;
+    protected $primaryKey = 'id_commercial';
+    public $incrementing = false;
     protected $fillable = [
         'id_commercial',
         'id_pen',
