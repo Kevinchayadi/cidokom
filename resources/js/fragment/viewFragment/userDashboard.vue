@@ -46,8 +46,8 @@
             path: route("user.commercial")
         },
         {
-            name: "other",
-            path: route("user.kandangList")
+            name: "Afkir & Karantina",
+            path: route("user.afkir")
         },
     ]);
 

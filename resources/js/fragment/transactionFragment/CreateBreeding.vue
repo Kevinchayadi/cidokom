@@ -35,6 +35,12 @@
                 content="age (in days)"
                 type="number"
             />
+            <InputFragment
+                v-model="Cost"
+                name="cost"
+                content="harga (isi dengan 0)"
+                type="number"
+            />
             <!-- <InputFragment
                 v-model="vaksin"
                 name="vaksin"
@@ -99,6 +105,7 @@ const ayamBetina = ref("");
 const qtyJantan = ref(0);
 const qtyBetina = ref(0);
 const umur = ref(0);
+const cost = ref(0);
 const vaksin = ref([]);
 
 const handleSubmit = () => {
@@ -110,6 +117,7 @@ const handleSubmit = () => {
         jumlah_jantan: qtyJantan.value,
         jumlah_betina: qtyBetina.value,
         age: umur.value,
+        cost: cost.value,
         vaksin: vaksin.value,
         inputBy : store.getters.user.name
     });

@@ -9,6 +9,13 @@
                 content="code pen"
                 :datas="penList"
             />
+            <InputFragment
+                v-model="pen2"
+                name="another pen2"
+                type="dropdown"
+                content="code pen2"
+                :datas="penList"
+            />
 
             <InputFragment
                 v-model="hatcheryMachine"
@@ -67,8 +74,8 @@ const store = useStore();
 
 const penList = computed(() =>
   props.pen.map(item => ({
-  id: item.id,
-  name: `(${item.kandang.nama_kandang}) ${item.code_pen}`
+  id: item.indukan,
+  name: `kandang indukan ${item.indukan}`
 })));
 
 const machineList = computed(() =>
@@ -78,15 +85,18 @@ const machineList = computed(() =>
 })));
 
 const pen = ref("");
+const pen2 = ref("");
 const hatcheryMachine = ref("");
-const totalSetting = ref(0);
+const currSetting = ref(0);
+const anotherSetting = ref(0);
+// const totalSetting = ref(0);
 
 watch(pen, async (newPenValue, oldPenValue) => {
     if (newPenValue) {
         try {
             console.log(pen.value)
             const response = await axios.get(`/user/getegg/${pen.value}`);
-            totalSetting.value = response.data;
+            currSetting.value = response.data;
             console.log("Selected data:", totalSetting.value);
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -96,6 +106,25 @@ watch(pen, async (newPenValue, oldPenValue) => {
         totalSetting.value = 0;
     }
 });
+watch(pen2, async (newPenValue, oldPenValue) => {
+    if (newPenValue) {
+        try {
+            console.log(pen.value)
+            const response = await axios.get(`/user/anotheregg/${pen2.value}`);
+            anotherSetting.value = response.data;
+            console.log("Selected data:", totalSetting.value);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    } else {
+        // Reset totalSetting jika tidak ada pen yang dipilih
+        totalSetting.value = 0;
+    }
+});
+const totalSetting = computed(() => {
+  return currSetting.value + anotherSetting.value;
+});
+
 
 
 

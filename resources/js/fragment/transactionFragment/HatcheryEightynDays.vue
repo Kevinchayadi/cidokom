@@ -1,6 +1,6 @@
 <template>
     <div class="w-[80%]">
-        <Headers tittle="Hari ke-18" />
+        <Headers tittle="Hari ke-18 ( Candling )" />
         <form @submit.prevent="handleSubmit">
             
             <InputFragment

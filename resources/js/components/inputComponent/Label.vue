@@ -5,7 +5,7 @@
 <script setup>
     import { computed, ref } from 'vue';
 
-    const classes = ref('no-underline font-semibold text-xs md:text-xl ml-2')
+    const classes = ref('no-underline font-semibold text-xs text-white md:text-xl ml-2')
     const props = defineProps({
         name: {
             type: String,

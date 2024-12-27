@@ -19,7 +19,8 @@ return new class extends Migration
             $table->integer('jumlah_jantan');
             $table->integer('jumlah_betina');
             $table->integer('age');
-            $table->decimal('cost_induk')->nullable();
+            $table->decimal('cost_Total_induk',18)->nullable();
+            $table->decimal('cost_induk',18,2)->nullable();
             $table->string('move_to')->nullable();
             $table->string('status')->nullable()->default('active');
             $table->string('inputBy');

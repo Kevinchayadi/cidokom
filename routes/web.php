@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AfkirController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AyamController;
 use App\Http\Controllers\BreedingController;
@@ -25,13 +26,20 @@ Route::prefix('admin')->middleware(['auth','isAdmin'])->group(function(){
     Route::get('/hatchery', [HatcheryController::class, 'adminIndex'])->name('admin.hatchery');
     Route::get('/breeding', [BreedingController::class, 'adminIndex'])->name('admin.breeding');
     Route::get('/breeding-detail/{id}', [BreedingController::class, 'getBreedingDetail']);
-    Route::get('commercial', [CommercialController::class, 'adminIndex'])->name('admin.commercial');
+    Route::get('/commercial', [CommercialController::class, 'adminIndex'])->name('admin.commercial');
+    Route::get('/chicken', [ayamController::class, 'adminIndex'])->name('admin.chicken');
+    Route::get('/afkir', [AfkirController::class, 'adminIndex'])->name('admin.afkir');
+    Route::get('/kandang', [KandangController::class, 'adminIndex'])->name('admin.kandang');
+    Route::get('/pen', [PenController::class, 'adminIndex'])->name('admin.pen');
+    Route::get('/pakan', [PakanController::class, 'adminIndex'])->name('admin.pakan');
     Route::get('/logout',[AuthController::class, 'logout'])->name('admin.logout');
+    
 });
 
 
 Route::prefix('user')->middleware(['auth','isUser'])->group(function(){
-    Route::get('/getegg/{id}', [HatcheryController::class, 'getegg']);
+    Route::get('/getegg/{id}', [HatcheryController::class, 'getegg']); 
+    Route::get('/anotheregg/{id}', [HatcheryController::class, 'anotheregg']); 
     Route::get('/dashboard',[DashboardController::class, 'userIndex'])->name('user.dashboard');
     Route::get('/ayam', [AyamController::class, 'userIndex'])->name('user.ayamList');
     Route::get('/ayam/create', [AyamController::class, 'createAyam'])->name('user.ayam.create');
@@ -63,7 +71,13 @@ Route::prefix('user')->middleware(['auth','isUser'])->group(function(){
     Route::get('/hatchery/finalInput/{id}', [HatcheryController::class, 'finalInputHatchery'])->name('user.hatchery.finalInput');
     Route::post('/hatchery/finalInput', [HatcheryController::class,'finalInputedHatchery'])->name('user.hatchery.finalInputed');
     Route::get('/hatchery/move/{id}', [HatcheryController::class,'move'])->name('user.hatchery.finalInputed');
+    Route::post('/commercial/moved', [HatcheryController::class,'move'])->name('user.hatchery.finalInputed');
     Route::get('/pakan', [PakanController::class, 'userIndex'])->name('user.pakan');
+    Route::get('/afkir', [AfkirController::class, 'afkir'])->name('user.afkir');
+    Route::get('/afkir/input/{id}', [AfkirController::class, 'dailyAfkirForm'])->name('user.dailyAfkirForm');
+    Route::post('/afkir/input/{id}', [AfkirController::class, 'dailyAfkirForm'])->name('user.dailyAfkirForm');
+
+
     Route::get('/logout',[AuthController::class, 'logout'])->name('user.logout');
 });
 

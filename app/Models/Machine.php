@@ -11,6 +11,7 @@ class Machine extends Model
 
     protected $fillable = [
         'machine_name',
+        'kapasitas',
         'status'
     ];
 }

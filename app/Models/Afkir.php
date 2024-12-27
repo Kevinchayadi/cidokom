@@ -21,4 +21,9 @@ class Afkir extends Model
         'male_out',
         'female_out',
     ];
+    
+    public function pen()
+    {
+        return $this->belongsTo(pen::class, 'id_pen', 'id');
+    }
 }

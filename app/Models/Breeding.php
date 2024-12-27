@@ -19,10 +19,17 @@ class Breeding extends Model
         'code_ayam_betina',
         'jumlah_jantan',
         'jumlah_betina',
+        'cost_Total_induk',
+        'cost_induk',
         'age',
         'status',
         'inputBy'
     ];
+
+    public function vaksin()
+    {
+        return $this->belongsToMany(vaksin::class, 'commercial_breeding_vaccine', 'id_breeding', 'vaccine_id');
+    }
 
     public function breedingDetails()
     {

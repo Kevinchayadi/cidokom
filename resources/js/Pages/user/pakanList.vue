@@ -1,5 +1,5 @@
 <template>
-    <SideBarUser>
+    <SideBarUser dashboard="true">
         <PakanList :pakan="pakan"/>
     </SideBarUser>
 </template>

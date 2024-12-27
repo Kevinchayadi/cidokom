@@ -28,11 +28,22 @@
         </button>
       </div>
       <div class="max-w-full">
-        <FormTemplate>
-          <slot>
-            
-          </slot>
-        </FormTemplate>
+         <div v-if="dashboard">
+           <FrontTemplate>
+             <slot>
+               
+             </slot>
+           </FrontTemplate>
+           
+        </div>
+        <div v-else>
+          <FormTemplate>
+            <slot>
+              
+            </slot>
+          </FormTemplate>
+
+        </div>
 
       </div>
     </div>
@@ -43,12 +54,20 @@
 import { computed, ref } from 'vue';
 import FormTemplate from '../layout/FormTemplate.vue'
 import NavbarUser from '../components/displayComponent/NavbarUser.vue';
+import FrontTemplate from './frontTemplate.vue';
 
-const isSidebarOpen = ref(false);
+const isSidebarOpen = ref(true);
+
 
 function toggleSidebar() {
   isSidebarOpen.value = !isSidebarOpen.value;
 }
+
+const props = defineProps({
+  dashboard:{
+    typeof: Boolean
+  }
+})
 
 const sidebarClasses = computed(() => {
   return `

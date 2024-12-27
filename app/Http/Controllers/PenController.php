@@ -36,4 +36,9 @@ class PenController extends Controller
         $penInput = Pen::create($pen);
         return redirect()->route('user.penList')->with('success', 'Berhasil membuat pen baru!!');
     }
+    function adminIndex(){
+        $pen = Pen::with('kandang')->get();
+        // dd($pen[0]->kandang->nama_kandang);
+        return Inertia::render('admin/pen', ['pen'=>$pen]);
+    }
 }

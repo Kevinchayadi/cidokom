@@ -1,5 +1,5 @@
 <template>
-    <SideBarUser>
+    <SideBarUser dashboard="true">
         <PenList :pen="pen" :tittle="tittle"/>
     </SideBarUser>
 </template>

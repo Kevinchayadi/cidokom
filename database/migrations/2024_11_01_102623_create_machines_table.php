@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('machines', function (Blueprint $table) {
             $table->id();
             $table->string('machine_name');
+            $table->integer('kapasitas');
             $table->string('status')->default('active');
             $table->timestamps();
         });

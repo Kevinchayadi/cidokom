@@ -105,36 +105,36 @@
                         total
                     </th>
                     <th  :class="classesth3">
-                        percantage
+                        percentage
                     </th>
                     <th  :class="classesth3">
                         cracked
                     </th>
                     <th  :class="classesth3">
-                        percantage
+                        percentage
                     </th>
                     <th  :class="classesth3">
                         abnormal
                     </th>
                     <th  :class="classesth3">
-                        percantage
+                        percentage
                     </th>
                     <th  :class="classesth3">
                         sale
                     </th>
                     <th  :class="classesth3">
-                        percantage
+                        percentage
                     </th>
                     <th  :class="classesth3">
                         HE
                     </th>
                     <th  :class="classesth3">
-                        percantage
+                        percentage
                     </th>
                     <th  :class="classesth3">
                         feed(kg)
                     </th><th  :class="classesth3">
-                        percantage
+                        percentage
                     </th>
 
                 </tr>
@@ -218,7 +218,7 @@
         {{ item.total }}
     </td>
     <td :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white': selectedId !== item.id, [classestd]: true }">
-        {{ item.egg_percantage }}
+        {{ item.egg_percentage }}
     </td>
     <td :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white': selectedId !== item.id, [classestd]: true }">
         {{ item.cracked }}
@@ -314,7 +314,7 @@
         egg_morning: item.egg_morning,
         egg_afternoon: item.egg_afternoon,
         total: item.egg_afternoon + item.egg_morning,
-        egg_percantage: ((item.egg_afternoon + item.egg_morning) / item.last_female * 100).toFixed(2) + '%',
+        egg_percentage: ((item.egg_afternoon + item.egg_morning) / item.last_female * 100).toFixed(2) + '%',
         cracked: item.broken,
         cracked_percentage: parseFloat(((item.broken /(item.egg_afternoon + item.egg_morning)) * 100).toFixed(2)) + '%',
         abnormal: item.abnormal,
@@ -324,7 +324,7 @@
         he: item.total_egg,
         he_percentage: ((item.total_egg / (item.egg_afternoon + item.egg_morning)) * 100).toFixed(2) + '%',
         feed: item.feed + ' kg',
-        feed_percentage: (((item.feed * 1000) / (item.last_female + item.last_male))).toFixed(2) + ' gr',
+        feed_percentage: (((item.feed) / (item.last_female + item.last_male)) ).toFixed(2) + ' %',
         inputBy: item.inputBy
     }))
 );

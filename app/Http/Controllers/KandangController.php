@@ -30,4 +30,10 @@ class KandangController extends Controller
 
         return redirect()->route('user.kandangList')->with('success', 'Berhasil membuat jenis ayam baru!!');
     }
+
+    function adminIndex(){
+        $kandang = Kandang::get();
+        return Inertia::render('admin/kandang', ['kandang'=>$kandang]);
+    }
+
 }

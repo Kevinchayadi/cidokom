@@ -1,18 +1,23 @@
 <template>
+    <div class=" flex flex-col mt-10  h-screen ">
+        <div class="flex justify-center items-center mb-2" >
+            <img src="../../../../public/img/logo.png" alt="" class="w-60">
     
-    <nav class="space-y-2 m-4  align-center">
-        <div v-if="auth">
-            <h1>{{ auth . user . username }}</h1>
         </div>
-        <div v-for="data in routes" :key="data.path">
-            <Link :href="data.path" :class="classes">
-            {{ data . name . toUpperCase() }}
-            </Link>
-        </div>
-        <div v-if="auth">
-            <Link href="#" :class="classes" @click.prevent="logout">Logout</Link>
-        </div>
-    </nav>
+        <nav class="space-y-2 m-4  align-center">
+            <div v-if="auth">
+                <h1>{{ auth . user . username }}</h1>
+            </div>
+            <div v-for="data in routes" :key="data.path">
+                <Link :href="data.path" :class="classes">
+                {{ data . name . toUpperCase() }}
+                </Link>
+            </div>
+            <div v-if="auth">
+                <Link href="#" :class="classes" @click.prevent="logout">Logout</Link>
+            </div>
+        </nav>
+    </div>
 </template>
 
 <script setup>

@@ -4,7 +4,7 @@
         <FormButton name="add new" @click="createForm" class="text-sm mb-2" />
         <table class="w-full">
             <tbody>
-                <tr v-for="data in hatchery" :key="data.id_hatchery" class="w-full border-b border-b-white">
+                <tr v-for="data in hatchery" :key="data.id_hatchery" class="w-full border-b border-b-white text-primary-text-light">
                     <td>{{ data.id_hatchery }}</td>
                     <td class="text-right">
                         <div v-if="data.hatchery_details?.[0]?.infertile === null">
@@ -63,7 +63,7 @@ import Headers from '../../components/Headers.vue';
         router.get(`/user/hatchery/finalInput/${id}`)
     };
     const moveTo = (id) => {
-        router.get(`/user/hatchery/finalInput/${id}`)
+        router.get(`/user/hatchery/move/${id}`)
     };
 
     const buttonClasses =

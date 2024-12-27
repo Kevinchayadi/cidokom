@@ -7,6 +7,8 @@ import { createApp, h } from "vue";
 import { createInertiaApp } from "@inertiajs/vue3";
 import axios from "axios"; // Import Axios
 import store from "./store";
+import Highcharts from 'highcharts';
+import HighchartsVue from 'highcharts-vue';
 // Set CSRF Token for Axios from the meta tag
 axios.defaults.headers.common["X-CSRF-TOKEN"] = document
     .querySelector('meta[name="csrf-token"]')
@@ -31,6 +33,7 @@ createInertiaApp({
       const app = createApp({ render: () => h(App, props) })
           .use(plugin)
           .use(store)
+          .use(HighchartsVue)
           .mount(el);
   },
 });

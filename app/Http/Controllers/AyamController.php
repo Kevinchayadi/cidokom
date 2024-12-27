@@ -41,6 +41,7 @@ class AyamController extends Controller
 
     function adminIndex(){
         $ayam = Ayam::get();
-        return Inertia::render('admin.ayam', ['ayam'=>$ayam]);
+        // dd($ayam);
+        return Inertia::render('admin/chicken', ['ayam'=>$ayam]);
     }
 }

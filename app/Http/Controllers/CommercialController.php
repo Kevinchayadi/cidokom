@@ -16,6 +16,9 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Services\CountService;
+use App\Services\moveService;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 use function Termwind\render;
@@ -23,9 +26,11 @@ use function Termwind\render;
 class CommercialController extends Controller
 {
     protected $countService;
-    public function __construct(CountService $countService)
+    protected $moveService;
+    public function __construct(CountService $countService, moveService $moveService)
     {
         $this->countService = $countService;
+        $this->moveService = $moveService;
     }
     public function userIndex()
     {
@@ -91,6 +96,9 @@ class CommercialController extends Controller
             'depreciation_die' => 'nullable|integer|min:0',
             'depreciation_afkir' => 'nullable|integer|min:0',
             'depreciation_panen' => 'nullable|integer|min:0',
+            'move_to' =>'integer',
+            'total_female_move' =>'integer',
+            'total_male_move' =>'integer',
             'feed' => 'required|integer',
             'feed_name' => 'required',
             'inputBy' => 'required',
@@ -118,98 +126,107 @@ class CommercialController extends Controller
             return response()->json(['error' => 'Population chicken cant be minus quantity!'], 400);
         }
         $costchicken = $this->countService->costChicken($commercial->unit_cost ?? 0, $input['last_population']);
-        $new_cost = 0;
+        $new_cost = 0.0;
         try {
+            DB::beginTransaction();
             //code...
             if ($request->move_to != 0) {
                 // $input['last_population'] =  $input['last_population'] - $input['total_male_move'] - $input['total_female_move'];
-                $data = Pen::with('kandang')
-                    ->where('id', $request->move_to)
-                    ->firstorfail();
-                $cost = $commercial->unit_cost / $input['last_population'];
-                $new_cost = $cost * ($request->total_male_move + $request->total_female_move);
-                if ($data->kandang->jenis_kandang == 'afkir') {
-                    // dd('test');
-                    $afkir = Afkir::where('id_pen', $request->move_to)->firstOrFail();
-                    if ($afkir) {
-                        $male = $afkir->male + $request->total_male_move;
-                        $female = $afkir->female + $request->total_female_move;
-                        // $cost = $commercial->unit_cost / $input['last_population'] ;
-                        $male_cost = $afkir->male_cost + $cost * $request->total_male_move;
-                        $female_cost = $afkir->female_cost + $cost * $request->total_female_move;
-                        Afkir::create([
-                            'id_pen' => $request->move_to,
-                            'male' => $male,
-                            'female' => $female,
-                            'male_cost' => $male_cost,
-                            'female_cost' => $female_cost,
-                            'female_come' => $request->total_female_move,
-                            'male_come' => $request->total_male_move,
-                        ]);
-                    } else {
-                        Afkir::create([
-                            'id_pen' => $request->move_to,
-                            'male' => $request->total_male_move,
-                            'female' => $request->total_female_move,
-                            'male_cost' => $cost * $request->total_male_move,
-                            'female_cost' => $cost * $request->total_female_move,
-                            'female_come' => $request->total_female_move,
-                            'male_come' => $request->total_male_move,
-                        ]);
-                    }
-                    Table_move::create([
-                        'current_pen' => $commercial->id_pen,
-                        'destination_pen' => $request->move_to,
-                        'totalMale' => $request->total_male_move,
-                        'totalFemale' => $request->total_female_move,
-                        'maleCost' => $cost * $request->total_male_move,
-                        'femaleCost' => $cost * $request->total_female_move,
-                        'status' => 'inactive',
-                    ]);
-                }
-                if ($data->kandang->jenis_kandang == 'breeding') {
-                    $breeding = Breeding::with([
-                        'breedingDetail' => function ($query) {
-                            $query->whereDate('created_at', Carbon::today());
-                        },
-                    ])
-                        ->where('id_pen', $request->move_to)
-                        ->first();
+                // $data = Pen::with('kandang')
+                //     ->where('id', $request->move_to)
+                //     ->firstorfail();
+                // $cost = $commercial->unit_cost / $input['last_population'];
+                // $new_cost = $cost * ($request->total_male_move + $request->total_female_move);
+                // if ($data->kandang->jenis_kandang == 'afkir') {
+                //     // dd('test');
+                //     $afkir = Afkir::where('id_pen', $request->move_to)->firstOrFail();
+                //     if ($afkir) {
+                //         $male = $afkir->male + $request->total_male_move;
+                //         $female = $afkir->female + $request->total_female_move;
+                //         // $cost = $commercial->unit_cost / $input['last_population'] ;
+                //         $male_cost = $afkir->male_cost + $cost * $request->total_male_move;
+                //         $female_cost = $afkir->female_cost + $cost * $request->total_female_move;
+                //         Afkir::create([
+                //             'id_pen' => $request->move_to,
+                //             'male' => $male,
+                //             'female' => $female,
+                //             'male_cost' => $male_cost,
+                //             'female_cost' => $female_cost,
+                //             'female_come' => $request->total_female_move,
+                //             'male_come' => $request->total_male_move,
+                //         ]);
+                //     } else {
+                //         Afkir::create([
+                //             'id_pen' => $request->move_to,
+                //             'male' => $request->total_male_move,
+                //             'female' => $request->total_female_move,
+                //             'male_cost' => $cost * $request->total_male_move,
+                //             'female_cost' => $cost * $request->total_female_move,
+                //             'female_come' => $request->total_female_move,
+                //             'male_come' => $request->total_male_move,
+                //         ]);
+                //     }
+                //     Table_move::create([
+                //         'current_pen' => $commercial->id_pen,
+                //         'destination_pen' => $request->move_to,
+                //         'totalMale' => $request->total_male_move,
+                //         'totalFemale' => $request->total_female_move,
+                //         'maleCost' => $cost * $request->total_male_move,
+                //         'femaleCost' => $cost * $request->total_female_move,
+                //         'status' => 'inactive',
+                //     ]);
+                // }
+                // if ($data->kandang->jenis_kandang == 'breeding') {
+                //     $breeding = Breeding::with([
+                //         'breedingDetail' => function ($query) {
+                //             $query->whereDate('created_at', Carbon::today());
+                //         },
+                //     ])
+                //         ->where('id_pen', $request->move_to)
+                //         ->first();
 
-                    if ($breeding) {
-                        $last_male = $breeding->last_male + $request->total_male_move;
-                        $last_female = $breeding->last_female + $request->total_female_move;
-                        $total_female = $breeding->total_female_receive + $request->total_female_move;
-                        $total_male = $breeding->total_male_receive + $request->total_male_move;
-                        $breeding->breeding_detail->update([
-                            'last_male' => $last_male,
-                            'last_female' => $last_female,
-                            'receive_from' => $commercial->id_pen,
-                            'total_female_receive' => $total_female,
-                            'total_male_receive' => $total_male,
-                        ]);
-                        Table_move::create([
-                            'current_pen' => $commercial->id_pen,
-                            'destination_pen' => $request->move_to,
-                            'totalMale' => $request->total_male_move,
-                            'totalFemale' => $request->total_female_move,
-                            'maleCost' => $cost * $request->total_male_move,
-                            'femaleCost' => $cost * $request->total_female_move,
-                            'status' => 'inactive',
-                        ]);
-                    } else {
-                        Table_move::create([
-                            'current_pen' => $commercial->id_pen,
-                            'destination_pen' => $request->move_to,
-                            'totalMale' => $request->total_male_move,
-                            'totalFemale' => $request->total_female_move,
-                            'maleCost' => $cost * $request->total_male_move,
-                            'femaleCost' => $cost * $request->total_female_move,
-                        ]);
-                    }
-                }
-                $input['last_population'] = $input['last_population'] - $input['total_male_move'] - $input['total_female_move'];
-                $input['total_move'] = $request->total_male_move + $request->total_female_move;
+                //     if ($breeding) {
+                //         $last_male = $breeding->last_male + $request->total_male_move;
+                //         $last_female = $breeding->last_female + $request->total_female_move;
+                //         $total_female = $breeding->total_female_receive + $request->total_female_move;
+                //         $total_male = $breeding->total_male_receive + $request->total_male_move;
+                //         $breeding->breeding_detail->update([
+                //             'last_male' => $last_male,
+                //             'last_female' => $last_female,
+                //             'receive_from' => $commercial->id_pen,
+                //             'total_female_receive' => $total_female,
+                //             'total_male_receive' => $total_male,
+                //         ]);
+                //         Table_move::create([
+                //             'current_pen' => $commercial->id_pen,
+                //             'destination_pen' => $request->move_to,
+                //             'totalMale' => $request->total_male_move,
+                //             'totalFemale' => $request->total_female_move,
+                //             'maleCost' => $cost * $request->total_male_move,
+                //             'femaleCost' => $cost * $request->total_female_move,
+                //             'status' => 'inactive',
+                //         ]);
+                //     } else {
+                //         Table_move::create([
+                //             'current_pen' => $commercial->id_pen,
+                //             'destination_pen' => $request->move_to,
+                //             'totalMale' => $request->total_male_move,
+                //             'totalFemale' => $request->total_female_move,
+                //             'maleCost' => $cost * $request->total_male_move,
+                //             'femaleCost' => $cost * $request->total_female_move,
+                //         ]);
+                //     }
+                // }
+                // $input['last_population'] = $input['last_population'] - $input['total_male_move'] - $input['total_female_move'];
+                // $input['total_move'] = $request->total_male_move + $request->total_female_move;
+
+                $unitCostAsFloat = (float) $commercial->unitCost;
+                $datas = $this->moveService->moveTable($input['move_to'], $commercial->id_pen, $unitCostAsFloat, $input['last_population'],0, $input['total_male_move'], $input['total_female_move']);
+                $new_cost = $datas['new_cost'];
+                // dd($datas);
+                $input['last_population'] = $datas['last_male']+$datas['last_female'];
+
+
             }
             $totalMale = Table_move::where('destination_pen', $commercial->id_pen)->sum('totalMale');
             $totalFemale = Table_move::where('destination_pen', $commercial->id_pen)->sum('totalFemale');
@@ -226,22 +243,28 @@ class CommercialController extends Controller
             // dd( $input['last_population']);
             $currentfeed = $feed->qty - $input['feed'];
             $costTotal = $commercial->total_cost + ($input['feed'] * $feed->harga)  - $new_cost;
-            $costUnit = $commercial->unit_cost - $costchicken * ($input['depreciation_die'] + $input['depreciation_afkir'] + $input['depreciation_panen']) + $input['feed'] * $feed->harga - $new_cost + $costPopulation;
+            $costUnit = $commercial->unit_cost - ($costchicken * $input['depreciation_panen']) + $input['feed'] * $feed->harga - $new_cost + $costPopulation;
             // dd($request);
             Commercial_detail::create($input);
             $feed->update([
                 'qty' => $currentfeed,
             ]);
+            $status= 'active';
+            if($input['last_population']==0){
+                $status = 'inactive';
+            }
 
             Commercial::where('id_commercial', $input['id_commercial'])->update([
                 'last_population' => $input['last_population'],
                 'total_cost' => $costTotal,
                 'unit_Cost' => $costUnit,
+                'status' => $status,
             ]);
-
+            DB::commit();
             return redirect()->route('user.commercial')->with('success', 'berhasil membuat kandang commercial baru');
         } catch (\Throwable $th) {
             //throw $th;
+            DB::rollBack();
             return response()->json(['error' => 'input commercial failed!'], 400);
         }
     }
@@ -321,5 +344,18 @@ class CommercialController extends Controller
         }
 
         return redirect()->route('user.commercial')->with('success', 'Berhasil mengimpor data commercial.');
+    }
+
+    public function Download($invoiceId)
+    {
+        // Ambil data invoice berdasarkan ID
+        $invoice = Commercial::with('items')->findOrFail($invoiceId);
+
+        // Render PDF dari view dan set kertas dengan orientasi landscape
+        $pdf = Pdf::loadView('invoice', ['invoice' => $invoice])
+                  ->setPaper('A4', 'landscape'); // Mengatur kertas A4 dengan orientasi landscape
+
+        // Output PDF ke browser
+        return $pdf->stream('invoice-'.$invoice->number.'.pdf');
     }
 }

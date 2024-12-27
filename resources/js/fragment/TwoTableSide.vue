@@ -1,5 +1,5 @@
 <template>
-    <div class="flex justify-start sticky top-0 left-0 bg-primary">
+    <div class="flex justify-start sticky top-0 left-0 bg-primary-bg">
         <button :class="[buttonclasses, { 'text-primary-text-light-hover': !selectedId }]" @click="selectItem"
             :disabled="!selectedId">
             Select

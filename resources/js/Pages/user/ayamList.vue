@@ -1,5 +1,5 @@
 <template>
-    <SideBarUser>
+    <SideBarUser dashboard="true">
         <AyamList :ayam="ayam"/>
     </SideBarUser>
 </template>

@@ -6,7 +6,7 @@
     </div>
     <table class="w-full">
       <tbody>
-        <tr v-for="data in commercial" :key="data.id_commercial" class="w-full border-b border-b-white text-primary-text-light ">
+        <tr v-for="data in commercial" :key="data.id_commercial" class="w-full border-b border-b-white text-primary-text-light text-primary-text-light ">
           <td class="p-2 font-bold">{{ data.id_commercial }}</td>
           <td class="text-right">
             <!-- Periksa apakah ada relasi hatcheryDetails dan aksesnya -->

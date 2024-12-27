@@ -25,6 +25,11 @@ class Commercial extends Model
 
     ];
 
+    public function vaksin()
+    {
+        return $this->belongsToMany(vaksin::class, 'commercial_breeding_vaccine', 'id_commercial', 'vaccine_id');
+    }
+
     public function commercialDetails()
     {
         return $this->hasMany(Commercial_detail::class, 'id_commercial', 'id_commercial');

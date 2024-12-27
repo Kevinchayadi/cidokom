@@ -4,7 +4,7 @@
     <FormButton name="add new" @click="createForm" class="text-sm mb-2"/>
     <table class="w-full">
       <tbody>
-        <tr v-for="data in breedingList" :key="data.id" class="w-full border-b border-b-white">
+        <tr v-for="data in breedingList" :key="data.id" class="w-full border-b text-primary-text-light border-b-white">
           <td>{{ data.name }}</td>
           <td class="text-right">
             <!-- Periksa apakah ada relasi hatcheryDetails dan aksesnya -->

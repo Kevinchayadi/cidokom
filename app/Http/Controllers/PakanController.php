@@ -27,4 +27,10 @@ class PakanController extends Controller
         return redirect()->route('user.pakan')->with('success', 'Berhasil membuat pakan baru!!');
 
     }
+
+    function adminIndex(){
+        $pakan = Pakan::get();
+        return Inertia::render('admin/pakan', ['pakan'=>$pakan]);
+    }
+
 }

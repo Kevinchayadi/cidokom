@@ -47,43 +47,43 @@
                         total
                     </th>
                     <th :class="classesth2">
-                        percantage
+                        percentage
                     </th>
                     <th :class="classesth2">
                         total
                     </th>
                     <th :class="classesth2">
-                        percantage
+                        percentage
                     </th>
                     <th :class="classesth2">
                         total
                     </th>
                     <th :class="classesth2">
-                        percantage
+                        percentage
                     </th>
                     <th :class="classesth2">
                         total
                     </th>
                     <th :class="classesth2">
-                        percantage
+                        percentage
                     </th>
                     <th :class="classesth2">
                         total
                     </th>
                     <th :class="classesth2">
-                        percantage
+                        percentage
                     </th>
                     <th :class="classesth2">
                         total
                     </th>
                     <th :class="classesth2">
-                        percantage
+                        percentage
                     </th>
                     <th :class="classesth2">
                         total
                     </th>
                     <th :class="classesth2">
-                        percantage
+                        percentage
                     </th>
 
                 </tr>

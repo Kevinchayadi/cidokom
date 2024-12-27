@@ -1,5 +1,5 @@
 <template>
-    <SideBarUser>
+    <SideBarUser dashboard="true">
         <KandangList :kandang="kandang"/>
     </SideBarUser>
 </template>
