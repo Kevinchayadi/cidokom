@@ -14,7 +14,8 @@ class Table_move extends Model
         'destination_pen',
         'totalMale',
         'totalFemale',
-        'cost',
+        'maleCost',
+        'femaleCost',
         'status',
     ];
 }

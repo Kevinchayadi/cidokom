@@ -18,6 +18,10 @@ return new class extends Migration
             $table->integer('female')->nullable();
             $table->decimal('male_cost', 15, 2)->nullable();
             $table->decimal('female_cost', 15, 2)->nullable();
+            $table->integer('male_die')->nullable();
+            $table->integer('female_die')->nullable();
+            $table->integer('male_sale')->nullable();
+            $table->integer('female_sale')->nullable();
             $table->integer('feed_male')->nullable();
             $table->integer('feed_female')->nullable();
             $table->integer('male_come')->nullable();

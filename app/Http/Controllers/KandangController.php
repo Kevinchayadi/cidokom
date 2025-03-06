@@ -8,22 +8,25 @@ use Inertia\Inertia;
 
 class KandangController extends Controller
 {
-    function userIndex(){
+    function userIndex()
+    {
         $kandang = Kandang::with('pen')->get()->toArray();
-        return Inertia::render('user/kandangList',['kandang'=>$kandang]);
+        return Inertia::render('user/kandangList', ['kandang' => $kandang]);
     }
-    
-    function createKandang(){
+
+    function createKandang()
+    {
         return Inertia::render('user/FormCreateKandang');
     }
-    
-    function storeKandang(Request $request){
+
+    function storeKandang(Request $request)
+    {
         // dd($request);
-        $kandang = $request->validate([ 
-                        'nama_kandang' => 'required|string|max:255', 
-                        'lokasi_kandang' => 'required|string|max:255', 
-                        'jenis_kandang' => 'required|string',
-                    ]);
+        $kandang = $request->validate([
+            'nama_kandang' => 'required|string|max:255',
+            'lokasi_kandang' => 'required|string|max:255',
+            'jenis_kandang' => 'required|string',
+        ]);
         $kandang['nama_kandang'] = strtoupper($kandang['nama_kandang']);
         $kandang['lokasi_kandang'] = strtoupper($kandang['lokasi_kandang']);
         Kandang::create($kandang);
@@ -31,9 +34,9 @@ class KandangController extends Controller
         return redirect()->route('user.kandangList')->with('success', 'Berhasil membuat jenis ayam baru!!');
     }
 
-    function adminIndex(){
+    function adminIndex()
+    {
         $kandang = Kandang::get();
-        return Inertia::render('admin/kandang', ['kandang'=>$kandang]);
+        return Inertia::render('admin/kandang', ['kandang' => $kandang]);
     }
-
 }

@@ -12,8 +12,8 @@ return new class extends Migration {
     {
         Schema::create('commercial_breeding_vaccine', function (Blueprint $table) {
             $table->id();
-            $table->string('id_commercial');
-            $table->string('id_breeding');
+            $table->string('id_commercial')->nullable();
+            $table->string('id_breeding')->nullable();
             $table->unsignedBigInteger('vaccine_id'); // Assuming 'vaccine_id' is also a string, adjust if necessary
 
             // Define foreign key constraints for string columns

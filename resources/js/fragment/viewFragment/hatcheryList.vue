@@ -1,7 +1,7 @@
 <template>
     <div class="w-full d-flex">
         <Headers tittle="Hatchery List" />
-        <FormButton name="add new" @click="createForm" class="text-sm mb-2" />
+        <FormButton name="Create New Hatchery" @click="createForm" class="text-sm mb-2" />
         <table class="w-full">
             <tbody>
                 <tr v-for="data in hatchery" :key="data.id_hatchery" class="w-full border-b border-b-white text-primary-text-light">

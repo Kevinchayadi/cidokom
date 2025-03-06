@@ -8,12 +8,12 @@
                 content="die"
                 type="number"
             />
-            <InputFragment
+            <!-- <InputFragment
                 v-model="depreciation_afkir"
                 name="depreciation_afkir"
-                content="afkir"
+                content="reject"
                 type="number"
-            />
+            /> -->
             <InputFragment
                 v-model="depreciation_panen"
                 name="depreciation_panen"
@@ -43,7 +43,7 @@
                 v-model="feed"
                 name="feed"
                 content="feed (in kilograms)"
-                type="number"
+                type="decimal"
             />
             <InputFragment
                 v-model="feed_name"
@@ -90,7 +90,7 @@ const store = useStore();
 
 const FeedList = computed(() =>
     props.feed.map(item => ({
-        id: item.id,
+        id: item.nama_pakan,
         name: item.nama_pakan
     }))
 );

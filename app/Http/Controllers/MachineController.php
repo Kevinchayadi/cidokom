@@ -8,23 +8,26 @@ use Inertia\Inertia;
 
 class MachineController extends Controller
 {
-    function userIndex(){
+    function userIndex()
+    {
+        // dd('test');
         $machine = Machine::get();
-        return Inertia::render('user/MachineList', compact('machine'));
+        return Inertia::render('user/machineList', compact('machine'));
     }
-    
-    function createMachine(){
+
+    function createMachine()
+    {
         return Inertia::render('user/FormCreateMachine');
     }
-    
-    function storemachinen(Request $request){
-        dd($request);
+
+    function storeMachine(Request $request)
+    {
+        // dd($request);
         $machine = $request->validate([
-            'machine_name' => ['require'],
-
+            'machine_name' => 'required',
+            'kapasitas' => 'required|integer',
         ]);
-        Machine::create($machine);;
+        Machine::create($machine);
         return redirect()->route('user.machine')->with('success', 'Berhasil membuat pakan baru!!');
-
     }
 }

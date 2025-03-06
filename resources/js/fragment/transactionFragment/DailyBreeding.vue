@@ -11,7 +11,7 @@
             <InputFragment
                 v-model="femaleReject"
                 name="femaleReject"
-                content="female reject"
+                content="female sale"
                 type="number"
             />
             <InputFragment
@@ -23,7 +23,7 @@
             <InputFragment
                 v-model="maleReject"
                 name="maleReject"
-                content="male reject"
+                content="male sale"
                 type="number"
             />
             <InputFragment
@@ -79,7 +79,7 @@
                 v-model="feed"
                 name="feed"
                 content="total feed(in Kilograms)"
-                type="number"
+                type="decimal"
             />
             <InputFragment
                 v-model="feedName"
@@ -155,38 +155,48 @@ const total_egg = computed(() => {
 });
 // Handle form submission
 const handleSubmit = () => {
-    router.post("/user/breeding/input", {
-        id_breeding: props.id_breeding,
-        female_die: femaleDie.value,
-        female_reject: femaleReject.value,
-        male_die: maleDie.value,
-        male_reject: maleReject.value,
-        egg_morning: eggMorning.value,
-        egg_afternoon: eggAfternoon.value,
-        broken: broken.value,
-        abnormal: abnormal.value,
-        sale: sale.value,
-        total_egg: total_egg.value,
-        move_to: move.value,
-        total_female_move: femaleMove.value,
-        total_male_move: maleMove.value,
-        feed: feed.value,
-        feed_name: feedName.value,
-        inputBy: store.getters.user.name
- 
-    }).then(response => {
-        // Jika berhasil, Anda bisa menangani respons sukses di sini
-        console.log("Data berhasil dikirim:", response);
-        alert("Data berhasil dikirim!");
-    })
-    .catch(error => {
-        // Jika ada error, tampilkan alert
-        if (error.response && error.response.data.error) {
-            alert(error.response.data.error); // Menampilkan error yang diterima dari server
-        } else {
-            alert("Terjadi kesalahan saat mengirim data. Silakan coba lagi."); // Menangani error umum
-        }
-    });
+    if(total_egg.value<0){
+        alert("Total broken, abnormal and sale egg is bigger than current total!!");
+        return;
+    }else{
+
+        router.post("/user/breeding/input", {
+            id_breeding: props.id_breeding,
+            female_die: femaleDie.value,
+            female_reject: femaleReject.value,
+            male_die: maleDie.value,
+            male_reject: maleReject.value,
+            egg_morning: eggMorning.value,
+            egg_afternoon: eggAfternoon.value,
+            broken: broken.value,
+            abnormal: abnormal.value,
+            sale: sale.value,
+            total_egg: total_egg.value,
+            move_to: move.value,
+            total_female_move: femaleMove.value,
+            total_male_move: maleMove.value,
+            feed: feed.value,
+            feed_name: feedName.value,
+            inputBy: store.getters.user.name
+     
+        }, {
+            onError: (errors) => {
+                let errorMessage = "";
+                if (errors.error) {
+                    alert(errors.error);
+                }
+                Object.values(errors).forEach((errorArray) => {
+                    if (Array.isArray(errorArray)) {
+                        errorMessage += errorArray.join("\n") + "\n"; // Gabungkan jika array
+                    } else {
+                        errorMessage += String(errorArray) +
+                        "\n"; // Konversi ke string jika bukan array
+                    }
+                });
+                alert(errorMessage);
+            }
+        });
+    }
 };
 </script>
 

@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('id_pen');
             $table->integer('qty');
+            $table->decimal('price',15,2)->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }

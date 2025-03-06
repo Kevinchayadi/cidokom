@@ -8,8 +8,8 @@
 
 <script setup>
 import Sidebarnew from '../../layout/sidebarnew.vue';
-import Dashboard from '../../fragment/Admin/dashboard.vue';
-import Pen from '../../fragment/Admin/Pen.vue';
+
+import Pen from '../../fragment/Admin/Operational/Pen.vue';
 
 const props = defineProps({
     pen:{

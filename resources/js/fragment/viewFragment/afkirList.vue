@@ -8,8 +8,8 @@
             <td>{{ data.name }}</td>
             <td class="text-right">
               <!-- Periksa apakah ada relasi hatcheryDetails dan aksesnya -->
-              <div v-if="check(data.afkirDetails)">
-                <button :class="buttonClasses" @click="input(data.id)">Daily Input</button>
+              <div v-if="data.isTrue">
+                <button  :class="buttonClasses" @click="input(data.id)">Daily Input</button>
               </div>
             </td>
           </tr>
@@ -30,13 +30,18 @@
       afkir: {
         type: Array,
         required: true
+      },
+      pakan:{
+        type: Array,
+        required: true
       }
     });
   
     const afkirList = computed(() =>
     props.afkir.map(item => ({
       id: item.id,
-      name: item.code_pen
+      name: item.code_pen,
+      isTrue: item.isTrue,
     }))
   );
   
@@ -44,21 +49,21 @@
       router.get('/user/afkir/create')
     }
   
-    const check = (afkirDetails) => {
-    if (!afkirDetails || afkirDetails.length === 0) return true; // Jika tidak ada data, tampilkan tombol
+  //   const check = (afkirDetails) => {
+  //   if (!afkirDetails || afkirDetails.length === 0) return true; // Jika tidak ada data, tampilkan tombol
   
-    const today = new Date(); // Mendapatkan tanggal hari ini
+  //   const today = new Date(); // Mendapatkan tanggal hari ini
   
-    // Mengecek apakah ada detail dengan createAt sama dengan hari ini
-    return !afkirDetails.some(detail => {
-      const createdDate = new Date(detail.createAt); 
-      return (
-        today.getFullYear() === createdDate.getFullYear() && // Tahun sama
-        today.getMonth() === createdDate.getMonth() && // Bulan sama
-        today.getDate() === createdDate.getDate() // Hari sama
-      );
-    });
-  };
+  //   // Mengecek apakah ada detail dengan createAt sama dengan hari ini
+  //   return !afkirDetails.some(detail => {
+  //     const createdDate = new Date(detail.createAt); 
+  //     return (
+  //       today.getFullYear() === createdDate.getFullYear() && // Tahun sama
+  //       today.getMonth() === createdDate.getMonth() && // Bulan sama
+  //       today.getDate() === createdDate.getDate() // Hari sama
+  //     );
+  //   });
+  // };
   
     
     const input = (id) => {

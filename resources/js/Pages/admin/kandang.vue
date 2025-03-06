@@ -8,8 +8,8 @@
 
 <script setup>
 import Sidebarnew from '../../layout/sidebarnew.vue';
-import Dashboard from '../../fragment/Admin/dashboard.vue';
-import Kandang from '../../fragment/Admin/kandang.vue';
+
+import Kandang from '../../fragment/Admin/Operational/kandang.vue';
 const props = defineProps({
     kandang:{
         type: Array,

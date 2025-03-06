@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('vaksins', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('nama');
             $table->string('type')->nullable();
-            $table->text('deskripsi')->nullable();
+            $table->integer('hari')->nullable();
             $table->timestamps();
         });
     }

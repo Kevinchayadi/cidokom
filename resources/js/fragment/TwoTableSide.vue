@@ -51,7 +51,7 @@
     } from 'vue';
     // import Table from '../fragment/Table.vue'
     import OnlyTable from '../fragment/OnlyTable.vue';
-    import BreedingHeaderTable from '../fragment/Admin/breedingHeaderTable.vue';
+    import BreedingHeaderTable from './Admin/Main/breedingHeaderTable.vue';
     import axios from 'axios';
 
     const selectedId = ref(null);

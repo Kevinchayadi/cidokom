@@ -11,13 +11,17 @@ use App\Models\Commercial_detail;
 use App\Models\Kandang;
 use App\Models\Pakan;
 use App\Models\Pen;
+use App\Models\Sale;
 use App\Models\Table_move;
+use App\Models\vaksin;
+use App\Models\vaksinType;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Services\CountService;
 use App\Services\moveService;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -34,13 +38,63 @@ class CommercialController extends Controller
     }
     public function userIndex()
     {
-        $commercial = Commercial::with('commercialDetails')->get();
+        $commercial = Commercial::with('commercialDetails', 'vaksin')->where('status', 'active')->get();
+        $vaksin = vaksin::where('type', 'CMR')->get();
+        // dd($commercial[2]->vaksin);
+
+        foreach ($commercial as $item) {
+            // Hitung umur berdasarkan created_at dan update nilai age
+            $item->age = floor(
+                $item->age +
+                    Carbon::parse($item->created_at)
+                        ->startOfDay()
+                        ->diffInDays(Carbon::now()->startOfDay()),
+            );
+            $item->isInputed = false;
+            $item->isTrue = false;
+            $item->isTime = false;
+
+            if ($item->age >= 70) {
+                $item->isTime = true;
+            }
+
+            foreach ($item->commercialDetails as $detail) {
+                $createdDate = Carbon::parse($detail->created_at)
+                    // ->startOfDay()
+                    ->toDateString();
+                $today = Carbon::now('Asia/Jakarta')->toDateString();
+                // dd($createdDate == $today);
+                if ($createdDate === $today) {
+                    // Jika ada detail pada hari ini, set isInputed menjadi true
+                    $item->isInputed = true;
+                    break; // keluar dari loop karena sudah ditemukan detail hari ini
+                }
+            }
+            // Periksa apakah item sudah memenuhi kriteria vaksin
+            foreach ($vaksin as $data) {
+                if ($item->age >= $data->hari) {
+                    // Jika vaksin dengan 'hari' yang tepat ditemukan, cek apakah vaksin sudah ada
+                    $item->isTrue = in_array($data->id, $item->vaksin->pluck('id')->toArray());
+                    // dd($item->isTrue);
+                    // Jika vaksin sudah ada, set isTrue ke false dan keluar dari loop
+                    if ($item->isTrue === false) {
+                        break;
+                    }
+                }
+            }
+        }
+
         return Inertia::render('user/commercial', compact('commercial'));
     }
 
     public function adminIndex()
     {
-        $commercial = Commercial::with('commercialDetails', 'pen')->get();
+        $commercial = Commercial::with([
+            'commercialDetails' => function ($query) {
+                $query->orderBy('created_at', 'desc');
+            },
+            'pen',
+        ])->get();
         return Inertia::render('admin/commercial', compact('commercial'));
     }
 
@@ -57,7 +111,6 @@ class CommercialController extends Controller
     }
     public function storeCommercial(Request $request)
     {
-        // dd($request);
         $input = $request->validate([
             'id_pen' => 'required|integer|exists:pens,id',
             'entryDate' => 'required|date',
@@ -81,11 +134,14 @@ class CommercialController extends Controller
     {
         $feed = Pakan::get()->toArray();
         $pen = Pen::with('kandang')
-            ->where('status', 'active')
+            ->where('status', 'inactive')
             ->whereHas('kandang', function ($query) {
-                $query->whereNotIn('jenis_kandang', ['breeding', 'commerce']);
+                $query->where('jenis_kandang', 'breeding')->orWhere(function ($subQuery) {
+                    $subQuery->where('jenis_kandang', 'afkir')->where('code_pen', 'like', '%CMR');
+                });
             })
             ->get();
+
         return Inertia::render('user/FormDailyCommercial', ['id_commercial' => $id, 'feed' => $feed, 'pen' => $pen]);
     }
 
@@ -96,161 +152,93 @@ class CommercialController extends Controller
             'depreciation_die' => 'nullable|integer|min:0',
             'depreciation_afkir' => 'nullable|integer|min:0',
             'depreciation_panen' => 'nullable|integer|min:0',
-            'move_to' =>'integer',
-            'total_female_move' =>'integer',
-            'total_male_move' =>'integer',
-            'feed' => 'required|integer',
+            'move_to' => 'integer',
+            'total_female_move' => 'integer',
+            'total_male_move' => 'integer',
+            'feed' => 'required|numeric',
             'feed_name' => 'required',
             'inputBy' => 'required',
         ]);
-        // dd($request);
 
         $commercial = Commercial::where('id_commercial', $input['id_commercial'])->firstOrFail();
         if (!$commercial) {
-            return response()->json(['error' => 'Data Commercial tidak ditemukan'], 404);
+            return back()->withErrors('Data Commercial tidak ditemukan');
         }
         $input['begining_population'] = $commercial->entry_population;
         $input['date'] = $commercial->date;
 
-        $previousDetail = Commercial_detail::where('id_commercial', $input['id_commercial'])
-            ->latest('created_at')
-            ->first();
+        $previousDetail = Commercial_detail::where('id_commercial', $input['id_commercial'])->latest('created_at')->first();
+
         if (!$previousDetail) {
             $input['last_population'] = $input['begining_population'] - $input['depreciation_die'] - $input['depreciation_afkir'] - $input['depreciation_panen'];
-            $input['last_population'];
+
+            $costchicken = $this->countService->costChicken($commercial->unit_Cost ?? 0, $input['begining_population']);
         } else {
             $input['last_population'] = $previousDetail->last_population - $input['depreciation_die'] - $input['depreciation_afkir'] - $input['depreciation_panen'];
-            $input['last_population'];
+            $costchicken = $this->countService->costChicken($commercial->unit_Cost ?? 0, $previousDetail->last_population);
         }
         if ($input['last_population'] < 0) {
-            return response()->json(['error' => 'Population chicken cant be minus quantity!'], 400);
+            return back()->withErrors('Population chicken cant be minus quantity!');
         }
-        $costchicken = $this->countService->costChicken($commercial->unit_cost ?? 0, $input['last_population']);
+
+        // dd($costchicken);;
         $new_cost = 0.0;
         try {
             DB::beginTransaction();
-            //code...
+            //move transaction
+            //---------------------------------------------------------------------------------------------------------------------------------------------
             if ($request->move_to != 0) {
-                // $input['last_population'] =  $input['last_population'] - $input['total_male_move'] - $input['total_female_move'];
-                // $data = Pen::with('kandang')
-                //     ->where('id', $request->move_to)
-                //     ->firstorfail();
-                // $cost = $commercial->unit_cost / $input['last_population'];
-                // $new_cost = $cost * ($request->total_male_move + $request->total_female_move);
-                // if ($data->kandang->jenis_kandang == 'afkir') {
-                //     // dd('test');
-                //     $afkir = Afkir::where('id_pen', $request->move_to)->firstOrFail();
-                //     if ($afkir) {
-                //         $male = $afkir->male + $request->total_male_move;
-                //         $female = $afkir->female + $request->total_female_move;
-                //         // $cost = $commercial->unit_cost / $input['last_population'] ;
-                //         $male_cost = $afkir->male_cost + $cost * $request->total_male_move;
-                //         $female_cost = $afkir->female_cost + $cost * $request->total_female_move;
-                //         Afkir::create([
-                //             'id_pen' => $request->move_to,
-                //             'male' => $male,
-                //             'female' => $female,
-                //             'male_cost' => $male_cost,
-                //             'female_cost' => $female_cost,
-                //             'female_come' => $request->total_female_move,
-                //             'male_come' => $request->total_male_move,
-                //         ]);
-                //     } else {
-                //         Afkir::create([
-                //             'id_pen' => $request->move_to,
-                //             'male' => $request->total_male_move,
-                //             'female' => $request->total_female_move,
-                //             'male_cost' => $cost * $request->total_male_move,
-                //             'female_cost' => $cost * $request->total_female_move,
-                //             'female_come' => $request->total_female_move,
-                //             'male_come' => $request->total_male_move,
-                //         ]);
-                //     }
-                //     Table_move::create([
-                //         'current_pen' => $commercial->id_pen,
-                //         'destination_pen' => $request->move_to,
-                //         'totalMale' => $request->total_male_move,
-                //         'totalFemale' => $request->total_female_move,
-                //         'maleCost' => $cost * $request->total_male_move,
-                //         'femaleCost' => $cost * $request->total_female_move,
-                //         'status' => 'inactive',
-                //     ]);
-                // }
-                // if ($data->kandang->jenis_kandang == 'breeding') {
-                //     $breeding = Breeding::with([
-                //         'breedingDetail' => function ($query) {
-                //             $query->whereDate('created_at', Carbon::today());
-                //         },
-                //     ])
-                //         ->where('id_pen', $request->move_to)
-                //         ->first();
-
-                //     if ($breeding) {
-                //         $last_male = $breeding->last_male + $request->total_male_move;
-                //         $last_female = $breeding->last_female + $request->total_female_move;
-                //         $total_female = $breeding->total_female_receive + $request->total_female_move;
-                //         $total_male = $breeding->total_male_receive + $request->total_male_move;
-                //         $breeding->breeding_detail->update([
-                //             'last_male' => $last_male,
-                //             'last_female' => $last_female,
-                //             'receive_from' => $commercial->id_pen,
-                //             'total_female_receive' => $total_female,
-                //             'total_male_receive' => $total_male,
-                //         ]);
-                //         Table_move::create([
-                //             'current_pen' => $commercial->id_pen,
-                //             'destination_pen' => $request->move_to,
-                //             'totalMale' => $request->total_male_move,
-                //             'totalFemale' => $request->total_female_move,
-                //             'maleCost' => $cost * $request->total_male_move,
-                //             'femaleCost' => $cost * $request->total_female_move,
-                //             'status' => 'inactive',
-                //         ]);
-                //     } else {
-                //         Table_move::create([
-                //             'current_pen' => $commercial->id_pen,
-                //             'destination_pen' => $request->move_to,
-                //             'totalMale' => $request->total_male_move,
-                //             'totalFemale' => $request->total_female_move,
-                //             'maleCost' => $cost * $request->total_male_move,
-                //             'femaleCost' => $cost * $request->total_female_move,
-                //         ]);
-                //     }
-                // }
-                // $input['last_population'] = $input['last_population'] - $input['total_male_move'] - $input['total_female_move'];
-                // $input['total_move'] = $request->total_male_move + $request->total_female_move;
-
-                $unitCostAsFloat = (float) $commercial->unitCost;
-                $datas = $this->moveService->moveTable($input['move_to'], $commercial->id_pen, $unitCostAsFloat, $input['last_population'],0, $input['total_male_move'], $input['total_female_move']);
+                $unitCostAsFloat = (float) $commercial->unit_Cost;
+                $datas = $this->moveService->moveTable($input['move_to'], $commercial->id_pen, $unitCostAsFloat, $input['last_population'], 0, $input['total_male_move'], $input['total_female_move']);
                 $new_cost = $datas['new_cost'];
-                // dd($datas);
-                $input['last_population'] = $datas['last_male']+$datas['last_female'];
-
-
+                // dd( $datas['last_male']);
+                $input['last_population'] = $datas['last_male'] + $datas['last_female'];
             }
-            $totalMale = Table_move::where('destination_pen', $commercial->id_pen)->sum('totalMale');
-            $totalFemale = Table_move::where('destination_pen', $commercial->id_pen)->sum('totalFemale');
-            $totalPopulation = $totalMale + $totalFemale;
-            $costMale = Table_move::where('destination_pen', $commercial->id_pen)->sum('maleCost');
-            $costFemale = Table_move::where('destination_pen', $commercial->id_pen)->sum('femaleCost');
-            $costPopulation = $costMale + $costFemale;
-            
-            if($totalPopulation){
-                $input['last_population'] = $totalPopulation;
+            $input['total_move'] = $input['total_male_move'] + $input['total_female_move'];
+
+            if ($input['depreciation_panen'] != 0) {
+                $qtysale = $input['depreciation_panen'];
+                Sale::create([
+                    'id_pen' => $commercial->id_pen,
+                    'qty' => $qtysale,
+                ]);
             }
-            // dd($request);
-            $feed = Pakan::where('id', $input['feed_name'])->firstorfail();
-            // dd( $input['last_population']);
+            //if table move not null
+            // dd('test');
+            //-----------------------------------------------------------------------------------------------------------------------------------------
+            $totalMale = Table_move::where('destination_pen', $commercial->id_pen)->where('status', 'active')->sum('totalMale');
+            $totalFemale = Table_move::where('destination_pen', $commercial->id_pen)->where('status', 'active')->sum('totalFemale');
+            $totalPopulation = $totalMale ?? (0 + $totalFemale ?? 0);
+            $costMale = Table_move::where('destination_pen', $commercial->id_pen)->where('status', 'active')->sum('maleCost');
+            $costFemale = Table_move::where('destination_pen', $commercial->id_pen)->where('status', 'active')->sum('femaleCost');
+            $costPopulation = $costMale ?? (0 + $costFemale ?? 0);
+            // dd($totalPopulation);
+
+            if ($totalPopulation != 0) {
+                $lastTable = Table_move::where('destination_pen', $commercial->id_pen)->where('status', 'active')->first();
+                $input['recieve_from'] = $lastTable->current_pen;
+                Table_move::where('destination_pen', $commercial->id_pen)
+                    ->where('status', 'active')
+                    ->update(['status' => 'inactive']);
+                $input['last_population'] += $totalPopulation;
+                $input['total_recieve'] = $totalPopulation;
+            }
+
+            //feed
+            //----------------------------------------------------------------------------------------------------------------------------------------
+            $feed = Pakan::where('nama_pakan', $input['feed_name'])->firstorfail();
+
             $currentfeed = $feed->qty - $input['feed'];
-            $costTotal = $commercial->total_cost + ($input['feed'] * $feed->harga)  - $new_cost;
-            $costUnit = $commercial->unit_cost - ($costchicken * $input['depreciation_panen']) + $input['feed'] * $feed->harga - $new_cost + $costPopulation;
-            // dd($request);
+            $costTotal = $commercial->total_cost + $input['feed'] * $feed->harga - $new_cost + $costPopulation;
+            $costUnit = $commercial->unit_Cost - $costchicken * $input['depreciation_panen'] + $input['feed'] * $feed->harga - $new_cost + $costPopulation;
+
+            // dd($input);
             Commercial_detail::create($input);
             $feed->update([
                 'qty' => $currentfeed,
             ]);
-            $status= 'active';
-            if($input['last_population']==0){
+            $status = 'active';
+            if ($input['last_population'] == 0) {
                 $status = 'inactive';
             }
 
@@ -260,35 +248,246 @@ class CommercialController extends Controller
                 'unit_Cost' => $costUnit,
                 'status' => $status,
             ]);
+
             DB::commit();
             return redirect()->route('user.commercial')->with('success', 'berhasil membuat kandang commercial baru');
         } catch (\Throwable $th) {
-            //throw $th;
             DB::rollBack();
-            return response()->json(['error' => 'input commercial failed!'], 400);
+            return back()->withErrors('input commercial failed!');
         }
+    }
+
+    public function moveForm($id)
+    {
+        $pen = Pen::with('kandang')
+            ->where('status', 'inactive')
+            ->whereHas('kandang', function ($query) {
+                $query->where('jenis_kandang', 'breeding')->orWhere(function ($subQuery) {
+                    $subQuery->where('jenis_kandang', 'afkir')->where('code_pen', 'like', '%CMR');
+                });
+            })
+            ->get();
+
+        return Inertia::render('user/FormMoveCommercial', ['id' => $id, 'pen' => $pen]);
+    }
+    public function moveTable(Request $request, $id)
+    {
+        // Validasi input
+        $input = $request->validate([
+            // 'id_commercial' => 'required|exists:commercials,id_commercial', // Pastikan ID valid
+            'move_to' => 'integer|required',
+            'total_female_move' => 'integer|required',
+            'total_male_move' => 'integer|required',
+        ]);
+
+        if ($input['move_to'] == 0) {
+            return back()->withErrors('Select move pen');
+        }
+
+        // Mendapatkan Commercial berdasarkan ID
+        $commercial = Commercial::with([
+            'commercialDetails' => function ($query) {
+                $query->whereDate('created_at', Carbon::today());
+            },
+        ])->findOrFail($id); // pastikan ID valid
+
+        // Mendapatkan data commercialDetails pertama
+        $commercialDetail = $commercial->commercialDetails->first(); // jika lebih dari satu, bisa menggunakan get()
+
+        if (!$commercialDetail) {
+            return back()->withErrors('Commercial details not found for today!');
+        }
+        // dd($commercialDetail);
+
+        // Lakukan perhitungan dan pemindahan
+        $unitCostAsFloat = (float) $commercial->cost_Total_induk;
+        $datas = $this->moveService->moveTable($input['move_to'], $commercial->id_pen, $unitCostAsFloat, $commercialDetail->last_population, 0, $input['total_male_move'], $input['total_female_move']);
+
+        $new_cost = $datas['new_cost'];
+        $input['last_population'] = $datas['last_male'] + $datas['last_female'];
+
+        // Validasi agar jumlah ayam tidak menjadi negatif
+        if ($input['last_population'] < 0) {
+            return back()->withErrors('Male chicken cannot have negative quantity!');
+        }
+
+        // Menghitung total cost dan cost induk
+        $total_cost = $commercial->total_cost - $new_cost;
+        $unit_Cost = $commercial->unit_cost - $new_cost;
+
+        // Mulai transaksi DB
+        DB::beginTransaction();
+
+        try {
+            // Update commercial data
+            $commercial->update([
+                'total_cost' => $total_cost,
+                'unit_Cost' => $unit_Cost,
+                'last_population' => $input['last_population'],
+            ]);
+
+            // Update commercialDetails
+            $commercialDetail->update([
+                'last_population' => $input['last_population'],
+            ]);
+
+            // Commit transaksi jika berhasil
+            DB::commit();
+
+            return redirect()->route('user.commercial')->with('success', 'Successfully moved to new pen!');
+        } catch (\Exception $e) {
+            // Rollback transaksi jika terjadi error
+            DB::rollback();
+            return back()->withErrors('Failed to move to new pen. Error: ' . $e->getMessage());
+        }
+    }
+
+    public function SaleALL($id)
+    {
+        // Mendapatkan Breeding berdasarkan ID
+        $commercial = Commercial::with([
+            'commercialDetails' => function ($query) {
+                $query->latest('created_at')->first();
+            },
+        ])->findOrFail($id);
+        // Mendapatkan data commercialDetails pertama
+        $commercialDetail = $commercial->commercialDetails->first(); // atau bisa menggunakan firstOrFail()
+        // dd($commercialDetail);
+
+        // Lakukan perhitungan dan pemindahan
+
+        // Mulai transaksi DB
+        $last = $commercial->last_population ?? $commercial->entry_population;
+        // dd($commercial);
+
+        try {
+            DB::beginTransaction();
+            // Update commercial data
+            $commercial->update([
+                'last_population' => 0,
+                'status' => 'inactive',
+            ]);
+
+            if ($commercialDetail != null && $commercialDetail->created_at->isToday()) {
+                // Lakukan update jika tanggalnya hari ini
+                $commercialDetail->update([
+                    'last_population' => 0,
+                    'depreciation_panen' => $last,
+                ]);
+            } else {
+                // dd('test');
+                // Lakukan pembuatan commercial detail baru jika tanggalnya bukan hari ini
+                Commercial_detail::create([
+                    'id_commercial' => $id, // Asumsikan ini datang dari input yang divalidasi
+                    'date' => Carbon::now(), // Menetapkan tanggal saat ini
+                    'begining_population' => 0,
+                    'last_population' => $last,
+                    'depreciation_die' => 0,
+                    'depreciation_afkir' => 0,
+                    'depreciation_panen' => 0,
+                    'move_to' => 0,
+                    'total_move' => 0,
+                    'recieve_from' => 0,
+                    'total_recieve' => 0,
+                    'feed' => 0,
+                    'feed_name' => '0', // Asumsi kolom feed_name adalah string
+                    'inputBy' => Auth::user()->name, // Mengisi dengan nama pengguna yang sedang login
+                ]);
+            }
+            Sale::create([
+                'id_pen' => $commercial->id_pen,
+                'qty' => $last,
+            ]);
+
+            // Commit transaksi jika berhasil
+            DB::commit();
+
+            return redirect()->route('user.commercial')->with('success', 'Successfully moved to new pen!');
+        } catch (\Exception $e) {
+            // Rollback transaksi jika terjadi error
+            DB::rollback();
+            dd('tst');
+            return back()->withErrors('Failed to move to new pen, try again.');
+        }
+    }
+
+    public function addVaccine($id)
+    {
+        $commercial = Commercial::with('commercialDetails', 'vaksin')->where('id_commercial', $id)->first();
+        $vaksin = vaksin::where('type', 'CMR')->get();
+        $vaksinList = [];
+
+        $commercial->age = floor(
+            $commercial->age +
+                Carbon::parse($commercial->created_at)
+                    ->startOfDay()
+                    ->diffInDays(Carbon::now()->startOfDay()),
+        );
+        // dd( $commercial->age);
+        foreach ($vaksin as $data) {
+            if ($commercial->age >= $data->hari) {
+                // Jika vaksin dengan 'hari' yang tepat dcommercialukan, cek apakah vaksin sudah ada
+                $commercial->isTrue = in_array($data->id, $commercial->vaksin->pluck('id')->toArray());
+                // dd($commercial->isTrue);
+                // Jika vaksin sudah ada, set isTrue ke false dan keluar dari loop
+                if ($commercial->isTrue === false) {
+                    $vaksinList[] = $data;
+                }
+            }
+        }
+
+        // dd($vaksinList);
+        return Inertia::render('user/FormAddCommercialVaksin', ['id' => $id, 'vaksin' => $vaksinList, 'pen' => 'commercial']);
+    }
+    public function storevaccine($id, Request $request)
+    {
+        $input = $request->validate([
+            'id_vaksin' => 'required|integer',
+            'qty' => 'required|numeric',
+        ]);
+        $commercial = Commercial::with('commercialDetails', 'vaksin')->where('id_commercial', $id)->first();
+        $vaksin = vaksin::find($input['id_vaksin']);
+        $vaksintype = vaksinType::where('nama_vaksin', $vaksin->nama)->first();
+
+        if (!$vaksintype) {
+            return back()->withErrors('Vaksin not found!, please call Jakarta Admin to add the vaksin!!');
+        }
+
+        $qty = $vaksintype->qty - $input['qty'];
+
+        if ($qty < 0) {
+            return back()->withErrors('Vaksin QTY is not enough, please tell Jakarta Admin!!');
+        }
+        // dd($vaksintype);
+        // dd($vaksintype);
+        try {
+            $vaksintype->update([
+                'qty' => $qty,
+            ]);
+            $commercial->vaksin()->attach($request->id_vaksin);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return back()->withErrors('failed input!');
+        }
+
+        return redirect()->route('user.commercial')->with('success', 'berhasil membuat kandang Breeding baru');
     }
 
     public function dailyStoreBulk(Request $request)
     {
-        // Validasi file Excel
         $request->validate([
             'file' => 'required|file|mimes:xlsx,xls,csv',
         ]);
 
-        // Ambil data dari Excel
         $data = \Maatwebsite\Excel\Facades\Excel::toArray([], $request->file('file'));
 
-        // Ambil sheet pertama (Anda dapat menyesuaikan jika ada beberapa sheet)
         $rows = $data[0];
 
-        // Abaikan baris header, mulai dari baris kedua
         $rows = array_slice($rows, 1);
 
-        // Iterasi setiap baris dan jalankan logika `dailyStore`
         foreach ($rows as $row) {
             $input = [
-                'id_commercial' => $row[0], // Sesuaikan kolom Excel
+                'id_commercial' => $row[0],
                 'depreciation_die' => $row[1],
                 'depreciation_afkir' => $row[2],
                 'depreciation_panen' => $row[3],
@@ -297,7 +496,6 @@ class CommercialController extends Controller
                 'inputBy' => $row[6],
             ];
 
-            // Validasi data per baris
             $validated = Validator::make($input, [
                 'id_commercial' => 'required|exists:commercials,id_commercial',
                 'depreciation_die' => 'nullable|integer|min:0',
@@ -308,15 +506,12 @@ class CommercialController extends Controller
                 'inputBy' => 'required',
             ])->validate();
 
-            // Proses logika yang ada di `dailyStore`
             $commercial = Commercial::where('id_commercial', $validated['id_commercial'])->firstOrFail();
 
             $validated['begining_population'] = $commercial->entry_population;
             $validated['date'] = $commercial->date;
 
-            $previousDetail = Commercial_detail::where('id_commercial', $validated['id_commercial'])
-                ->latest('created_at')
-                ->first();
+            $previousDetail = Commercial_detail::where('id_commercial', $validated['id_commercial'])->latest('created_at')->first();
 
             if (!$previousDetail) {
                 $validated['last_population'] = $validated['begining_population'] - $validated['depreciation_afkir'] - $validated['depreciation_panen'];
@@ -330,12 +525,11 @@ class CommercialController extends Controller
             $feed = Pakan::where('id', $validated['feed_name'])->firstOrFail();
             $costchicken = $this->countService->costChicken($commercial->unit_cost, $previousDetail->last_population ?? $validated['begining_population']);
             $costTotal = $commercial->total_cost + $validated['feed'] * $feed->harga;
+
             $costUnit = $commercial->unit_cost - $costchicken * ($validated['depreciation_die'] + $validated['depreciation_afkir'] + $validated['depreciation_panen']) + $validated['feed'] * $feed->harga;
 
-            // Simpan detail komersial
             Commercial_detail::create($validated);
 
-            // Update data komersial
             Commercial::where('id_commercial', $validated['id_commercial'])->update([
                 'last_population' => $validated['last_population'],
                 'total_cost' => $costTotal,
@@ -348,14 +542,10 @@ class CommercialController extends Controller
 
     public function Download($invoiceId)
     {
-        // Ambil data invoice berdasarkan ID
         $invoice = Commercial::with('items')->findOrFail($invoiceId);
 
-        // Render PDF dari view dan set kertas dengan orientasi landscape
-        $pdf = Pdf::loadView('invoice', ['invoice' => $invoice])
-                  ->setPaper('A4', 'landscape'); // Mengatur kertas A4 dengan orientasi landscape
+        $pdf = Pdf::loadView('invoice', ['invoice' => $invoice])->setPaper('A4', 'landscape');
 
-        // Output PDF ke browser
-        return $pdf->stream('invoice-'.$invoice->number.'.pdf');
+        return $pdf->stream('invoice-' . $invoice->number . '.pdf');
     }
 }

@@ -1,28 +1,32 @@
 // resources/js/store/index.js
 
-import { createStore } from 'vuex';
+import { createStore } from "vuex";
+import Sidebar from './module/Sidebar';
 
 export default createStore({
-  state: {
-    user: null,
-  },
-  mutations: {
-    SET_USER(state, user) {
-        // console.log('Memanggil mutation SET_USER dengan:', user);
-      state.user = user;
-    //   console.log('Memanggil mutation state.user', state.user);
+    state: {
+        user: null,
     },
-  },
-  actions: {
-    setUser({ commit }, user) {
-        // console.log('Memanggil mutation SET_USER dengan:', user);
-      commit('SET_USER', user);
+    mutations: {
+        SET_USER(state, user) {
+            // console.log('Memanggil mutation SET_USER dengan:', user);
+            state.user = user;
+            // console.log('Memanggil mutation state.user', state.user);
+        },
     },
-  },
-  getters: {
-    user: (state) => {
-      // console.log('Getter user called, returning:', state.user);
-      return state.user;
+    actions: {
+        setUser({ commit }, user) {
+            // console.log('Memanggil mutation SET_USER dengan:', user);
+            commit("SET_USER", user);
+        },
     },
-}
+    getters: {
+        user: (state) => {
+            // console.log('Getter user called, returning:', state.user);
+            return state.user;
+        },
+    },
+    modules: {
+        Sidebar, // Menambahkan modul dropdown ke dalam store
+    },
 });

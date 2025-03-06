@@ -1,16 +1,18 @@
 <template>
   <div class="w-full d-flex">
     <Headers tittle="Breeding List" />
-    <FormButton name="add new" @click="createForm" class="text-sm mb-2"/>
+    <FormButton name="Create New Breeder" @click="createForm" class="text-sm mb-2"/>
     <table class="w-full">
       <tbody>
         <tr v-for="data in breedingList" :key="data.id" class="w-full border-b text-primary-text-light border-b-white">
-          <td>{{ data.name }}</td>
+          <td class="p-3">{{ data.name }}</td>
           <td class="text-right">
             <!-- Periksa apakah ada relasi hatcheryDetails dan aksesnya -->
-            <div v-if="check(data.breedingDetails)">
-              <button :class="buttonClasses" @click="input(data.id)">Daily Input</button>
-            </div>
+            <button v-if="data.isTime" :class="buttonClasses" @click="afkirALL(data.id)">afkir All</button>
+            <button v-if="data.isTrue" :class="buttonClasses" @click="vaccine(data.id)">Add Vaccine</button>
+            <button v-if="data.isInputed" :class="buttonClasses" @click="input(data.id)">Daily Input</button>
+            <!-- <button v-if="data.isInputed" :class="buttonClasses" @click="input(data.id)">Daily Input</button> -->
+            <button v-else :class="buttonClasses" @click="move(data.id)">move</button>
           </td>
         </tr>
       </tbody>
@@ -36,7 +38,9 @@ import Headers from '../../components/Headers.vue';
   const breedingList = computed(() =>
   props.breeding.map(item => ({
     id: item.id_breeding,
-    name: item.id_breeding
+    name: item.id_breeding,
+    isInputed: !item.isInputed, // Jika ada detail yang dibuat hari ini, tampilkan tombol
+    isTrue: !item.isTrue
   }))
 );
 
@@ -62,12 +66,24 @@ import Headers from '../../components/Headers.vue';
 
   
   const input = (id) => {
-    console.log(`Edit button clicked for 3 days condition, hatchery with ID: ${id}`)
+    // console.log(`Edit button clicked for 3 days condition, hatchery with ID: ${id}`)
     router.get(`/user/breeding/input/${id}`);
+  };
+  const afkirALL = (id) => {
+    // console.log(`Edit button clicked for 3 days condition, hatchery with ID: ${id}`)
+    router.get(`/user/breeding/afkir/${id}`);
+  };
+  const move = (id) => {
+    // console.log(`Edit button clicked for 3 days condition, hatchery with ID: ${id}`)
+    // console.log(`Edit button clicked for 3 days condition, hatchery with ID: ${id}`)
+    router.get(`/user/breeding/move/${id}`);
+  };
+  const vaccine = (id) => {
+    router.get(`/user/breeding/vaccine/${id}`);
   };
   
 
-  const buttonClasses = 'border border-black min-w-[120px] p-2 rounded-2xl bg-primary hover:bg-primary-dark text-primary-text-light mb-2';
+  const buttonClasses = 'border border-black min-w-[120px] p-2 mt-1 mx-1 rounded-2xl bg-primary hover:bg-primary-dark text-primary-text-light mb-2';
   </script>
   
   <style>

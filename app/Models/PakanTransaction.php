@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class PakanTransaction extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'id_pakan',
+        'qty',
+        'harga_pembelian'
+    ];
 }

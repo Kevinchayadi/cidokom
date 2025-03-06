@@ -6,7 +6,7 @@
 </template>
 
 <script setup>
-    import CommercialMainTable from '../../fragment/Admin/commercialMainTable.vue';
+    import CommercialMainTable from '../../fragment/Admin/Main/commercialMainTable.vue';
     import Sidebarnew from '../../layout/sidebarnew.vue';
 
     const props = defineProps({

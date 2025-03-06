@@ -7,7 +7,7 @@
 
 <script setup>
 import { onMounted } from 'vue';
-import BreedingMainTable from '../../fragment/Admin/breedingMainTable.vue';
+import BreedingMainTable from '../../fragment/Admin/Main/breedingMainTable.vue';
 import Sidebarnew from '../../layout/sidebarnew.vue';
 const props = defineProps({
     auth: {

@@ -1,6 +1,6 @@
 <template>
     <SideBarUser>
-        <MoveHarchery :pen="pen" :hatchery="hatchery"/>
+        <MoveHarchery :pen="pen" :id="id" :hatchery="hatchery"/>
     </SideBarUser>
 </template>
 
@@ -10,8 +10,11 @@ import SideBarUser from '../../layout/SideBarUser.vue';
 import MoveHarchery from '../../fragment/transactionFragment/moveHarchery.vue';
 
 const props = defineProps({
+    id:{
+        type:String
+    },
     hatchery:{
-        type:Array
+        type:Object
     },
   pen: {
     type: Array,
@@ -19,7 +22,11 @@ const props = defineProps({
   }
 });
 onMounted(() => {
-  console.log(props.pen)
+  if (props.hatchery  ) {
+    console.log();
+  } else {
+    console.log("Hatchery details not available or empty.");
+  }
 });
 </script>
 

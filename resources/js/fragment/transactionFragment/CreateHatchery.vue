@@ -14,7 +14,7 @@
                 name="another pen2"
                 type="dropdown"
                 content="code pen2"
-                :datas="penList"
+                :datas="pen2List"
             />
 
             <InputFragment
@@ -64,6 +64,10 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    pen2: {
+        type: Array,
+        default: () => [],
+    },
     machine: {
         type: Array,
         default: () => [],
@@ -75,7 +79,12 @@ const store = useStore();
 const penList = computed(() =>
   props.pen.map(item => ({
   id: item.indukan,
-  name: `kandang indukan ${item.indukan}`
+  name: `breeding cage ${item.indukan}`
+})));
+const pen2List = computed(() =>
+  props.pen2.map(item => ({
+  id: item.id_pen,
+  name: `breeding cage ${item.id_pen}`
 })));
 
 const machineList = computed(() =>
@@ -97,7 +106,7 @@ watch(pen, async (newPenValue, oldPenValue) => {
             console.log(pen.value)
             const response = await axios.get(`/user/getegg/${pen.value}`);
             currSetting.value = response.data;
-            console.log("Selected data:", totalSetting.value);
+            console.log("Selected data:", currSetting.value);
         } catch (error) {
             console.error("Error fetching data:", error);
         }
@@ -133,6 +142,7 @@ const handleSubmit = () => {
     "/user/hatchery/create",
     {
         id_pen: pen.value,
+        another_pen:pen2.value,
         id_machine: hatcheryMachine.value,
         total_setting: totalSetting.value,
         inputBy : store.getters.user.name

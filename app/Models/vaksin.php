@@ -9,9 +9,9 @@ class vaksin extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'name', 
-        'typr',
-        'deskripsi'
+        'nama', 
+        'type',
+        'hari'
     ];
 
     public function breedings()

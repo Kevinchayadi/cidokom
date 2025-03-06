@@ -43,7 +43,7 @@
     };
 
     const routes = ref([{
-            name: "dashboard",
+            name: "Dashboard",
             path: route("user.dashboard")
         },
         {
@@ -51,7 +51,7 @@
             path: route("user.ayamList")
         },
         {
-            name: "farm",
+            name: "Farm",
             path: route("user.kandangList")
         },
         {
@@ -59,9 +59,14 @@
             path: route("user.penList")
         },
         {
-            name: "pakan",
+            name: "Feed",
             path: route("user.pakan")
         },
+        {
+            name: "Machine",
+            path: route("user.machine")
+        },
+        
         {
             name: "Logout",
             path: route("user.logout")

@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('pakans', function (Blueprint $table) {
             $table->id();
             $table->string('nama_pakan');
-            $table->unsignedBigInteger('qty');
-            $table->unsignedBigInteger('harga');
+            $table->decimal('qty', 15, 3);
+            $table->decimal('harga', 15, 3);
             $table->timestamps();
         });
     }

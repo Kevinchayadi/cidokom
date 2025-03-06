@@ -6,7 +6,7 @@
 </template>
 
 <script setup>
-import HatcheryMainTable from '../../fragment/Admin/hatcheryMainTable.vue';
+import HatcheryMainTable from '../../fragment/Admin/Main/hatcheryMainTable.vue';
 import Sidebarnew from '../../layout/sidebarnew.vue';
 const props = defineProps({
     hatchery:{

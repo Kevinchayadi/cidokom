@@ -9,8 +9,7 @@
             <div :class="sidebarClasses" class="bg-primary shadow-sm">
                 <div class=" mb-2 mt-1 mx-2 md:h-screen">
                     <div class="flex justify-end  ">
-                        <button @click="toggleSidebar"
-                            class="px-2   rounded-full hover:border-gray-600 ">
+                        <button @click="toggleSidebar" class="px-2   rounded-full hover:border-gray-600 ">
 
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill=""
                                 class="size-5 fill-primary-text-light hidden md:block hover:fill-primary-text-light-hover">
@@ -23,7 +22,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
                             </svg>
                         </button>
-                        
+
                     </div>
 
                     <NavbarAdmin />
@@ -34,23 +33,22 @@
             <!-- Main Content Area -->
             <div :class="mainContentClasses" class="h-screen  ">
                 <div class="flex justify-between md:justify-normal bg-primary flex-row">
-    <!-- Button with order-md-1 to appear first on md and above -->
-    <button @click="toggleSidebar"
-        class="px-3 py-1 bg-primary hover:bg-primary-aHover"
-        :class="{ 'hidden': isSidebarOpen }" :disabled="isSidebarOpen">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-            stroke="white" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-    </button>
+                    <!-- Button with order-md-1 to appear first on md and above -->
+                    <button @click="toggleSidebar" class="px-3 py-1 bg-primary hover:bg-primary-aHover"
+                        :class="{ 'hidden': isSidebarOpen }" :disabled="isSidebarOpen">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="white" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
 
-    <!-- H1 appears after the button above md screen -->
-    <h1 :class="textclasses">PARUNG HIJAU PERKASA - {{ title.toUpperCase() }}</h1>
-</div>
+                    <!-- H1 appears after the button above md screen -->
+                    <h1 :class="textclasses">PARUNG HIJAU PERKASA - {{ title . toUpperCase() }}</h1>
+                </div>
 
-                <div >
+                <div>
                     <slot>
-            
+
                     </slot>
                 </div>
             </div>
@@ -62,22 +60,49 @@
 <script setup>
     import {
         computed,
-        ref
+        onMounted,
+        ref,
+        watch
     } from 'vue';
-import TwoTableSide from '../fragment/TwoTableSide.vue';
-import NavbarAdmin from '../components/displayComponent/NavbarAdmin.vue';
+    import TwoTableSide from '../fragment/TwoTableSide.vue';
+    import NavbarAdmin from '../components/displayComponent/NavbarAdmin.vue';
 
-     const props = defineProps({
-        title:{
+    const props = defineProps({
+        title: {
             type: String,
             default: 'Admin Side'
         }
-     })
-    const isSidebarOpen = ref(true);
+    })
+    const isSidebarOpen = ref(null);
+
+    function isMobile() {
+        return window.innerWidth < 768; // Ukuran layar mobile lebih kecil dari 768px
+    }
+    onMounted(() => {
+        if (isMobile()) {
+            isSidebarOpen.value = false; // Set ke false jika perangkat mobile
+        } else {
+            isSidebarOpen.value = true; // Set ke true jika perangkat bukan mobile
+        }
+    });
+    // watch(isSidebarOpen, (newValue) => {
+        
+    //     if (newValue === null) {
+    //         // Jika isSidebarOpen menjadi null, periksa ukuran layar dan atur ulang
+    //         if (isMobile()) {
+    //             console.log('false')
+    //             isSidebarOpen.value = false; // Set ke false jika perangkat mobile
+    //         } else {
+    //             console.log('true')
+    //             isSidebarOpen.value = true; // Set ke true jika perangkat bukan mobile
+    //         }
+    //     }
+    // });
 
     function toggleSidebar() {
         isSidebarOpen.value = !isSidebarOpen.value;
     }
+
 
     const sidebarClasses = computed(() => {
         return isSidebarOpen.value ?
@@ -85,7 +110,7 @@ import NavbarAdmin from '../components/displayComponent/NavbarAdmin.vue';
     });
     const textclasses = computed(() => {
         return isSidebarOpen.value ?
-             'hidden':'text-white mb-4 md:mb-0 md:order-1 order-2' ;
+            'hidden' : 'text-white mb-4 md:mb-0 md:order-1 order-2';
     });
 
     const mainContentClasses = computed(() => {

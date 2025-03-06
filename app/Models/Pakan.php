@@ -11,6 +11,7 @@ class Pakan extends Model
 
     protected $fillable = [
         'nama_pakan',
-        'qty'
+        'qty',
+        'harga'
     ];
 }

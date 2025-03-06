@@ -51,13 +51,25 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import FormTemplate from '../layout/FormTemplate.vue'
 import NavbarUser from '../components/displayComponent/NavbarUser.vue';
 import FrontTemplate from './frontTemplate.vue';
 
-const isSidebarOpen = ref(true);
+const isSidebarOpen = ref(null);
 
+function isMobile() {
+    return window.innerWidth < 768; // Ukuran layar mobile lebih kecil dari 768px
+}
+
+// Cek ukuran layar pada saat komponen dimuat
+onMounted(() => {
+    if (isMobile()) {
+        isSidebarOpen.value = false; // Set ke false jika perangkat mobile
+    } else {
+        isSidebarOpen.value = true; // Set ke true jika perangkat bukan mobile
+    }
+});
 
 function toggleSidebar() {
   isSidebarOpen.value = !isSidebarOpen.value;

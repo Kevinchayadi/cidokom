@@ -36,9 +36,9 @@
                 type="number"
             />
             <InputFragment
-                v-model="Cost"
+                v-model="cost"
                 name="cost"
-                content="harga (isi dengan 0)"
+                content="price (fill with 0, if its from our chick in)"
                 type="number"
             />
             <!-- <InputFragment
@@ -117,9 +117,14 @@ const handleSubmit = () => {
         jumlah_jantan: qtyJantan.value,
         jumlah_betina: qtyBetina.value,
         age: umur.value,
-        cost: cost.value,
+        cost_Total_induk: cost.value,
         vaksin: vaksin.value,
         inputBy : store.getters.user.name
+    },{
+        onError: (errors) => {
+            const errorMessages = Object.values(errors).flat(); 
+            alert(errorMessages.join('\n'));
+        }
     });
 };
 </script>

@@ -22,7 +22,8 @@ class Hatchery extends Model
         'cost_total',
         'move_to',
         'status',
-        'inputBy'
+        'inputBy',
+        'created_at',
     ];
     
     
@@ -48,11 +49,12 @@ class Hatchery extends Model
             $time = Carbon::now()->format('dmy');
     
             
-            // $count = Hatchery::where('id_pen', $model->id_pen)->count() + 1;
+            $count = Hatchery::where('id_pen', $model->id_pen)->count() + 1;
 
             $count_formatted = str_pad($model->id_machine, 2, '0', STR_PAD_LEFT);
+            $count_formatted2= str_pad($count, 2, '0', STR_PAD_LEFT);
     
-            $model->id_hatchery = 'HTC-' . $time . '-' . $count_formatted;
+            $model->id_hatchery = 'HTC-' . $time . '-' . $count_formatted.'-'.$count_formatted2;
         });
 
     }

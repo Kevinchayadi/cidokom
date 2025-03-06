@@ -1,6 +1,6 @@
 <template>
     <SideBarUser>
-        <DailyAfkir :id="id"  :pen="pen"/>
+        <DailyAfkir :id="id"  :pen="pen" :pakan="pakan"/>
     </SideBarUser>
     
 </template>
@@ -17,6 +17,10 @@ const props = defineProps({
         required: true
     },
     pen:{
+        type: Array,
+        required: true
+    },
+    pakan:{
         type: Array,
         required: true
     }

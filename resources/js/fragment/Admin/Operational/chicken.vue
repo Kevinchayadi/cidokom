@@ -1,0 +1,186 @@
+<template>
+    <div class="flex justify-start sticky top-0 left-0 bg-primary">
+        <!-- <button :class="buttonclasses" @click="selectItem">
+            Select
+        </button> -->
+        <!-- <button :class="[buttonclasses, { 'text-primary-text-light-hover': !selectedId }]" @click="editItem" :disabled="!selectedId">
+            Edit
+        </button> -->
+        <!-- <button :class="[buttonclasses, { 'text-primary-text-light-hover': !selectedId }]" @click="deleteItem" :disabled="!selectedId">
+            Delete
+        </button> -->
+        <button  :class="buttonclasses" @click="downloadItem"
+            >
+            Download
+        </button>
+    </div>
+    <div class="row-span-10 bg-gray-100 h- h-[95vh]  overflow-x-auto overflow-y-auto p-0 m-0">
+        <div class="divide-y divide-x divide-gray-300 border-collapse">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="   z-20" rowspan="3" :class="classesth">
+                            No.
+                        </th>
+                            <th class="   z-20" rowspan="3" :class="classesth">
+                                Code Chicken
+                        </th>
+                            <!-- <th class="   z-20" rowspan="3" :class="classesth">
+                                Nama Ayam
+                        </th> -->
+                            <th class="   z-20" rowspan="3" :class="classesth">
+                                Strain Male
+                        </th>
+                            <th class="   z-20" rowspan="3" :class="classesth">
+                                Strain Female
+                        </th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in ayamlist" :key="item.id">
+                            <td :class="classestd">
+                                {{ item.id }}
+                            </td>
+                            <td :class="classestd">
+                                {{ item.code }}
+                            </td>
+                            <td :class="classestd">
+                                {{ item.male }}
+                            </td>
+                            <td :class="classestd">
+                                {{ item.female }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+            </div>
+
+    </div>
+    
+</template>
+
+
+
+<script setup>
+    import {
+        computed,
+        ref
+    } from 'vue';
+
+    const classesth =
+        ' bg-blue-300 text-center  text-xs border-gray-300 text-table font-medium text-gray-700 uppercase tracking-wider  sticky top-[0px] min-w-[120px] shadow-[inset_1px_-1px_1px_white]'
+    const classesth2 =
+        ' bg-blue-300 text-center  text-xs font-medium text-table border-gray-300 text-gray-700 uppercase tracking-wider  sticky top-[36px] min-w-[120px] shadow-[inset_1px_-1px_1px_white]'
+    const classesth3 =
+        ' bg-blue-300 text-center  text-xs font-medium text-table border-gray-300 text-gray-700 uppercase tracking-wider  sticky top-[54px] min-w-[120px] shadow-[inset_1px_-1px_1px_white]'
+
+    const classestd = 'p-1 text-xs  text-gray-900 text-table text-center min-w-[75px] shadow-[inset_1px_-1px_1px_rgba(128,128,128,0.2)]'
+
+    const selectedId = ref(null);
+    const buttonclasses = '  text-primary-text-light rounded hover:text-primary-text-light-hover sticky top-0 px-2'
+    const breedingDetail = ref([])
+    const showdata = ref(null);
+
+    const props = defineProps({
+        ayam: {
+            type: Array,
+
+        }
+});
+
+// Computed property untuk memproses data dari props
+const ayamlist = computed(() =>
+  props.ayam.map(item => ({
+
+    id: item.id,
+    code: item.code_Ayam,
+    male: item.strain_male,
+    female: item.strain_female
+  }))
+);
+
+    const selectedData = ref([]);
+
+    const selectItem = async () => {
+        showdata.value = 0
+        console.log(selectedId.value)
+        const item = props.breeding.find(b => b.id_breeding === selectedId.value);
+        
+
+    };
+
+    const editItem = () => {
+        console.log("Edit:", selectedId.value);
+    };
+
+    const deleteItem = () => {
+        console.log("Delete:", selectedId.value);
+    };
+
+    const downloadItem = () => {
+        console.log("Download:", selectedId.value);
+        
+        axios.get(`/download/chicken`, { responseType: 'blob' })
+        .then((response) => {
+          // Membuat URL objek untuk file binary
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          // Membuat elemen <a> untuk mendownload file
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', `chicken.xlsx`); // Nama file
+          document.body.appendChild(link);
+          link.click(); // Memicu unduhan
+          document.body.removeChild(link); // Menghapus link setelah klik
+        })
+        .catch(error => {
+          console.error("Error downloading file:", error);
+        });
+    };
+</script>
+
+<style scoped>
+    html,
+    body,
+    #app {
+        height: 100%;
+    }
+
+    /* Style untuk scrollbar */
+    ::-webkit-scrollbar {
+        width: 12px;
+        /* Lebar scrollbar untuk vertikal */
+        height: 12px;
+        /* Tinggi scrollbar untuk horizontal */
+    }
+
+    /* Style untuk track */
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    /* Style untuk thumb (bagian geser scrollbar) */
+    ::-webkit-scrollbar-thumb {
+        background-color: #888;
+        /* Warna thumb */
+        border-radius: 10px;
+        border: 3px solid transparent;
+    }
+
+    /* Warna thumb saat dihover */
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: #555;
+    }
+
+    /* Custom Scrollbar untuk bagian tabel */
+    .custom-scroll {
+        max-height: 500px;
+        /* Sesuaikan dengan tinggi tabel yang diinginkan */
+        overflow-y: auto;
+        /* Scroll vertikal */
+        overflow-x: hidden;
+        /* Nonaktifkan scroll horizontal */
+    }
+</style>

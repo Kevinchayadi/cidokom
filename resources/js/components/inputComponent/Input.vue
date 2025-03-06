@@ -1,6 +1,7 @@
 <template>
-    <input :type="type" :id="name" :name="name" :placeholder="placeholder" required
-        v-model="inputed" ref="inputref" :class="classes">
+    
+    <input :type="type" :id="name" :name="name" :placeholder="placeholder":required="required"
+        v-model="inputed" ref="inputref" :step="isStep ? '0.01' : '1'" :class="classes">
 </template>
 <script setup>
     import {
@@ -20,6 +21,14 @@
         placeholder: {
             type: String,
             Default: ''
+        },
+        required:{
+            type: Boolean,
+            default: true
+        },
+        isStep: {
+            type: Boolean,
+            default: false
         },
         modelValue: {
         type: [String, Number],

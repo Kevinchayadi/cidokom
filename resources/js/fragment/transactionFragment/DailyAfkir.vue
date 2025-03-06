@@ -3,6 +3,13 @@
         <Headers tittle="Breeding daily report" />
         <form @submit.prevent="handleSubmit">
             <InputFragment
+                v-model="feedName"
+                name="feedName"
+                content="Feed name"
+                type="dropdown"
+                :datas="pakanList"
+            />
+            <InputFragment
                 v-model="feedMale"
                 name="feedMale"
                 content="Feed Male (in Kilograms)"
@@ -15,9 +22,33 @@
                 type="number"
             />
             <InputFragment
+                v-model="male_die"
+                name="male_die"
+                content="Male Die"
+                type="number"
+            />
+            <InputFragment
+                v-model="female_die"
+                name="female_die"
+                content="Female Die"
+                type="number"
+            />
+            <InputFragment
+                v-model="male_sale"
+                name="male_sale"
+                content="Male Sale"
+                type="number"
+            />
+            <InputFragment
+                v-model="female_sale"
+                name="female_sale"
+                content="Female Sale"
+                type="number"
+            />
+            <InputFragment
                 v-model="idDestination"
                 name="idDestination"
-                content="ID Destination"
+                content="pen Destination"
                 type="dropdown"
                 :datas="penList"
             />
@@ -56,13 +87,13 @@ import { useStore } from "vuex";
 
 // Define props
 const props = defineProps({
-    id_breeding: {
+    id: {
         type: String,
-        required: true
+        required: true,
     },
     pakan: {
         type: Array,
-        required: true
+        required: true,
     },
     pen: {
         type: Array,
@@ -70,48 +101,57 @@ const props = defineProps({
 });
 
 const pakanList = computed(() =>
-  props.pakan.map(item => ({
-      id: item.nama_pakan,
-      name: item.nama_pakan
-  }))
+    props.pakan.map((item) => ({
+        id: item.nama_pakan,
+        name: item.nama_pakan,
+    }))
 );
 
 const penList = computed(() =>
-  props.pen.map(item => ({
-      id: item.id,
-      name: item.code_pen
-  }))
+    props.pen.map((item) => ({
+        id: item.id,
+        name: item.code_pen,
+    }))
 );
 
 const store = useStore();
 
+const feedName = ref(0);
 const feedMale = ref(0);
 const feedFemale = ref(0);
-const idDestination = ref('');
+const male_die = ref(0);
+const female_die = ref(0);
+const male_sale = ref(0);
+const female_sale = ref(0);
+const idDestination = ref("");
 const maleOut = ref(0);
 const femaleOut = ref(0);
 
 // Handle form submission
 const handleSubmit = () => {
-    router.post("/user/breeding/input", {
-        id_breeding: props.id_breeding,
-        feed_male: feedMale.value,
-        feed_female: feedFemale.value,
-        id_destination: idDestination.value,
-        male_out: maleOut.value,
-        female_out: femaleOut.value,
-        inputBy: store.getters.user.name
-    }).then(response => {
-        console.log("Data berhasil dikirim:", response);
-        alert("Data berhasil dikirim!");
-    })
-    .catch(error => {
-        if (error.response && error.response.data.error) {
-            alert(error.response.data.error);
-        } else {
-            alert("Terjadi kesalahan saat mengirim data. Silakan coba lagi.");
+    router.post(
+        `/user/afkir/input/${props.id}`,
+        {
+            feedName: feedName.value,
+            // id_breeding: props.id_breeding,
+            feed_male: feedMale.value,
+            feed_female: feedFemale.value,
+            male_die: male_die.value,
+            female_die: female_die.value,
+            male_sale: male_sale.value,
+            female_sale: female_sale.value,
+            id_destination: idDestination.value,
+            male_out: maleOut.value,
+            female_out: femaleOut.value,
+            inputBy: store.getters.user.name,
+        },
+        {
+            onError: (errors) => {
+                const errorMessages = Object.values(errors).flat();
+                alert(errorMessages.join("\n"));
+            },
         }
-    });
+    );
 };
 </script>
 

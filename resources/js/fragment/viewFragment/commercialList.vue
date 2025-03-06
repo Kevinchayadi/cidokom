@@ -2,7 +2,7 @@
   <div class="w-full d-flex">
     <div class="items-center justify-between ">
       <Header tittle="Commercial List" />
-      <FormButton name="add new" @click="createForm" class="text-sm mb-2"/>
+      <FormButton name="Create New Commercial" @click="createForm" class="text-sm mb-2"/>
     </div>
     <table class="w-full">
       <tbody>
@@ -11,7 +11,10 @@
           <td class="text-right">
             <!-- Periksa apakah ada relasi hatcheryDetails dan aksesnya -->
             <div >
-              <button :class="buttonClasses" @click="input(data.id_commercial)">Daily Input</button>
+              <button v-if="data.isTime" :class="buttonClasses" @click="saleAll(data.id_commercial)">Sale All</button>
+              <button v-if="!data.isTrue" :class="buttonClasses" @click="vaccine(data.id_commercial)">Add Vaccine</button>
+              <button v-if="!data.isInputed" :class="buttonClasses" @click="input(data.id_commercial)">Daily Input</button>
+              <button v-else :class="buttonClasses" @click="move(data.id_commercial)">move</button>
             </div>
           </td>
         </tr>
@@ -40,6 +43,16 @@ import { router } from '@inertiajs/vue3';
   
   const input = (id) => {
     router.get(`/user/commercial/input/${id}`)
+  };
+  const saleAll = (id) => {
+    router.get(`/user/commercial/sale/${id}`)
+  };
+  const move = (id) => {
+    router.get(`/user/commercial/move/${id}`)
+  };
+  const vaccine = (id) => {
+    console.log(`Edit button clicked for 3 days condition, hatchery with ID: ${id}`)
+    router.get(`/user/commercial/vaccine/${id}`);
   };
   
 

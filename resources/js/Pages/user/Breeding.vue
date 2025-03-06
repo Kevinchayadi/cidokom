@@ -16,9 +16,9 @@ const props = defineProps({
     required: true,
   }
 });
-// onMounted(() => {
-//   console.log(props.breeding)
-// });
+onMounted(() => {
+  console.log(props.breeding)
+});
 </script>
 
 <style>

@@ -20,9 +20,9 @@ class isAdmin
             // Arahkan ke halaman login jika pengguna belum login
             return redirect()->route('login');
         }
-        if(Auth::user()->role_id != 1){
-            return redirect()->route('user.dashboard');
+        if(Auth::user()->role_id == 1 || Auth::user()->role_id == 3 || Auth::user()->role_id == 4){
+            return $next($request);
         }
-        return $next($request);
+        return redirect()->route('user.dashboard');
     }
 }

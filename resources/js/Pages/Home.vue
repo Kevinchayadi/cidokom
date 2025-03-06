@@ -10,7 +10,7 @@
 import Sidebarnew from '../layout/sidebarnew.vue';
 
 
-import BreedingHeaderTable from '../fragment/Admin/breedingHeaderTable.vue';
+// import BreedingHeaderTable from '../fragment/Admin/breedingHeaderTable.vue';
 
 
 

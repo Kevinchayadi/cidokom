@@ -1,6 +1,6 @@
 <template>
     <div class="w-[80%]">
-        <Headers tittle="Buat Kandang farm" />
+        <Headers tittle="Create New Cage" />
         <form @submit.prevent="handleSubmit">
             <InputFragment v-model="form.nama_kandang" name="nama_kandang" content="code kandang" type="text" />
             <InputFragment v-model="form.lokasi_kandang" name="lokasi_kandang" content="Lokasi Kandang" type="text" />

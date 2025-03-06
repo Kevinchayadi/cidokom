@@ -22,8 +22,8 @@ return new class extends Migration
             $table->integer('depreciation_panen')->nullable();
             $table->integer('move_to')->nullable();
             $table->integer('total_move')->nullable();
-            $table->integer('receive_from')->nullable();
-            $table->integer('total_receive')->nullable();
+            $table->integer('recieve_from')->nullable();
+            $table->integer('total_recieve')->nullable();
             $table->integer('feed')->nullable();
             $table->string('feed_name')->nullable();
             $table->string('inputBy');

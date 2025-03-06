@@ -26,14 +26,15 @@ class Breeding_detail extends Model
         'total_male_move',
         'total_female_move',
         'receive_from',
-        'total_male_recieve',
-        'total_female_recieve',
+        'total_male_receive',
+        'total_female_receive',
         'cost_unit',
         'cost_total',
         'feed',
         'feed_name',
         'status',
-        'inputBy'
+        'inputBy',
+        'created_at',
     ];
 
     public function breeding()

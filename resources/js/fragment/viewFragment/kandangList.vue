@@ -1,6 +1,6 @@
 <template>
   <div class="w-full d-flex">
-    <FormButton name="add new" @click="createForm" class="text-sm mb-2"/>
+    <FormButton name="Create new Cage" @click="createForm" class="text-sm mb-2"/>
     
     <table class="w-full">
       <tbody>

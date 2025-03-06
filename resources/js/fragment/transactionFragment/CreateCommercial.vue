@@ -24,7 +24,7 @@
             <InputFragment
                 v-model="umur"
                 name="umur"
-                content="age"
+                content="age (in days)"
                 type="number"
 
             />
@@ -74,6 +74,11 @@ const handleSubmit = () => {
         entry_population: entry_population.value,
         age: umur.value,
         inputBy : store.getters.user.name
+    },{
+        onError: (errors) => {
+            const errorMessages = Object.values(errors).flat(); 
+            alert(errorMessages.join('\n'));
+        }
     });
 };
 </script>

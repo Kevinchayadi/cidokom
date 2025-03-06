@@ -2,7 +2,7 @@
     <div class="w-full d-flex">
       <div>
         <div><Headers :tittle="tittle" /> </div>
-        <FormButton name="Buat Jenis Ayam Baru" @click="createForm" class="text-sm mb-2"/>
+        <FormButton name="create new chicken" @click="createForm" class="text-sm mb-2"/>
       </div>
       
       <table class="w-full">

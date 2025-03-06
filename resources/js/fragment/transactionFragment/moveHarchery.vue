@@ -19,7 +19,7 @@
                 name="entry_population"
                 content="total population"
                 type="number"
-                :value="harchability"
+                :value="entry_population"
             />
             <show
                 v-model="hatchery.saleable"
@@ -44,14 +44,17 @@ import { router } from "@inertiajs/vue3";
 import InputFragment from "../../components/InputFragment.vue";
 import FormButton from "../../components/inputComponent/FormButton.vue";
 import Headers from "../../components/Headers.vue";
-import { computed, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useStore } from "vuex";
 import Showdata from "../../components/showdata.vue";
 
 const props = defineProps({
     hatchery:{
-        type: Object,
+        type: Array,
         default: () => ({})
+    },
+    id:{
+        type:String
     },
     pen: {
         type: Array,
@@ -65,15 +68,24 @@ const penList = computed(() =>
   id: item.id,
   name: `(${item.kandang.nama_kandang}) ${item.code_pen}`
 })));
+// const useStore = useStore();
 
 const id_pen = ref("");
 const entryDate = ref("");
-const entry_population = ref(props.hatchery.saleable);
+const entry_population = ref( null);
 const umur = ref(0);
 const status = ref("active");
 
+onMounted(() => {
+  // Pastikan bahwa props.hatchery.hatchery_details memiliki data sebelum mengaksesnya
+  if (props.hatchery.hatchery_details && props.hatchery.hatchery_details.length > 0) {
+    // console.log
+    entry_population.value = props.hatchery.hatchery_details[0].saleable;
+  }
+});
+
 const handleSubmit = () => {
-    router.post("/user/commercial/moved", {
+    router.post(`/user/commercial/moved/${props.id}`, {
         id_pen: id_pen.value,
         entryDate: entryDate.value,
         entry_population: entry_population.value,
@@ -81,5 +93,10 @@ const handleSubmit = () => {
         inputBy : store.getters.user.name
     });
 };
+// watch(id_pen, (newVal, oldVal) => {
+//   if (newVal !== oldVal) {
+//     console.log("entry_population berubah:", newVal);
+//   }
+// });
 </script>
 <style></style>

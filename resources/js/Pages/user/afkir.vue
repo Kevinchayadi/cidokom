@@ -1,7 +1,7 @@
 <template>
     <SideBarUser dashboard="true">
         
-        <afkirList :afkir="afkir"/>
+        <afkirList :afkir="afkir" />
     </SideBarUser>
 </template>
 
@@ -15,6 +15,10 @@ import afkirList from '../../fragment/viewFragment/afkirList.vue';
 
 const props = defineProps({
   afkir: {
+    type: Array,
+    required: true,
+  },
+  pakan:{
     type: Array,
     required: true,
   }

@@ -2,7 +2,9 @@
 
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\isAdmin;
+use App\Http\Middleware\isAnalyst;
 use App\Http\Middleware\isGuest;
+use App\Http\Middleware\isSeller;
 use App\Http\Middleware\isUser;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -22,6 +24,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'isAdmin'=> isAdmin::class,
             'isUser'=> isUser::class,
             'isGuest'=> isGuest::class,
+            'isAnalyst'=> isAnalyst::class,
+            'isSeller'=> isSeller::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

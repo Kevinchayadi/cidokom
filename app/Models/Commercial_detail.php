@@ -19,11 +19,12 @@ class Commercial_detail extends Model
         'depreciation_panen',
         'move_to',
         'total_move',
-        'receive_from',
+        'recieve_from',
         'total_recieve',
         'feed',
         'feed_name',
-        'inputBy'
+        'inputBy',
+        'created_at',
 
     ];
 
