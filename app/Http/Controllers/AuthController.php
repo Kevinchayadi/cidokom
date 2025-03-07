@@ -27,7 +27,8 @@ class AuthController extends Controller
 
         if (Auth::attempt(['username' => $request->username, 'password' => $request->password], $request->boolean('remember'))) {
             // return redirect()->route('dashboard');
-            return redirect()->route('user.dashboard');
+            $user = Auth::user(); // Get the authenticated user
+            return redirect()->route('admin.dashboard'); // Redirect to dashboard on successful login
         } else {
             return back()->withErrors(['error' => 'User data not found']);
         }
@@ -77,6 +78,6 @@ class AuthController extends Controller
     function logout()
     {
         Auth::logout();
-        return redirect()->route('login');
+        return redirect()->route('login'); // Redirect to login
     }
 }

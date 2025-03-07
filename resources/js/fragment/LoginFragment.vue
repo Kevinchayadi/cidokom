@@ -36,7 +36,6 @@ import FormButton from "../components/inputComponent/FormButton.vue";
 import Checkbox from "../components/inputComponent/Checkbox.vue";
 import Headers from "../components/Headers.vue";
 
-
 const form = useForm({
     username: '',
     password: '',
@@ -44,11 +43,14 @@ const form = useForm({
 });
 
 const handleSubmit = () => {
-    form.post("/login",{
+    form.post("/login", {
         onError: (errors) => {
             if (errors.error) {
                 alert(errors.error);
             }
+        },
+        onSuccess: () => {
+            window.location.reload(); // Full page reload on successful login
         }
     });
 };

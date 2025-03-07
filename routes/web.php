@@ -67,23 +67,23 @@ Route::prefix('admin')->middleware(['auth','isAdmin'])->group(function(){
         
         Route::get('/sales', [SaleController::class, 'salesIndex'])->name('admin.sales');
         Route::post('/createsales', [SaleController::class, 'storeSales'])->name('admin.sales.create');
-        Route::put('/editSales/{id}', [SaleController::class, 'editSales'])->name('admin.sales.create');
+        Route::put('/editSales/{id}', [SaleController::class, 'editSales'])->name('admin.sales.edit');
     
         Route::get('/Residence', [ResidentController::class, 'ResidentIndex'])->name('admin.Residence');
         Route::post('/createResidence', [ResidentController::class, 'storeResident'])->name('admin.Residence.create');
-        Route::put('/editResidence/{id}', [ResidentController::class, 'editResident'])->name('admin.Residence.create');
+        Route::put('/editResidence/{id}', [ResidentController::class, 'editResident'])->name('admin.Residence.edit');
     
         Route::get('/CustHandle', [CustHandleController::class, 'SalesIndex'])->name('admin.CustHandle');
         Route::post('/createCustHandle', [CustHandleController::class, 'storeSales'])->name('admin.CustHandle.create');
-        Route::put('/editCustHandle/{id}', [CustHandleController::class, 'editSales'])->name('admin.CustHandle.create');
+        Route::put('/editCustHandle/{id}', [CustHandleController::class, 'editSales'])->name('admin.CustHandle.edit');
     
         Route::get('/Customer', [CustomerController::class, 'CustomerIndex'])->name('admin.Customer');
         Route::post('/createCustomer', [CustomerController::class, 'storeCustomer'])->name('admin.Customer.create');
-        Route::put('/editCustomer/{id}', [CustomerController::class, 'editCustomer'])->name('admin.Customer.create');
+        Route::put('/editCustomer/{id}', [CustomerController::class, 'editCustomer'])->name('admin.Customer.edit');
         
         Route::get('/ChickenSize', [ChickenSizeController::class, 'ChickenIndex'])->name('admin.ChickenSize');
         Route::post('/createChickenSize', [ChickenSizeController::class, 'storeChicken'])->name('admin.ChickenSize.create');
-        Route::put('/editChickenSize/{id}', [ChickenSizeController::class, 'editChicken'])->name('admin.ChickenSize.create');
+        Route::put('/editChickenSize/{id}', [ChickenSizeController::class, 'editChicken'])->name('admin.ChickenSize.edit');
 
         Route::get('/Sales-Summary',[DashboardController::class, 'salesSummary'])->name('admin.salesSummary');
     });
@@ -97,9 +97,9 @@ Route::prefix('admin')->middleware(['auth','isAdmin'])->group(function(){
     Route::get('/logout',[AuthController::class, 'logout'])->name('admin.logout');
     Route::post('/register', [AuthController::class, 'register'])->name('admin.register');
     Route::post('/createPakan', [PakanController::class, 'storePakan'])->name('admin.pakan.create');
-    Route::put('/addPakan/{id}', [PakanController::class, 'addPakan'])->name('admin.pakan.create');
+    Route::put('/addPakan/{id}', [PakanController::class, 'addPakan'])->name('admin.pakan.created');
     Route::post('/createVaksin', [VaksinController::class, 'storevaksin'])->name('admin.vaksin.create');
-    Route::put('/addVaksin/{id}', [VaksinController::class, 'addvaksin'])->name('admin.vaksin.create');
+    Route::put('/addVaksin/{id}', [VaksinController::class, 'addvaksin'])->name('admin.vaksin.created');
 
     
     //sales Functions
@@ -164,8 +164,8 @@ Route::prefix('user')->middleware(['auth','isUser'])->group(function(){
     Route::post('/hatchery/eightynInput', [HatcheryController::class,'eightynInputedHatchery'])->name('user.hatchery.eightynInputed');
     Route::get('/hatchery/finalInput/{id}', [HatcheryController::class, 'finalInputHatchery'])->name('user.hatchery.finalInput');
     Route::post('/hatchery/finalInput', [HatcheryController::class,'finalInputedHatchery'])->name('user.hatchery.finalInputed');
-    Route::get('/hatchery/move/{id}', [HatcheryController::class,'move'])->name('user.hatchery.finalInputed');
-    Route::post('/commercial/moved/{id}', [HatcheryController::class,'moved'])->name('user.hatchery.finalInputed');
+    Route::get('/hatchery/move/{id}', [HatcheryController::class,'move'])->name('user.hatchery.move');
+    Route::post('/commercial/moved/{id}', [HatcheryController::class,'moved'])->name('user.hatchery.moved');
 
 
     Route::get('/pakan', [PakanController::class, 'userIndex'])->name('user.pakan');

@@ -40,16 +40,16 @@ class firstSeeder extends Seeder
         User::create([
             'name' => 'Admin',
             'username' => 'Admin',
-            'password' => Hash::make('admin'),
+            'password' => Hash::make('@dmin!2E'),
             'role_id' => '1',
         ]);
-
         User::create([
             'name' => 'user',
             'username' => 'user',
-            'password' => Hash::make('user'),
+            'password' => Hash::make('User!2E4$'),
             'role_id' => '2',
         ]);
+
 
         Ayam::create([
             'code_AYam' => 'KUB2',
