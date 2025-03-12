@@ -6,7 +6,7 @@
             <InputFragment v-model="formData.size" name="Size" content="Size Chicken (character)" type="text" label="black" />
             <InputFragment v-model="formData.harga" name="harga" content="Price" type="decimal" label="black" />
             <div class="w-full flex text-center justify-center">
-                <FormButton name="Submit" custom="text-center w-[80%] py-4 mt-4" />
+                <FormButton name="Submit" custom="text-center w-[80%] py-4 mt-4" :disabled="loading"/>
             </div>
         </form>
     </div>
@@ -26,7 +26,7 @@
             required: true,  // Ensure the item prop is passed from the parent
         }
     });
-
+    const loading = ref(false);
     // Form data model for the form fields
     const formData = ref({
         size: '',  // Chicken size
@@ -43,7 +43,7 @@
 
     // Handle form submission for updating the chicken type
     const handleSubmit = () => {
-        // Make a PUT request to update the chicken type
+        loading.value = true;
         router.put(`/admin/editChickenSize/${props.item.id}`, formData.value, {
             onError: (errors) => {
                 let errorMessage = "";
@@ -58,7 +58,11 @@
                     }
                 });
                 alert(errorMessage);
-            }
+                loading.value = false;
+            }, 
+            onSuccess: () => {
+            loading.value = false; 
+        },
         });
     };
 </script>

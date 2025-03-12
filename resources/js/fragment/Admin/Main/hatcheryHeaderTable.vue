@@ -129,7 +129,7 @@
             pen : item.pen.code_pen,
             machine: item.machine.machine_name,
             settingDate : item.setting_date,
-            candlingDate : item.candling_ate,
+            candlingDate : item.candling_date,
             pullChickenDate : item.pull_chicken_date,
             remark : '',
             inputBy : item.inputBy,

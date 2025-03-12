@@ -10,7 +10,7 @@ use App\Models\Hatchery;
 use App\Models\Hatchery_detail;
 use App\Models\Machine;
 use App\Models\Pen;
-use App\Services\countService;
+use App\Services\CountService;
 use App\Services\moveService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -319,23 +319,13 @@ class HatcheryController extends Controller
             'inputBy' => 'required',
         ]);
         // dd($request);
-        try {
+        // try {
             DB::beginTransaction();
             $hatchery = Hatchery::with('hatcheryDetails')->find($id);
             // $input['entry_population'] = $hatchery->hatcheryDetails[0]->saleable;
             $check = Commercial::with('commercialDetails')->where('id_pen', $input['id_pen'])->first();
 
             if (isset($check)) {
-                // dd('test1');
-                // $check2 = Commercial::with(['commercialDetails' => function($query) {
-                //     // Filter hanya yang memiliki created_at hari ini
-                //     $query->whereDate('created_at', Carbon::today());
-                // }])->where('id_pen', $input['id_pen'])->first();
-                // if(isset($check2)){
-                //     $this->moveService->createMoveTable(0, $input['id_pen'], $input['entry_population'], 0, $hatchery->cost_total, 0, 'active');
-                // }else{
-                //     $this->moveService->moveToCommercial($check2,0,0,0,0,$hatchery->cost_total);
-                // }
                 $this->moveService->moveTable($input['id_pen'], 0, $hatchery->cost_total, $input['entry_population'], 0, $input['entry_population'], 0);
             } else {
                 $this->moveService->createMoveTable(0, $input['id_pen'], $input['entry_population'], 0, $hatchery->cost_total ?? 0, 0, 'inactive');
@@ -346,7 +336,9 @@ class HatcheryController extends Controller
                 // dd( $input);
                 Commercial::create($input);
             }
+            $pen = Pen::find($input['id_pen']);
             $hatchery->update([
+                'move_to' => $pen->code_pen,
                 'status' => 'inactive',
             ]);
             Machine::where('id', $hatchery->id_machine)->update([
@@ -354,12 +346,12 @@ class HatcheryController extends Controller
             ]);
             DB::commit();
             return redirect()->route('user.hatchery')->with('success', 'Berhasil memindahkan kandang ke Pen Commercial');
-        } catch (\Throwable $th) {
-            DB::rollback();
-            dd('test');
-            return redirect()
-                ->route('user.hatchery')
-                ->withErrors('error', 'Gagal memindahkan kandang: ' . $th->getMessage());
-        }
+        // } catch (\Throwable $th) {
+        //     DB::rollback();
+        //     dd('test');
+        //     return redirect()
+        //         ->route('user.hatchery')
+        //         ->withErrors('error', 'Gagal memindahkan kandang: ' . $th->getMessage());
+        // }
     }
 }

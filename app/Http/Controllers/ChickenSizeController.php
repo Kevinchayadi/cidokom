@@ -6,6 +6,8 @@ use App\Models\ChickenSize;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
+use function PHPUnit\Framework\isNull;
+
 class ChickenSizeController extends Controller
 {
     function storeChicken(Request $request)
@@ -15,7 +17,10 @@ class ChickenSizeController extends Controller
             'size' => 'required|string',
             'harga' => 'required|numeric'
         ]);
-        
+        $check = ChickenSize::where('size' , $input['size'])->where('harga', $input['harga'])->first();
+        if($check){
+            return back()->withErrors('Data Already Exist!');
+        }
         try {
             ChickenSize::create($input);
             return redirect()->route('admin.ChickenSize')->with('success','Successfully created new chicken size!');

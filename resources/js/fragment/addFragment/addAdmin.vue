@@ -13,7 +13,7 @@
                 :datas="data" />
 
             <div class="w-full flex text-center justify-center">
-                <FormButton name="Submit" custom="text-center w-[80%] py-4 mt-4" />
+                <FormButton name="Submit" custom="text-center w-[80%] py-4 mt-4" :disabled="loading"/>
             </div>
         </form>
     </div>
@@ -46,7 +46,7 @@
             type: Array
         }
     })
-
+    const loading = ref(false);
     const data = computed(() =>
         props.role.map(item => ({
             id: item.id,
@@ -61,7 +61,7 @@
             return;
         }
 
-
+        loading.value = true;
         router.post("/admin/register", formData.value, {
             onError: (errors) => {
                 let errorMessage = "";
@@ -77,7 +77,11 @@
                     }
                 });
                 alert(errorMessage);
-            }
+                loading.value = false;
+            }, 
+            onSuccess: () => {
+            loading.value = false; 
+        },
         });
     };
 </script>

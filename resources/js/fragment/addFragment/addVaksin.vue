@@ -21,6 +21,7 @@
                 <FormButton
                     name="Submit"
                     custom="text-center w-[80%] py-4 mt-4"
+                    :disabled="loading"
                 />
             </div>
         </form>
@@ -50,6 +51,7 @@ const props = defineProps({
         type: Number,
     }
 })
+const loading = ref(false);
 
 // onMounted(() => {
 //   console.log(props.id)
@@ -62,7 +64,7 @@ const handleSubmit = () => {
     //     return;
     // }
 
-
+    loading.value = true;
     router.put(`/admin/addVaksin/${props.id}`, formData.value, {
         onError: (errors) => {
             let errorMessage = "";
@@ -78,7 +80,11 @@ const handleSubmit = () => {
                 }
             });
             alert(errorMessage);
-        }
+            loading.value = false;
+        }, 
+            onSuccess: () => {
+            loading.value = false; 
+        },
     });
 };
 </script>

@@ -6,6 +6,8 @@ use App\Models\CustHandle;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
+use function PHPUnit\Framework\isNull;
+
 class CustHandleController extends Controller
 {
     function storeSales(Request $request)
@@ -14,6 +16,12 @@ class CustHandleController extends Controller
             'nama_sales' => 'required|String',
             'diskon' => 'required|numeric'
         ]);
+
+        $check = CustHandle::where('nama_sales' , $input['nama_sales'])->where('diskon', $input['diskon'])->first();
+        
+        if($check){
+            return back()->withErrors('Data Already Exist!');
+        } 
         try {
             CustHandle::create($input);
         } catch (\Throwable $th) {

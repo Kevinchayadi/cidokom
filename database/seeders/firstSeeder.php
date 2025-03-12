@@ -49,6 +49,18 @@ class firstSeeder extends Seeder
             'password' => Hash::make('User!2E4$'),
             'role_id' => '2',
         ]);
+        User::create([
+            'name' => 'kaila',
+            'username' => 'kaila',
+            'password' => Hash::make('K@ila!23'),
+            'role_id' => '1',
+        ]);
+        User::create([
+            'name' => 'willy',
+            'username' => 'willy',
+            'password' => Hash::make('w!lly1234$'),
+            'role_id' => '2',
+        ]);
 
 
         Ayam::create([
@@ -345,18 +357,33 @@ class firstSeeder extends Seeder
         // ]);
         Pakan::create([
             'nama_pakan' => 'GF-11',
-            'qty' => 250.0,
+            'qty' => 0.0,
             'harga' => 5500.0,
         ]);
         Pakan::create([
             'nama_pakan' => 'PHP-C',
-            'qty' => 500.0,
+            'qty' => 0.0,
             'harga' => 5500.0,
         ]);
         Pakan::create([
             'nama_pakan' => 'PAR-L',
-            'qty' => 500.0,
+            'qty' => 100.0,
+            'harga' => 6600.0,
+        ]);
+        Pakan::create([
+            'nama_pakan' => 'PAR-G',
+            'qty' => 225.0,
+            'harga' => 6800.0,
+        ]);
+        Pakan::create([
+            'nama_pakan' => 'SB-100',
+            'qty' => 125.0,
             'harga' => 7700.0,
+        ]);
+        Pakan::create([
+            'nama_pakan' => 'B11A',
+            'qty' => 800.0,
+            'harga' => 8300.0,
         ]);
 
 

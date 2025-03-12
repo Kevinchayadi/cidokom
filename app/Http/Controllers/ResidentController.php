@@ -6,6 +6,8 @@ use App\Models\Resident;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
+use function PHPUnit\Framework\isNull;
+
 class ResidentController extends Controller
 {
     function storeResident(Request $request)
@@ -14,7 +16,10 @@ class ResidentController extends Controller
             'nama_Resident' => 'required',
             'tipe' => 'required|string'
         ]);
-        // dd($request);
+        $check = Resident::where('nama_Resident' , $input['nama_Resident'])->where('tipe', $input['tipe'])->first();
+        if($check){
+            return back()->withErrors('Data Already Exist!');
+        }
         
         try {
             Resident::create($input);

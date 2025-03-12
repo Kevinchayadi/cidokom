@@ -8,7 +8,7 @@
             <InputFragment v-model="formData.id_ayam" name="id_ayam" content="Select Chicken Type" type="dropdown"label="black"  :datas="chickenList"/>
             <InputFragment v-model="formData.description" name="desc" content="Description" type="textArea" label="black" />
             <div class="w-full flex text-center justify-center">
-                <FormButton name="Submit" custom="text-center w-[80%] py-4 mt-4" />
+                <FormButton name="Submit" custom="text-center w-[80%] py-4 mt-4" :disabled="loading"/>
             </div>
         </form>
     </div>
@@ -37,7 +37,7 @@
     });
 
 
-
+    const loading = ref(false);
     const props = defineProps({
         stock:{
             type: Number,
@@ -65,7 +65,7 @@
     const qtyLabel = `QTY (Stock : ${props.stock})`
 
     const handleSubmit = () => {
-
+        loading.value = true;
         router.post("/admin/createsales", formData.value, {
             onError: (errors) => {
                 let errorMessage = "";
@@ -81,7 +81,11 @@
                     }
                 });
                 alert(errorMessage);
-            }
+                loading.value = false;
+            }, 
+            onSuccess: () => {
+            loading.value = false; 
+        },
         });
     };
 </script>

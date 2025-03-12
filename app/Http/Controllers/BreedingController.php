@@ -32,8 +32,9 @@ class BreedingController extends Controller
     }
     public function userIndex()
     {
-        $breeding = Breeding::with('BreedingDetails', 'vaksin')->where('status', 'active')->get();
+        $breeding = Breeding::with('BreedingDetails', 'vaksin')->where('status', 'active')->latest()->get();
         $vaksin = vaksin::where('type', 'BRD')->get();
+        // dd($breeding->toArray());
 
         foreach ($breeding as $item) {
             // Hitung umur berdasarkan created_at dan update nilai age
@@ -50,6 +51,7 @@ class BreedingController extends Controller
             if($item->age >= 525){
                 $item->isReject = true;
             }
+            
 
             foreach ($item->BreedingDetails as $detail) {
                 $createdDate = Carbon::parse($detail->created_at)
@@ -63,6 +65,7 @@ class BreedingController extends Controller
                     break; // keluar dari loop karena sudah ditemukan detail hari ini
                 }
             }
+            // dd($createdDate);
             // Periksa apakah item sudah memenuhi kriteria vaksin
             foreach ($vaksin as $data) {
                 if ($item->age >= $data->hari) {
@@ -147,7 +150,7 @@ class BreedingController extends Controller
             })
             ->where('code_pen', 'like', '%BRD')
             ->get();
-
+        
         return Inertia::render('user/FormDailyBreeding', ['id_breeding' => $id, 'pakan' => $pakan, 'pen' => $pen]);
     }
 

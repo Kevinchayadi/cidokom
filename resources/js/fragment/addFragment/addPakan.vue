@@ -21,6 +21,7 @@
                 <FormButton
                     name="Submit"
                     custom="text-center w-[80%] py-4 mt-4"
+                    :disabled="loading"
                 />
             </div>
         </form>
@@ -39,7 +40,7 @@ import {
 import InputFragment from "../../components/InputFragment.vue";
 import FormButton from "../../components/inputComponent/FormButton.vue";
 import Headers from "../../components/Headers.vue";
-
+const loading = ref(false);
 // Form data model
 const formData = ref({
     qty: '',
@@ -62,7 +63,7 @@ const handleSubmit = () => {
     //     return;
     // }
 
-
+    loading.value = true;
     router.put(`/admin/addPakan/${props.id}`, formData.value, {
         onError: (errors) => {
             let errorMessage = "";
@@ -78,7 +79,12 @@ const handleSubmit = () => {
                 }
             });
             alert(errorMessage);
-        }
+            loading.value = false; 
+
+        }, 
+            onSuccess: () => {
+            loading.value = false; 
+        },
     });
 };
 </script>

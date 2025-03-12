@@ -8,7 +8,7 @@
                 label="black" />
 
             <div class="w-full flex text-center justify-center">
-                <FormButton name="Submit" custom="text-center w-[80%] py-4 mt-4" />
+                <FormButton name="Submit" custom="text-center w-[80%] py-4 mt-4" :disabled="loading"/>
             </div>
         </form>
     </div>
@@ -33,6 +33,7 @@
         qty: '',
         harga: '', // Corrected field name
     });
+    const loading = ref(false);
     const props = defineProps({
         pakan:{
             type: Array,
@@ -53,7 +54,7 @@
         //     return;
         // }
 
-
+        loading.value = true;
         router.post("/admin/createPakan", formData.value, {
             onError: (errors) => {
                 let errorMessage = "";
@@ -69,7 +70,11 @@
                     }
                 });
                 alert(errorMessage);
-            }
+                loading.value = false;
+            }, 
+            onSuccess: () => {
+            loading.value = false; 
+        },
         });
     };
 </script>

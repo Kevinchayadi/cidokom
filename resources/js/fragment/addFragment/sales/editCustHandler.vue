@@ -28,7 +28,7 @@
 
             <!-- Submit Button -->
             <div class="w-full flex text-center justify-center">
-                <FormButton name="Submit" custom="text-center w-[80%] py-4 mt-4" />
+                <FormButton name="Submit" custom="text-center w-[80%] py-4 mt-4" :disabled="loading" />
             </div>
         </form>
     </div>
@@ -46,7 +46,7 @@
         nama_sales: '',
         diskon: '', 
     });
-
+    const loading = ref(false);
     // Props for receiving selected data
     const props = defineProps({
         selectedId: {
@@ -74,6 +74,7 @@
 
     // Submit the form and send data to the backend
     const handleSubmit = () => {
+        loading.value = true;
         router.put(`/admin/editCustHandle/${props.selectedId}`, formData.value, {
             onError: (errors) => {
                 let errorMessage = "";
@@ -88,9 +89,11 @@
                     }
                 });
                 alert(errorMessage);
+                loading.value = false;
             },
             onSuccess: () => {
                 alert('Sales updated successfully!');
+                loading.value = false;
                 // Reset form after success
                 formData.value = { nama_sales: '', diskon: '' };
             }

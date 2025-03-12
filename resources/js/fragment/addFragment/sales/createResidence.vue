@@ -1,12 +1,12 @@
 <template>
     <div class="w-[80%] ">
-        <Headers tittle="Create New Sales" />
+        <Headers tittle="Create New Residence" />
         <form @submit.prevent="handleSubmit">
             <InputFragment v-model="formData.nama_Resident" name="nama_Residence" content="Residence Name" type="text" label="black" />
             <InputFragment v-model="formData.tipe" name="tipe" content="Type Building" type="dropdown" label="black" :datas="data"/>
 
             <div class="w-full flex text-center justify-center">
-                <FormButton name="Submit" custom="text-center w-[80%] py-4 mt-4" />
+                <FormButton name="Submit" custom="text-center w-[80%] py-4 mt-4" :disabled="loading"/>
             </div>
         </form>
     </div>
@@ -41,7 +41,7 @@
 
 
 
-
+    const loading = ref(false);
 
     const props = defineProps({
         stock:{
@@ -51,7 +51,7 @@
     const qtyLabel = `QTY (Stock : ${props.stock})`
 
     const handleSubmit = () => {
-
+        loading.value = true;
         router.post("/admin/createResidence", formData.value, {
             onError: (errors) => {
                 let errorMessage = "";
@@ -67,7 +67,11 @@
                     }
                 });
                 alert(errorMessage);
-            }
+                loading.value = false;
+            }, 
+            onSuccess: () => {
+            loading.value = false; 
+        },
         });
     };
 </script>

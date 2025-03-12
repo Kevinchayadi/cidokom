@@ -9,7 +9,7 @@
             <InputFragment v-model="formData.tipe" name="tipe" content="Type Building" type="dropdown" label="black" :datas="data"/>
 
             <div class="w-full flex text-center justify-center">
-                <FormButton name="Submit" custom="text-center w-[80%] py-4 mt-4" />
+                <FormButton name="Submit" custom="text-center w-[80%] py-4 mt-4" :disabled="loading"/>
             </div>
         </form>
     </div>
@@ -27,7 +27,7 @@
         nama_Resident: '',
         tipe: '',
     });
-
+    const loading = ref(false);
     // Dropdown options for 'tipe'
     const data = ref([
         {id: 'Residence', name: 'Residence'},
@@ -53,6 +53,7 @@
 
     // Handle form submission
     const handleSubmit = () => {
+        loading.value = true;
         router.put(`/admin/editResidence/${props.id}`, formData.value, {
             onError: (errors) => {
                 let errorMessage = "";
@@ -67,7 +68,11 @@
                     }
                 });
                 alert(errorMessage);
-            }
+                loading.value = false; 
+            }, 
+            onSuccess: () => {
+            loading.value = false; 
+        },
         });
     };
 </script>

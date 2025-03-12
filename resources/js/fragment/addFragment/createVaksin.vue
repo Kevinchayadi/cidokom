@@ -8,7 +8,7 @@
                 label="black" />
 
             <div class="w-full flex text-center justify-center">
-                <FormButton name="Submit" custom="text-center w-[80%] py-4 mt-4" />
+                <FormButton name="Submit" custom="text-center w-[80%] py-4 mt-4" :disabled="loading"/>
             </div>
         </form>
     </div>
@@ -38,7 +38,7 @@
             type: Array,
         }
     })
-
+    const loading = ref(false);
     const data = computed(() =>
         props.pakan.map(item => ({
             id: item.id,
@@ -47,7 +47,7 @@
     );
 
     const handleSubmit = () => {
-
+        loading.value = true;
         // if (formData.value.harga !== formData.value.harga_confirmation) {
         //     alert('hargas do not match!');
         //     return;
@@ -69,7 +69,11 @@
                     }
                 });
                 alert(errorMessage);
-            }
+                loading.value = false;
+            }, 
+            onSuccess: () => {
+            loading.value = false; 
+        },
         });
     };
 </script>
