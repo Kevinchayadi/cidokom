@@ -69,13 +69,13 @@ class HatcheryController extends Controller
     }
     public function userIndex()
     {
-        $hatchery = Hatchery::with('hatcheryDetails')->where('status', 'active')->get()->toArray();
+        $hatchery = Hatchery::with('hatcheryDetails')->where('status', 'active')->latest('created_at')->get()->toArray();
 
         return Inertia::render('user/Hatchery', compact('hatchery'));
     }
     public function adminIndex()
     {
-        $hatchery = Hatchery::with('hatcheryDetails', 'machine', 'pen')->get()->toArray();
+        $hatchery = Hatchery::with('hatcheryDetails', 'machine', 'pen')->orderBy('status')->get()->toArray();
 
         return Inertia::render('admin/hatchery', compact('hatchery'));
     }

@@ -94,7 +94,7 @@ class CommercialController extends Controller
                 $query->orderBy('created_at', 'desc');
             },
             'pen',
-        ])->get();
+        ])->orderBy('status')->get();
         return Inertia::render('admin/commercial', compact('commercial'));
     }
 

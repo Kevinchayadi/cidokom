@@ -92,7 +92,7 @@ class BreedingController extends Controller
                 $query->orderBy('created_at', 'desc');
             },
             'pen',
-        ])->get();
+        ])->orderBy('status')->get();
         foreach ($breeding as $item) {
             $item->age =
                 $item->age +

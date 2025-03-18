@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Afkir;
 use App\Models\Pakan;
 use App\Models\Pen;
-use App\Services\countService;
+use App\Services\CountService;
 use App\Services\moveService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
