@@ -141,8 +141,11 @@ class CommercialController extends Controller
                 });
             })
             ->get();
+        $commercial = Commercial::with('pen')->find($id);
+        $name = $commercial->pen->code_pen;
+        
 
-        return Inertia::render('user/FormDailyCommercial', ['id_commercial' => $id, 'feed' => $feed, 'pen' => $pen]);
+        return Inertia::render('user/FormDailyCommercial', ['id_commercial' => $id, 'feed' => $feed, 'pen' => $pen, 'name' =>$name]);
     }
 
     public function dailyStore(Request $request)
@@ -159,30 +162,45 @@ class CommercialController extends Controller
             'feed_name' => 'required',
             'inputBy' => 'required',
         ]);
-
+        
         $commercial = Commercial::where('id_commercial', $input['id_commercial'])->firstOrFail();
+        
         if (!$commercial) {
             return back()->withErrors('Data Commercial tidak ditemukan');
         }
         $input['begining_population'] = $commercial->entry_population;
         $input['date'] = $commercial->date;
-
+        
         $previousDetail = Commercial_detail::where('id_commercial', $input['id_commercial'])->latest('created_at')->first();
-
+        
         if (!$previousDetail) {
             $input['last_population'] = $input['begining_population'] - $input['depreciation_die'] - $input['depreciation_afkir'] - $input['depreciation_panen'];
-
             $costchicken = $this->countService->costChicken($commercial->unit_Cost ?? 0, $input['begining_population']);
         } else {
             $input['last_population'] = $previousDetail->last_population - $input['depreciation_die'] - $input['depreciation_afkir'] - $input['depreciation_panen'];
+            if ($previousDetail->last_population == 0) {
+                Commercial::where('id_commercial', $input['id_commercial'])->update(['status'=>'inactive']);
+                return redirect()->route('user.commercial')->with('success', 'cage is empty!');
+            }
             $costchicken = $this->countService->costChicken($commercial->unit_Cost ?? 0, $previousDetail->last_population);
         }
         if ($input['last_population'] < 0) {
+            
             return back()->withErrors('Population chicken cant be minus quantity!');
         }
-
+        
         // dd($costchicken);;
         $new_cost = 0.0;
+        //feed
+        //----------------------------------------------------------------------------------------------------------------------------------------
+        $feed = Pakan::where('nama_pakan', $input['feed_name'])->firstorfail();
+        
+        $currentfeed = $feed->qty - $input['feed'];
+        
+        if ($currentfeed < 0) {
+            // dd('test');
+            return back()->withErrors('pakan is not enough!! please check pakan stock or call jakarta admin to check the stock!');
+        }
         try {
             DB::beginTransaction();
             //move transaction
@@ -224,11 +242,6 @@ class CommercialController extends Controller
                 $input['total_recieve'] = $totalPopulation;
             }
 
-            //feed
-            //----------------------------------------------------------------------------------------------------------------------------------------
-            $feed = Pakan::where('nama_pakan', $input['feed_name'])->firstorfail();
-
-            $currentfeed = $feed->qty - $input['feed'];
             $costTotal = $commercial->total_cost + $input['feed'] * $feed->harga - $new_cost + $costPopulation;
             $costUnit = $commercial->unit_Cost - $costchicken * $input['depreciation_panen'] + $input['feed'] * $feed->harga - $new_cost + $costPopulation;
 

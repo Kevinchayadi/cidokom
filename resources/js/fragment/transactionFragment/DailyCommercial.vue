@@ -1,6 +1,6 @@
 <template>
     <div class="w-[80%]">
-        <Headers tittle="Commerce daily report" />
+        <Headers :tittle="`Commerce daily (${name})`" />
         <form @submit.prevent="handleSubmit">
             <InputFragment
                 v-model="depreciation_die"
@@ -8,12 +8,6 @@
                 content="die"
                 type="number"
             />
-            <!-- <InputFragment
-                v-model="depreciation_afkir"
-                name="depreciation_afkir"
-                content="reject"
-                type="number"
-            /> -->
             <InputFragment
                 v-model="depreciation_panen"
                 name="depreciation_panen"
@@ -83,22 +77,26 @@ const props = defineProps({
     },
     pen: {
         type: Array,
-        default:()=>[]
+        default: () => [],
     },
+    name:{
+        type:String
+    }
 });
 const store = useStore();
 
 const FeedList = computed(() =>
-    props.feed.map(item => ({
+    props.feed.map((item) => ({
         id: item.nama_pakan,
-        name: item.nama_pakan
+        name: item.nama_pakan,
     }))
 );
 const penList = computed(() =>
-  props.pen.map(item => ({
-  id: item.id,
-  name: `(${item.kandang.nama_kandang}) ${item.code_pen}`
-})));
+    props.pen.map((item) => ({
+        id: item.id,
+        name: `(${item.kandang.nama_kandang}) ${item.code_pen}`,
+    }))
+);
 
 // Define the state for each input
 const id_commercial = ref(props.id_commercial);
@@ -109,22 +107,39 @@ const move = ref(0);
 const femaleMove = ref(0);
 const maleMove = ref(0);
 const feed = ref(0);
-const feed_name = ref('');
+const feed_name = ref("");
 
 // Handle form submission
 const handleSubmit = () => {
     router.post("/user/commercial/input", {
         id_commercial: id_commercial.value,
-        depreciation_die: depreciation_die.value,
-        depreciation_afkir: depreciation_afkir.value,
-        depreciation_panen: depreciation_panen.value,
-        move_to: move.value,
-        total_female_move: femaleMove.value,
-        total_male_move: maleMove.value,
-        feed: feed.value,
-        feed_name: feed_name.value,
-        inputBy : store.getters.user.name
-    });
+            depreciation_die: depreciation_die.value,
+            depreciation_afkir: depreciation_afkir.value,
+            depreciation_panen: depreciation_panen.value,
+            move_to: move.value,
+            total_female_move: femaleMove.value,
+            total_male_move: maleMove.value,
+            feed: feed.value,
+            feed_name: feed_name.value,
+            inputBy: store.getters.user.name,
+     
+        }, {
+            onError: (errors) => {
+                let errorMessage = "";
+                if (errors.error) {
+                    alert(errors.error);
+                }
+                Object.values(errors).forEach((errorArray) => {
+                    if (Array.isArray(errorArray)) {
+                        errorMessage += errorArray.join("\n") + "\n"; // Gabungkan jika array
+                    } else {
+                        errorMessage += String(errorArray) +
+                        "\n"; // Konversi ke string jika bukan array
+                    }
+                });
+                alert(errorMessage);
+            }
+        });
 };
 </script>
 

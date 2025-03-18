@@ -1,6 +1,6 @@
 <template>
     <div class="w-[80%]">
-        <Headers tittle="Breeding daily report" />
+        <Headers :tittle="`Breeding Daily (${props.name})`" />
         <form @submit.prevent="handleSubmit">
             <InputFragment
                 v-model="femaleDie"
@@ -114,26 +114,31 @@ import { useStore } from "vuex";
 const props = defineProps({
     id_breeding: {
         type: String,
-        required: true
+        required: true,
     },
-    pakan:{
+    pakan: {
         type: Array,
-        required: true
+        required: true,
     },
     pen: {
         type: Array,
     },
-})
+    name: {
+        type: String,
+    },
+});
 const pakanList = computed(() =>
-  props.pakan.map(item => ({
-  id: item.nama_pakan,
-  name: item.nama_pakan
-})));
+    props.pakan.map((item) => ({
+        id: item.nama_pakan,
+        name: item.nama_pakan,
+    }))
+);
 const penList = computed(() =>
-  props.pen.map(item => ({
-  id: item.id,
-  name: `(${item.kandang.nama_kandang}) ${item.code_pen}`
-})));
+    props.pen.map((item) => ({
+        id: item.id,
+        name: `(${item.kandang.nama_kandang}) ${item.code_pen}`,
+    }))
+);
 const store = useStore();
 
 const femaleDie = ref(0);
@@ -147,55 +152,64 @@ const eggMorning = ref(0);
 const eggAfternoon = ref(0);
 const broken = ref(0);
 const abnormal = ref(0);
-const sale = ref(0)
+const sale = ref(0);
 const feed = ref(0);
-const feedName = ref('');
+const feedName = ref("");
 const total_egg = computed(() => {
-  return eggMorning.value + eggAfternoon.value - broken.value - abnormal.value - sale.value;
+    return (
+        eggMorning.value +
+        eggAfternoon.value -
+        broken.value -
+        abnormal.value -
+        sale.value
+    );
 });
 // Handle form submission
 const handleSubmit = () => {
-    if(total_egg.value<0){
-        alert("Total broken, abnormal and sale egg is bigger than current total!!");
+    if (total_egg.value < 0) {
+        alert(
+            "Total broken, abnormal and sale egg is bigger than current total!!"
+        );
         return;
-    }else{
-
-        router.post("/user/breeding/input", {
-            id_breeding: props.id_breeding,
-            female_die: femaleDie.value,
-            female_reject: femaleReject.value,
-            male_die: maleDie.value,
-            male_reject: maleReject.value,
-            egg_morning: eggMorning.value,
-            egg_afternoon: eggAfternoon.value,
-            broken: broken.value,
-            abnormal: abnormal.value,
-            sale: sale.value,
-            total_egg: total_egg.value,
-            move_to: move.value,
-            total_female_move: femaleMove.value,
-            total_male_move: maleMove.value,
-            feed: feed.value,
-            feed_name: feedName.value,
-            inputBy: store.getters.user.name
-     
-        }, {
-            onError: (errors) => {
-                let errorMessage = "";
-                if (errors.error) {
-                    alert(errors.error);
-                }
-                Object.values(errors).forEach((errorArray) => {
-                    if (Array.isArray(errorArray)) {
-                        errorMessage += errorArray.join("\n") + "\n"; // Gabungkan jika array
-                    } else {
-                        errorMessage += String(errorArray) +
-                        "\n"; // Konversi ke string jika bukan array
+    } else {
+        router.post(
+            "/user/breeding/input",
+            {
+                id_breeding: props.id_breeding,
+                female_die: femaleDie.value,
+                female_reject: femaleReject.value,
+                male_die: maleDie.value,
+                male_reject: maleReject.value,
+                egg_morning: eggMorning.value,
+                egg_afternoon: eggAfternoon.value,
+                broken: broken.value,
+                abnormal: abnormal.value,
+                sale: sale.value,
+                total_egg: total_egg.value,
+                move_to: move.value,
+                total_female_move: femaleMove.value,
+                total_male_move: maleMove.value,
+                feed: feed.value,
+                feed_name: feedName.value,
+                inputBy: store.getters.user.name,
+            },
+            {
+                onError: (errors) => {
+                    let errorMessage = "";
+                    if (errors.error) {
+                        alert(errors.error);
                     }
-                });
-                alert(errorMessage);
+                    Object.values(errors).forEach((errorArray) => {
+                        if (Array.isArray(errorArray)) {
+                            errorMessage += errorArray.join("\n") + "\n"; // Gabungkan jika array
+                        } else {
+                            errorMessage += String(errorArray) + "\n"; // Konversi ke string jika bukan array
+                        }
+                    });
+                    alert(errorMessage);
+                },
             }
-        });
+        );
     }
 };
 </script>

@@ -1,6 +1,6 @@
 <template>
     <SideBarUser>
-        <DailyBreeding :id_breeding="id_breeding" :pakan="pakan" :pen="pen"/>
+        <DailyBreeding :id_breeding="id_breeding" :pakan="pakan" :pen="pen" :name="name"/>
     </SideBarUser>
     
 </template>
@@ -22,6 +22,9 @@ const props = defineProps({
     pen:{
         type: Array,
         required: true
+    },
+    name:{
+        type: String,
     }
 })
 

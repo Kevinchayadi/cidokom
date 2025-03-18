@@ -150,8 +150,10 @@ class BreedingController extends Controller
             })
             ->where('code_pen', 'like', '%BRD')
             ->get();
+        $breeding = Breeding::with('pen')->find($id);
+        $name = $breeding->pen->code_pen;
         
-        return Inertia::render('user/FormDailyBreeding', ['id_breeding' => $id, 'pakan' => $pakan, 'pen' => $pen]);
+        return Inertia::render('user/FormDailyBreeding', ['id_breeding' => $id, 'pakan' => $pakan, 'pen' => $pen, 'name' =>$name]);
     }
 
     public function inputedBreeding(Request $request)

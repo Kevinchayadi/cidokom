@@ -1,6 +1,6 @@
 <template>
     <SideBarUser>
-        <DailyCommercial  :id_commercial="id_commercial" :feed="feed" :pen="pen"/>
+        <DailyCommercial  :id_commercial="id_commercial" :feed="feed" :pen="pen" :name="name"/>
     </SideBarUser>
 </template>
 
@@ -20,12 +20,12 @@ import { onMounted } from 'vue';
         },
         pen:{
             type: Array
+        },
+        name:{
+            type: String
         }
     })
 
-    onMounted(() => {
-  console.log(props.feed)
-});
 </script>
 
 <style>
