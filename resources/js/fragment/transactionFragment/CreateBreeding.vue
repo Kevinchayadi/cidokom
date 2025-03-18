@@ -53,6 +53,7 @@
                 <FormButton
                     name="Submit"
                     custom=" text-center w-[80%] py-4 mt-4"
+                    :disabled="loading"
                 />
             </div>
         </form>
@@ -107,9 +108,9 @@ const qtyBetina = ref(0);
 const umur = ref(0);
 const cost = ref(0);
 const vaksin = ref([]);
-
+const loading = ref(false);
 const handleSubmit = () => {
-    
+    loading.value = true;
     router.post("/user/breeding/create", {
         id_pen: pen.value,
         code_ayam_jantan: ayamJantan.value,
@@ -124,7 +125,11 @@ const handleSubmit = () => {
         onError: (errors) => {
             const errorMessages = Object.values(errors).flat(); 
             alert(errorMessages.join('\n'));
-        }
+            loading.value = false;
+        } , 
+            onSuccess: () => {
+            loading.value = false; 
+        },
     });
 };
 </script>

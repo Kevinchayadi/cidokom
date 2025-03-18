@@ -40,7 +40,8 @@
                 <FormButton
                     name="Submit"
                     custom=" text-center w-[80%] py-4 mt-4"
-                    :disabled="totalSetting === 0"
+                    :disabled="totalSetting === 0 || loading"
+                    
                     
                 />
             </div>
@@ -135,9 +136,10 @@ const totalSetting = computed(() => {
 });
 
 
-
+const loading = ref(false);
 
 const handleSubmit = () => {
+    loading.value = true;
     router.post(
     "/user/hatchery/create",
     {
@@ -161,7 +163,11 @@ const handleSubmit = () => {
                 }
             });
             alert(errorMessage); 
-        }
+            loading.value = false;
+        }, 
+            onSuccess: () => {
+            loading.value = false; 
+        },
     }
 );
 

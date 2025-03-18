@@ -95,6 +95,7 @@
                 <FormButton
                     name="Submit"
                     custom=" text-center w-[80%] py-4 mt-4"
+                    :disabled="loading"
                 />
             </div>
         </form>
@@ -164,6 +165,7 @@ const total_egg = computed(() => {
         sale.value
     );
 });
+const loading = ref(false);
 // Handle form submission
 const handleSubmit = () => {
     if (total_egg.value < 0) {
@@ -172,6 +174,8 @@ const handleSubmit = () => {
         );
         return;
     } else {
+        loading.value = true;
+
         router.post(
             "/user/breeding/input",
             {
@@ -207,7 +211,11 @@ const handleSubmit = () => {
                         }
                     });
                     alert(errorMessage);
-                },
+                    loading.value = false;
+                }, 
+            onSuccess: () => {
+            loading.value = false; 
+        },
             }
         );
     }

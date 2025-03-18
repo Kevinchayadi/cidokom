@@ -9,7 +9,7 @@
                 content="female chicken" type="number" />
 
             <div class="w-full flex text-center justify-center">
-                <FormButton name="Submit" custom=" text-center w-[80%] py-4 mt-4" />
+                <FormButton name="Submit" custom=" text-center w-[80%] py-4 mt-4" :disabled="loading"/>
             </div>
         </form>
     </div>

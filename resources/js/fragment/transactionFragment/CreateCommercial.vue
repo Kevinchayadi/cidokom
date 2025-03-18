@@ -33,6 +33,7 @@
                 <FormButton
                     name="Submit"
                     custom=" text-center w-[80%] py-4 mt-4"
+                    :disabled="loading"
                 />
             </div>
         </form>
@@ -66,8 +67,9 @@ const entryDate = ref("");
 const entry_population = ref("");
 const umur = ref(0);
 const status = ref("active");
-
+const loading = ref(false);
 const handleSubmit = () => {
+    loading.value = true;
     router.post("/user/commercial/create", {
         id_pen: id_pen.value,
         entryDate: entryDate.value,
@@ -78,7 +80,11 @@ const handleSubmit = () => {
         onError: (errors) => {
             const errorMessages = Object.values(errors).flat(); 
             alert(errorMessages.join('\n'));
-        }
+            loading.value = false;
+        }, 
+            onSuccess: () => {
+            loading.value = false; 
+        },
     });
 };
 </script>

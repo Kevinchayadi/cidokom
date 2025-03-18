@@ -28,6 +28,7 @@
                 <FormButton
                     name="Submit"
                     custom="text-center w-[80%] py-4 mt-4"
+                    :disabled="loading"
                 />
             </div>
         </form>
@@ -78,9 +79,10 @@ const feedFemale = ref(0);
 const idDestination = ref('');
 const maleOut = ref(0);
 const femaleOut = ref(0);
-
+const loading = ref(false);
 // Handle form submission
 const handleSubmit = () => {
+    loading.value = true;
     router.post("/user/breeding/input", {
         id_breeding: props.id_breeding,
         feed_male: feedMale.value,
@@ -92,6 +94,7 @@ const handleSubmit = () => {
     }).then(response => {
         console.log("Data berhasil dikirim:", response);
         alert("Data berhasil dikirim!");
+        loading.value = false;
     })
     .catch(error => {
         if (error.response && error.response.data.error) {
@@ -99,6 +102,7 @@ const handleSubmit = () => {
         } else {
             alert("Terjadi kesalahan saat mengirim data. Silakan coba lagi.");
         }
+        loading.value = false;
     });
 };
 </script>

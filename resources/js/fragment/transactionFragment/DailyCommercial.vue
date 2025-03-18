@@ -51,6 +51,7 @@
                 <FormButton
                     name="Submit"
                     custom=" text-center w-[80%] py-4 mt-4"
+                    :disabled="loading"
                 />
             </div>
         </form>
@@ -108,9 +109,10 @@ const femaleMove = ref(0);
 const maleMove = ref(0);
 const feed = ref(0);
 const feed_name = ref("");
-
+const loading = ref(false);
 // Handle form submission
 const handleSubmit = () => {
+    loading.value = true;
     router.post("/user/commercial/input", {
         id_commercial: id_commercial.value,
             depreciation_die: depreciation_die.value,
@@ -138,7 +140,11 @@ const handleSubmit = () => {
                     }
                 });
                 alert(errorMessage);
-            }
+                loading.value = false;
+            }, 
+            onSuccess: () => {
+            loading.value = false; 
+        },
         });
 };
 </script>

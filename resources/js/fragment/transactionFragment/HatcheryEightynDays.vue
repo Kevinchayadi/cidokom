@@ -26,6 +26,7 @@
                 <FormButton
                     name="Submit"
                     custom=" text-center w-[80%] py-4 mt-4"
+                    :disabled="loading"
                 />
             </div>
         </form>
@@ -54,14 +55,35 @@ const explode = ref("");
 const hatcher = computed(() => {
   return props.hatcheryDetail.total_setting - infertile.value - explode.value;
 });
-
+const loading = ref(false);
 const handleSubmit = () => {
+    loading.value = true;
     router.post("/user/hatchery/eightynInput", {
         id_hatchery: id_hatchery.value,
         infertile: infertile.value,
         explode: explode.value,
         hatcher: hatcher.value,
-    });
+    }, {
+            onError: (errors) => {
+                let errorMessage = "";
+                if (errors.error) {
+                    alert(errors.error);
+                }
+                Object.values(errors).forEach((errorArray) => {
+                    if (Array.isArray(errorArray)) {
+                        errorMessage += errorArray.join("\n") + "\n"; // Gabungkan jika array
+                    } else {
+                        errorMessage += String(errorArray) +
+                        "\n"; // Konversi ke string jika bukan array
+                    }
+                });
+                alert(errorMessage);
+                loading.value = false;
+            }, 
+            onSuccess: () => {
+            loading.value = false; 
+        },
+        });
 };
 </script>
 

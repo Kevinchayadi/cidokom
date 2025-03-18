@@ -71,6 +71,7 @@
                 <FormButton
                     name="Submit"
                     custom="text-center w-[80%] py-4 mt-4"
+                    :disabled="loading"
                 />
             </div>
         </form>
@@ -126,9 +127,10 @@ const female_sale = ref(0);
 const idDestination = ref("");
 const maleOut = ref(0);
 const femaleOut = ref(0);
-
+const loading = ref(false);
 // Handle form submission
 const handleSubmit = () => {
+    loading.value = true;
     router.post(
         `/user/afkir/input/${props.id}`,
         {
@@ -149,7 +151,11 @@ const handleSubmit = () => {
             onError: (errors) => {
                 const errorMessages = Object.values(errors).flat();
                 alert(errorMessages.join("\n"));
+                loading.value = false;
             },
+            onSuccess: () => {
+            loading.value = false; 
+        },
         }
     );
 };
