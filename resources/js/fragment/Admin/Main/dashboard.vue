@@ -180,7 +180,7 @@
             const createdAt = hatcheryItem.created_at;
             const saleable = (details.dead_in_egg || 0) +
                 (details.explode || 0) +
-                (details.Infertile || 0);
+                (details.infertile || 0);
 
             // Format created_at menjadi dd/mm/yy
             const formattedDate = createdAt ? formatDate(createdAt) : null;

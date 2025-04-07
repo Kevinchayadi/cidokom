@@ -1,6 +1,12 @@
 <template>
     <div class="w-[80%]">
-        <Headers tittle="Breeding daily report" />
+        <Headers :tittle="`Daily Report `" />
+        <Headers :tittle="`(${name})`" />
+        <div class="flex w-full justify-around my-5 lg:text-xl text-lg">
+            <h2 class=" text-yellow-300 font-bold mx-2">Male Chicken : {{ chicken.male }} Pcs</h2>
+            <h2 class=" text-yellow-300 font-bold mx-2" >Female Chicken : {{ chicken.female }} Pcs</h2>
+
+        </div>
         <form @submit.prevent="handleSubmit">
             <InputFragment
                 v-model="feedName"
@@ -97,6 +103,12 @@ const props = defineProps({
         required: true,
     },
     pen: {
+        type: Array,
+    },
+    name: {
+        type: String,
+    },
+    chicken: {
         type: Array,
     },
 });

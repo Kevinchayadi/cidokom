@@ -2,7 +2,7 @@
 <template>
 
     <Sidebarnew title="Dashboard">
-        <Summary :breeding="breeding" :commercial="commercial" :total_egg="total_egg" :pakan="pakan" />
+        <Summary :breeding="breeding" :commercial="commercial" :total_egg="total_egg" :pakan="pakan" :date="date" />
     </Sidebarnew>
     <!-- <BreedingHeaderTable /> -->
   
@@ -30,13 +30,16 @@ const props = defineProps({
     pakan:{
         type: Array,
         required: true
+    },
+    date:{
+        type: String,
     }
 
 })
 const store = useStore();
 onMounted(() => {
     // console.log(props.commercial[0].id_commercial)
-
+    
     if (!localStorage.getItem('page_refreshed')) {
         localStorage.setItem('page_refreshed', true);
         window.location.reload();

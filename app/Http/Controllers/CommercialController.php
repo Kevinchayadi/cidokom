@@ -141,11 +141,20 @@ class CommercialController extends Controller
                 });
             })
             ->get();
-        $commercial = Commercial::with('pen')->find($id);
+        $commercial = Commercial::with([
+            'commercialDetails' => function ($query) {
+                $query->orderBy('created_at', 'desc');
+            },
+            'pen',
+        ])->find($id);
+
+        $chicken = [
+            'total'=> $commercial->commercialDetails[0]->last_population,
+        ];
         $name = $commercial->pen->code_pen;
         
 
-        return Inertia::render('user/FormDailyCommercial', ['id_commercial' => $id, 'feed' => $feed, 'pen' => $pen, 'name' =>$name]);
+        return Inertia::render('user/FormDailyCommercial', ['id_commercial' => $id, 'feed' => $feed, 'pen' => $pen, 'name' =>$name, 'chicken' => $chicken]);
     }
 
     public function dailyStore(Request $request)
@@ -280,8 +289,19 @@ class CommercialController extends Controller
                 });
             })
             ->get();
+            $commercial = Commercial::with([
+                'commercialDetails' => function ($query) {
+                    $query->orderBy('created_at', 'desc');
+                },
+                'pen',
+            ])->find($id);
+    
+            $chicken = [
+                'total'=> $commercial->commercialDetails[0]->last_population,
+            ];
+            $name = $commercial->pen->code_pen;
 
-        return Inertia::render('user/FormMoveCommercial', ['id' => $id, 'pen' => $pen]);
+        return Inertia::render('user/FormMoveCommercial', ['id' => $id, 'pen' => $pen,'chicken'=> $chicken, 'name' => $name]);
     }
     public function moveTable(Request $request, $id)
     {

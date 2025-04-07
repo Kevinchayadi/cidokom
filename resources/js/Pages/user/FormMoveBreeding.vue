@@ -1,6 +1,6 @@
 <template>
     <SideBarUser>
-        <MoveForm :pen="pen" @submitForm="handleFormSubmit"/>
+        <MoveForm :pen="pen" @submitForm="handleFormSubmit" :name="name" :chicken="chicken"/>
     </SideBarUser>
     
 </template>
@@ -23,7 +23,14 @@ const props = defineProps({
     pen:{
         type:String,
         required: true
+    },
+    name:{
+        type:String,
+    },
+    chicken:{
+        type: Array,
     }
+
     
 })
 
@@ -35,9 +42,9 @@ const handleFormSubmit = (formData) => {
             }})
 };
 
-onMounted(() => {
-  console.log(props.vaksin)
-});
+// onMounted(() => {
+//   console.log(props.vaksin)
+// });
 
 
 </script>

@@ -1,33 +1,41 @@
 <template>
     <SideBarUser>
-        <DailyAfkir :id="id"  :pen="pen" :pakan="pakan"/>
+        <DailyAfkir
+            :id="id"
+            :pen="pen"
+            :pakan="pakan"
+            :name="name"
+            :chicken="chicken"
+        />
     </SideBarUser>
-    
 </template>
 
 <script setup>
-import SideBarUser from '../../layout/SideBarUser.vue';
-import DailyBreeding from '../../fragment/transactionFragment/DailyBreeding.vue'
-import { onMounted } from 'vue';
-import DailyAfkir from '../../fragment/transactionFragment/DailyAfkir.vue';
+import SideBarUser from "../../layout/SideBarUser.vue";
+import DailyBreeding from "../../fragment/transactionFragment/DailyBreeding.vue";
+import { onMounted } from "vue";
+import DailyAfkir from "../../fragment/transactionFragment/DailyAfkir.vue";
 
 const props = defineProps({
     id: {
         type: Number,
-        required: true
+        required: true,
     },
-    pen:{
+    pen: {
         type: Array,
-        required: true
+        required: true,
     },
-    pakan:{
+    pakan: {
         type: Array,
-        required: true
-    }
-})
-
+        required: true,
+    },
+    name: {
+        type: String,
+    },
+    chicken: {
+        type: Array,
+    },
+});
 </script>
 
-<style>
-
-</style>
+<style></style>

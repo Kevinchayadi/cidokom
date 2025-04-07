@@ -1,6 +1,11 @@
 <template>
     <div class="w-[80%]">
         <Headers :tittle="`Breeding Daily (${props.name})`" />
+        <div class="flex w-full justify-around my-5 lg:text-xl text-lg">
+            <h2 class=" text-yellow-300 font-bold">Male Chicken : {{ chicken.male }} Pcs</h2>
+            <h2 class=" text-yellow-300 font-bold" >Female Chicken : {{ chicken.female }} Pcs</h2>
+
+        </div>
         <form @submit.prevent="handleSubmit">
             <InputFragment
                 v-model="femaleDie"
@@ -127,6 +132,9 @@ const props = defineProps({
     name: {
         type: String,
     },
+    chicken:{
+        type: Array,
+    }
 });
 const pakanList = computed(() =>
     props.pakan.map((item) => ({

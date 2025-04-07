@@ -1,6 +1,6 @@
 <template>
     <SideBarUser>
-        <DailyCommercial  :id_commercial="id_commercial" :feed="feed" :pen="pen" :name="name"/>
+        <DailyCommercial  :id_commercial="id_commercial" :feed="feed" :pen="pen" :name="name" :chicken="chicken"/>
     </SideBarUser>
 </template>
 
@@ -23,6 +23,9 @@ import { onMounted } from 'vue';
         },
         name:{
             type: String
+        },
+        chicken:{
+            type: Array
         }
     })
 

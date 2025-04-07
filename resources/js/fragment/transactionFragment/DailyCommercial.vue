@@ -1,6 +1,10 @@
 <template>
     <div class="w-[80%]">
         <Headers :tittle="`Commerce daily (${name})`" />
+        <div class="flex w-full justify-around my-5 lg:text-xl text-lg">
+            <h2 class=" text-yellow-300 font-bold">Chicken : {{ chicken.total }} Pcs</h2>
+
+        </div>
         <form @submit.prevent="handleSubmit">
             <InputFragment
                 v-model="depreciation_die"
@@ -82,6 +86,9 @@ const props = defineProps({
     },
     name:{
         type:String
+    },
+    chicken:{
+        type:Array
     }
 });
 const store = useStore();

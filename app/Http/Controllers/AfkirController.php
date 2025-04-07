@@ -63,6 +63,13 @@ class AfkirController extends Controller
         // $pen = Pen::get();
 
         $pakan = Pakan::get()->toArray();
+        $afkir = Afkir::where('id_pen', $id)->latest()->first();
+        // dd($afkir);
+        $chicken = [
+            'male'=> $afkir->male,
+            'female'=> $afkir->female,
+        ];
+        $name = $penCheck->code_pen;
         // dd($pen);
         if ($penCheck->code_pen === 'AFKIR-BRD' || $penCheck->code_pen === 'KARANTINA-BRD') {
             $pen = Pen::whereHas('kandang', function ($query) {
@@ -76,7 +83,7 @@ class AfkirController extends Controller
             })->get();
             // return  Inertia::render('user/FormDailyAfkirCMR', ['id'=>$id, 'pen'=>$pen]);
         }
-        return Inertia::render('user/FormDailyAfkirBRD', ['id' => $id, 'pen' => $pen, 'pakan' => $pakan]);
+        return Inertia::render('user/FormDailyAfkirBRD', ['id' => $id, 'pen' => $pen, 'pakan' => $pakan, 'name'=>$name , 'chicken'=>$chicken]);
     }
     function storeAfkirForm(Request $request, $id)
     {

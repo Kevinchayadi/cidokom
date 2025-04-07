@@ -57,6 +57,7 @@ class BreedingController extends Controller
                 $createdDate = Carbon::parse($detail->created_at)
                     // ->startOfDay()
                     ->toDateString();
+                    
                 $today = Carbon::now('Asia/Jakarta')->toDateString();
                 // dd($createdDate == $today);
                 if ($createdDate === $today) {
@@ -65,7 +66,7 @@ class BreedingController extends Controller
                     break; // keluar dari loop karena sudah ditemukan detail hari ini
                 }
             }
-            // dd($createdDate);
+            
             // Periksa apakah item sudah memenuhi kriteria vaksin
             foreach ($vaksin as $data) {
                 if ($item->age >= $data->hari) {
@@ -100,6 +101,8 @@ class BreedingController extends Controller
                     ->startOfDay()
                     ->diffInDays(Carbon::now()->startOfDay());
         }
+        // dd($breeding->toArray());
+        
         return Inertia::render('admin/breeding', compact('breeding'));
     }
 
@@ -146,14 +149,25 @@ class BreedingController extends Controller
         $pen = Pen::with('kandang')
             ->where('status', 'inactive')
             ->whereHas('kandang', function ($query) {
-                $query->whereNotIn('jenis_kandang', ['breeding', 'commerce']);
+                $query->whereNotIn('jenis_kandang', ['commerce']);
             })
             ->where('code_pen', 'like', '%BRD')
             ->get();
-        $breeding = Breeding::with('pen')->find($id);
+        $breeding = Breeding::with([
+            'BreedingDetails' => function ($query) {
+                $query->orderBy('created_at', 'desc');
+            },
+            'pen',
+        ])->find($id);
+        $chicken = [
+            'male'=> $breeding->breedingDetails[0]->last_male,
+            'female'=> $breeding->breedingDetails[0]->last_female,
+        ];
+        // dd($chicken);
+
         $name = $breeding->pen->code_pen;
         
-        return Inertia::render('user/FormDailyBreeding', ['id_breeding' => $id, 'pakan' => $pakan, 'pen' => $pen, 'name' =>$name]);
+        return Inertia::render('user/FormDailyBreeding', ['id_breeding' => $id, 'pakan' => $pakan, 'pen' => $pen, 'name' =>$name, 'chicken' =>$chicken]);
     }
 
     public function inputedBreeding(Request $request)
@@ -230,27 +244,31 @@ class BreedingController extends Controller
                     'qty' => $qtysale,
                 ]);
             }
-
+            
             //if table move has breeding pending
             //------------------------------------------------------------------------------------------------------------------------------------
             $totalMale = Table_move::where('destination_pen', $Breeding->id_pen)
-                ->where('status', 'active')
-                ->sum('totalMale');
+            ->where('status', 'active')
+            ->sum('totalMale');
             $totalFemale = Table_move::where('destination_pen', $Breeding->id_pen)
-                ->where('status', 'active')
-                ->sum('totalFemale');
+            ->where('status', 'active')
+            ->sum('totalFemale');
             $totalPopulation = $totalMale ?? (0 + $totalFemale ?? 0);
             $costMale = Table_move::where('destination_pen', $Breeding->id_pen)
-                ->where('status', 'active')
-                ->sum('maleCost');
+            ->where('status', 'active')
+            ->sum('maleCost');
             $costFemale = Table_move::where('destination_pen', $Breeding->id_pen)
-                ->where('status', 'active')
-                ->sum('femaleCost');
+            ->where('status', 'active')
+            ->sum('femaleCost');
             $input['last_male'] += $totalMale ?? 0;
             $input['last_female'] += $totalFemale ?? 0;
-
+            
             $total_cost = $Breeding->cost_Total_induk - $new_cost + $costMale + $costFemale - $Breeding->cost_induk * ($input['female_reject'] + $input['male_reject']);
-            $cost_induk = $total_cost / ($input['last_male'] + $input['last_female']);
+            $cost_induk= 0;
+            if(($input['last_male'] + $input['last_female']) >0){
+                $cost_induk = $total_cost / ($input['last_male'] + $input['last_female']);
+            }
+            
             $Breeding->update([
                 'cost_Total_induk' => $total_cost,
                 'cost_induk' => $cost_induk,
@@ -264,7 +282,7 @@ class BreedingController extends Controller
                     ->update('status', 'inactive');
                 $input['last_population'] = $totalPopulation;
             }
-
+            // dd("test");
             //feed
             //--------------------------------------------------------------------------------------------------------------------------------
             // $currentfeed = $pakan->qty - $input['feed'];
@@ -297,8 +315,20 @@ class BreedingController extends Controller
             })
             ->where('code_pen', 'like', '%BRD')
             ->get();
+        $breeding = Breeding::with([
+                'BreedingDetails' => function ($query) {
+                    $query->orderBy('created_at', 'desc');
+                },
+                'pen',
+            ])->find($id);
+        $chicken = [
+                'male'=> $breeding->breedingDetails[0]->last_male,
+                'female'=> $breeding->breedingDetails[0]->last_female,
+            ];
+        $name = $breeding->pen->code_pen;
 
-        return Inertia::render('user/FormMoveBreeding', ['id' => $id, 'pen' => $pen]);
+
+        return Inertia::render('user/FormMoveBreeding', ['id' => $id, 'pen' => $pen,'name'=> $name, 'chicken' => $chicken]);
     }
 
     public function moveTable(Request $request, $id)

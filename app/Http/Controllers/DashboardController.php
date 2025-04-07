@@ -78,7 +78,6 @@ class DashboardController extends Controller
 
         $breedings = Breeding::where('status', 'active')->get();
         $breedingDetails = [];
-        $test = true;
         $TotalEgg = Breeding_detail::where('status', 'active')->sum('total_egg');
         $pakan = Pakan::get();
         $latestBreedingDetail = Breeding_detail::latest('created_at')->first();
@@ -138,6 +137,7 @@ class DashboardController extends Controller
             'commercial' => $commercialDetails,
             'total_egg' => $TotalEgg,
             'pakan' => $pakan,
+            'date'=>$date
         ]);
     }
 

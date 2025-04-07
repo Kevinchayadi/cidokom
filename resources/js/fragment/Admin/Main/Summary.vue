@@ -1,13 +1,26 @@
 <template>
-    <div class="flex justify-start sticky top-0 left-0 bg-primary">
+    <div class="flex md:justify-start md:flex-row flex-col sticky top-0 left-0 bg-primary">
         <button :class="buttonclasses" @click="downloadItem">
             Download
         </button>
     </div>
-    <div id="printAble" class="row-span-10 bg-gray-100 h-[95vh]  overflow-x-auto overflow-y-auto p-0 m-0">
-        <div class="divide-y divide-x divide-gray-300 border-collapse  pb-10">
+    <div id="printAble" class="row-span-10 bg-gray-100 h-[95vh]  overflow-x-auto overflow-y-auto p-0 m-0 ">
+        <div class="divide-y divide-x divide-gray-300 border-collapse  pb-10 mx-2">
             <div id="printAble">
+                <div class="flex flex-col lg:flex-row justify-between items-center p-2 ">
+                    <div>
+                        <h1 class="font-extrabold text-xl lg:text-3xl  py-2 " style="text-shadow: 3px 3px 7px rgba(0,0,0,0.5);">
+                            Daily Report for {{ date }}
+                        </h1>
+                    </div>
+                    <div>
+                        <form @submit.prevent="handleSubmit">
+                            <DateSubmitted v-model="dateNow"/>
+                            
+                        </form>
+                    </div>
 
+                </div>
                 <h1>1. Commercial</h1>
                 <table>
                     <thead>
@@ -102,6 +115,7 @@
                             <td :class="classestd">{{ grandTotal . mati }}</td>
                             <td :class="classestd">{{ grandTotal . keluar }}</td>
                             <td :class="classestd">{{ grandTotal . stock_akhir }}</td>
+                            <td :class="classestd"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -183,7 +197,8 @@
     import {
         computed,
         onMounted,
-        ref
+        ref,
+        watch
     } from 'vue';
 
 
@@ -205,13 +220,22 @@
         pakan: {
             type: Array,
             required: true
+        },
+        date:{
+            type:String
         }
     })
+    const dateNow = ref(props.date);
+
+    const handleSubmit = () => {
+        console.log("Tanggal dipilih:", dateNow.value);
+    };
+
 
     const total_pakan = computed(() => {
         let total = 0;
 
-        console.log(props.pakan)
+        // console.log(props.pakan)
         props.pakan.forEach((item) => {
             total += parseFloat(item.qty)
         });
@@ -247,6 +271,7 @@
             utuh,
         };
     });
+    
 
     const eggHarvesting = computed(() => {
         return props.breeding.map(item => {
@@ -390,16 +415,15 @@
     });
 
 
-    onMounted(() => {
-        console.log(props.commercial)
-
-    });
+    
 
 
 
 
 import { jsPDF } from "jspdf";  // Mengimpor jsPDF
 import html2canvas from "html2canvas";  // Mengimpor html2canvas
+import InputFragment from '../../../components/InputFragment.vue';
+import DateSubmitted from '../../../components/inputComponent/DateSubmitted.vue';
 
 const downloadItem = () => {
     const element = document.getElementById('printAble');  // Ambil elemen dengan ID 'printAble'
