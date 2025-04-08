@@ -96,11 +96,15 @@ class BreedingController extends Controller
         ])->orderBy('status')->get();
         foreach ($breeding as $item) {
             $item->age =
-                $item->age +
+                $item->age??0 +
                 Carbon::parse($item->created_at)
                     ->startOfDay()
                     ->diffInDays(Carbon::now()->startOfDay());
+            if($item->entryDate == null){
+                $item->entryDate = Carbon::parse($item->created_at)->format('Y-m-d');
+            }
         }
+        
         // dd($breeding->toArray());
         
         return Inertia::render('admin/breeding', compact('breeding'));
@@ -160,8 +164,8 @@ class BreedingController extends Controller
             'pen',
         ])->find($id);
         $chicken = [
-            'male'=> $breeding->breedingDetails[0]->last_male,
-            'female'=> $breeding->breedingDetails[0]->last_female,
+            'male'=> $breeding->breedingDetails[0]->last_male??$breeding->jumlah_jantan,
+            'female'=> $breeding->breedingDetails[0]->last_female??$breeding->jumlah_betina,
         ];
         // dd($chicken);
 
@@ -279,7 +283,7 @@ class BreedingController extends Controller
             if ($totalPopulation != 0) {
                 Table_move::where('destination_pen', $Breeding->id_pen)
                     ->where('status', 'active')
-                    ->update('status', 'inactive');
+                    ->update(['status' => 'inactive']);
                 $input['last_population'] = $totalPopulation;
             }
             // dd("test");

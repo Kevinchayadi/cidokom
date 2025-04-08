@@ -181,7 +181,7 @@
             const saleable = (details.dead_in_egg || 0) +
                 (details.explode || 0) +
                 (details.infertile || 0);
-
+            console.log(details.dead_in_egg, details.explode, details.infertile)
             // Format created_at menjadi dd/mm/yy
             const formattedDate = createdAt ? formatDate(createdAt) : null;
 
@@ -191,9 +191,9 @@
 
 
     onMounted(() => {
-        console.log(chickIn.value);
-        console.log(afkir.value);
-        console.log(death.value);
+        // console.log(chickIn.value);
+        // console.log(afkir.value);
+        // console.log(death.value);
     })
 
     const data1 = [

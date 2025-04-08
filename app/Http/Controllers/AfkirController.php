@@ -30,8 +30,8 @@ class AfkirController extends Controller
         foreach ($afkir as $item) {
             $item->isTrue = true;
             $data = Afkir::where('id_pen', $item->id)
-                ->whereDate('created_at', Carbon::today())
                 ->get();
+            // dd(!$data->isEmpty());
             if (!$data->isEmpty()) {
                 // Periksa kondisi: male == 0, female == 0, atau tanggal sama dengan hari ini
                 foreach ($data as $record) {
@@ -53,7 +53,7 @@ class AfkirController extends Controller
                 $item->isTrue = false;
             }
         }
-
+        // dd($afkir);
         // dd(!Afkir::where('id_pen', 33)->whereDate('created_at', Carbon::today())->get()->isEmpty());
         return Inertia::render('user/afkir', ['afkir' => $afkir]);
     }

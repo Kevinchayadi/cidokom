@@ -95,6 +95,16 @@ class CommercialController extends Controller
             },
             'pen',
         ])->orderBy('status')->get();
+        foreach ($commercial as $item) {
+            $item->age =
+                $item->age??0 +
+                Carbon::parse($item->created_at)
+                    ->startOfDay()
+                    ->diffInDays(Carbon::now()->startOfDay());
+                if($item->entryDate == null){
+                    $item->entryDate = Carbon::parse($item->created_at)->format('Y-m-d');
+                }
+            }
         return Inertia::render('admin/commercial', compact('commercial'));
     }
 
@@ -134,23 +144,24 @@ class CommercialController extends Controller
     {
         $feed = Pakan::get()->toArray();
         $pen = Pen::with('kandang')
-            ->where('status', 'inactive')
-            ->whereHas('kandang', function ($query) {
-                $query->where('jenis_kandang', 'breeding')->orWhere(function ($subQuery) {
-                    $subQuery->where('jenis_kandang', 'afkir')->where('code_pen', 'like', '%CMR');
-                });
-            })
-            ->get();
+        ->where('status', 'inactive')
+        ->whereHas('kandang', function ($query) {
+            $query->where('jenis_kandang', 'breeding')->orWhere(function ($subQuery) {
+                $subQuery->where('jenis_kandang', 'afkir')->where('code_pen', 'like', '%CMR');
+            });
+        })
+        ->get();
         $commercial = Commercial::with([
             'commercialDetails' => function ($query) {
                 $query->orderBy('created_at', 'desc');
             },
             'pen',
-        ])->find($id);
-
-        $chicken = [
-            'total'=> $commercial->commercialDetails[0]->last_population,
-        ];
+            ])->find($id);
+            
+            $chicken = [
+                'total'=> $commercial->commercialDetails[0]->last_population??$commercial->last_population,
+            ];
+            // dd("test");
         $name = $commercial->pen->code_pen;
         
 

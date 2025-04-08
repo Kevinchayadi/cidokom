@@ -28,6 +28,6 @@ class Afkir extends Model
     
     public function pen()
     {
-        return $this->belongsTo(pen::class, 'id_pen', 'id');
+        return $this->belongsTo(Pen::class, 'id_pen', 'id');
     }
 }

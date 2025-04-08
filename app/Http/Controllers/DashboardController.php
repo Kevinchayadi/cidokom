@@ -94,12 +94,15 @@ class DashboardController extends Controller
                 $total_male_sale = Breeding_detail::where('id_breeding', $item->id_breeding)->sum('male_reject');
                 $total_female_sale = Breeding_detail::where('id_breeding', $item->id_breeding)->sum('female_reject');
                 $last_breed = Breeding_detail::where('id_breeding', $item->id_breeding)->latest('created_at')->first();
-                $breedingDetail->FCR = number_format(
-                    $total_feed / ($total_male_sale + $total_female_sale + ($last_breed->last_male ?? 0) + ($last_breed->last_female ?? 0)),
-                    2, // Jumlah digit di belakang koma
-                    '.', // Pemisah desimal
-                    ''  // Pemisah ribuan (opsional, bisa diabaikan)
-                );
+                $breedingDetail->FCR = 0;
+                if(($total_male_sale + $total_female_sale + ($last_breed->last_male ?? 0) + ($last_breed->last_female ?? 0))!=0){
+                    $breedingDetail->FCR = number_format(
+                        $total_feed / ($total_male_sale + $total_female_sale + ($last_breed->last_male ?? 0) + ($last_breed->last_female ?? 0)),
+                        2, // Jumlah digit di belakang koma
+                        '.', // Pemisah desimal
+                        ''  // Pemisah ribuan (opsional, bisa diabaikan)
+                    );
+                }
 
             }
 

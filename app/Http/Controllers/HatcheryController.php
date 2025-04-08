@@ -319,12 +319,12 @@ class HatcheryController extends Controller
             'inputBy' => 'required',
         ]);
         // dd($request);
-        // try {
+        try {
             DB::beginTransaction();
             $hatchery = Hatchery::with('hatcheryDetails')->find($id);
-            // $input['entry_population'] = $hatchery->hatcheryDetails[0]->saleable;
-            $check = Commercial::with('commercialDetails')->where('id_pen', $input['id_pen'])->first();
-
+            $input['entry_population'] = $hatchery->hatcheryDetails[0]->saleable;
+            $check = Commercial::with('commercialDetails')->where('id_pen', $input['id_pen'])->where('status','active')->first();
+            // dd($check);
             if (isset($check)) {
                 $this->moveService->moveTable($input['id_pen'], 0, $hatchery->cost_total, $input['entry_population'], 0, $input['entry_population'], 0);
             } else {
@@ -346,12 +346,12 @@ class HatcheryController extends Controller
             ]);
             DB::commit();
             return redirect()->route('user.hatchery')->with('success', 'Berhasil memindahkan kandang ke Pen Commercial');
-        // } catch (\Throwable $th) {
-        //     DB::rollback();
-        //     dd('test');
-        //     return redirect()
-        //         ->route('user.hatchery')
-        //         ->withErrors('error', 'Gagal memindahkan kandang: ' . $th->getMessage());
-        // }
+        } catch (\Throwable $th) {
+            DB::rollback();
+            // dd('test');
+            return redirect()
+                ->route('user.hatchery')
+                ->withErrors('error', 'Gagal memindahkan kandang: ' . $th->getMessage());
+        }
     }
 }
