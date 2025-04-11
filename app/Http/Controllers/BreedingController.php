@@ -226,10 +226,8 @@ class BreedingController extends Controller
                 return back()->withErrors('data terakhir update adalah ' . $previousDetail->created_at->format('d-m-y'));
             }
             if(isset($input['date'])){
-                dd("test");
                 $input['created_at'] = Carbon::parse($input['date'])->addHours(7);
             }
-            dd('test2');
             $calculate_male = $previousDetail->last_male - $input['male_die'] - $input['male_reject'];
             $calculate_female = $previousDetail->last_female - $input['female_die'] - $input['female_reject'];
             $input['last_male'] = $calculate_male;
