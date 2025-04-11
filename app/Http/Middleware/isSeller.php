@@ -20,7 +20,7 @@ class isSeller
             // Arahkan ke halaman login jika pengguna belum login
             return redirect()->route('login');
         }
-        if(Auth::user()->role_id == 1|| Auth::user()->role_id == 4 ){
+        if(Auth::user()->role_id == 1|| Auth::user()->role_id == 4 || Auth::user()->role_id == 5){
             return $next($request);
         }
         return redirect()->route('admin.dashboard');

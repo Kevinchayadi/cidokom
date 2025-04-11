@@ -105,7 +105,7 @@ const isAnalyst = ref(false);
 const isSeller = ref(false);
 
 onMounted(() => {
-    if (role.value.role_id == 1) {
+    if (role.value.role_id == 1 || role.value.role_id == 5) {
         isAnalyst.value = true;
         isSeller.value = true;
     } else if (role.value.role_id == 3) {

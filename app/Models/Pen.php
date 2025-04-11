@@ -25,4 +25,7 @@ class Pen extends Model
     public function commercial(){
         return $this->hasMany(Commercial::class, 'id_pen', 'id');
     }
+    public function daily_feed(){
+        return $this->hasMany(Daily_feed::class, 'id_pen', 'id');
+    }
 }

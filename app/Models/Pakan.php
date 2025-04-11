@@ -14,4 +14,8 @@ class Pakan extends Model
         'qty',
         'harga'
     ];
+
+    function daily_feed(){
+        return $this->hasMany(Daily_feed::class, 'id_pakan', 'id');
+    }
 }

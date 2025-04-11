@@ -6,6 +6,7 @@ use App\Models\Afkir;
 use App\Models\Ayam;
 use App\Models\Breeding;
 use App\Models\Breeding_detail;
+use App\Models\Daily_feed;
 use App\Models\Pakan;
 use App\Models\Pen;
 use App\Models\Sale;
@@ -151,23 +152,25 @@ class BreedingController extends Controller
     {
         $pakan = Pakan::get()->toArray();
         $pen = Pen::with('kandang')
-            ->where('status', 'inactive')
-            ->whereHas('kandang', function ($query) {
-                $query->whereNotIn('jenis_kandang', ['commerce']);
-            })
-            ->where('code_pen', 'like', '%BRD')
-            ->get();
+        ->where('status', 'inactive')
+        ->whereHas('kandang', function ($query) {
+            $query->where('jenis_kandang', 'breeding')->orWhere(function ($subQuery) {
+                $subQuery->where('jenis_kandang', 'afkir')->where('code_pen', 'like', '%BRD');
+            });
+        })
+        ->get();
         $breeding = Breeding::with([
             'BreedingDetails' => function ($query) {
-                $query->orderBy('created_at', 'desc');
+                $query->latest('created_at');
             },
             'pen',
         ])->find($id);
+        $latest = $breeding->breedingDetails->sortByDesc('created_at')->values()->first();
         $chicken = [
-            'male'=> $breeding->breedingDetails[0]->last_male??$breeding->jumlah_jantan,
-            'female'=> $breeding->breedingDetails[0]->last_female??$breeding->jumlah_betina,
+            'male'=> $latest->last_male??$breeding->jumlah_jantan,
+            'female'=> $latest->last_female??$breeding->jumlah_betina,
         ];
-        // dd($chicken);
+        
 
         $name = $breeding->pen->code_pen;
         
@@ -194,26 +197,39 @@ class BreedingController extends Controller
             'feed' => 'required|numeric|min:0',
             'feed_name' => 'required|string',
             'inputBy' => 'required',
+            'date' => 'date|nullable',
         ]);
+        
+        $Breeding = Breeding::find($input['id_breeding']);
+        $pakan = Pakan::where('nama_pakan', $input['feed_name'])->first();
+        $previousDetail = Breeding_detail::where('id_breeding', $input['id_breeding'])
+            ->latest('created_at')
+            ->first();
+        
+
+        // dd($input);
         if ($input['move_to'] == 0) {
             $input['total_female_move'] = 0;
             $input['total_male_move'] = 0;
         }
-        $Breeding = Breeding::find($input['id_breeding']);
-        $pakan = Pakan::where('nama_pakan', $input['feed_name'])->first();
 
         if (!$Breeding) {
             return response()->json(['error' => 'Data Breeding tidak ditemukan'], 404);
         }
         $input['begining_population'] = $Breeding->begining_population;
 
-        $previousDetail = Breeding_detail::where('id_breeding', $input['id_breeding'])
-            ->latest('created_at')
-            ->first();
         if (!$previousDetail) {
             $input['last_male'] = $Breeding->jumlah_jantan - $input['male_die'] - $input['male_reject'];
             $input['last_female'] = $Breeding->jumlah_betina - $input['female_die'] - $input['female_reject'];
         } else {
+            if(Carbon::parse($previousDetail->created_at)->greaterThanOrEqualTo(Carbon::parse($input['date']))) {
+                return back()->withErrors('data terakhir update adalah ' . $previousDetail->created_at->format('d-m-y'));
+            }
+            if(isset($input['date'])){
+                dd("test");
+                $input['created_at'] = Carbon::parse($input['date'])->addHours(7);
+            }
+            dd('test2');
             $calculate_male = $previousDetail->last_male - $input['male_die'] - $input['male_reject'];
             $calculate_female = $previousDetail->last_female - $input['female_die'] - $input['female_reject'];
             $input['last_male'] = $calculate_male;
@@ -296,6 +312,12 @@ class BreedingController extends Controller
             $pakan->update([
                 'qty' => $currentfeed,
             ]);
+            Daily_feed::create([
+                'id_pen' => $Breeding->id_pen,
+                'id_pakan' => $pakan->id,
+                'qty' => $input['feed'],
+                'stock_feed' => $currentfeed
+            ]);
             Breeding_detail::create($input);
             if ($input['last_male'] == 0 && $input['last_female'] == 0) {
                 $Breeding->update([
@@ -312,13 +334,14 @@ class BreedingController extends Controller
 
     public function moveForm($id)
     {
-        $pen = Pen::with('kandang')
-            ->where('status', 'inactive')
-            ->whereHas('kandang', function ($query) {
-                $query->whereNotIn('jenis_kandang', ['breeding', 'commerce']);
-            })
-            ->where('code_pen', 'like', '%BRD')
-            ->get();
+        $pen = $pen = Pen::with('kandang')
+        ->where('status', 'inactive')
+        ->whereHas('kandang', function ($query) {
+            $query->where('jenis_kandang', 'breeding')->orWhere(function ($subQuery) {
+                $subQuery->where('jenis_kandang', 'afkir')->where('code_pen', 'like', '%BRD');
+            });
+        })
+        ->get();
         $breeding = Breeding::with([
                 'BreedingDetails' => function ($query) {
                     $query->orderBy('created_at', 'desc');

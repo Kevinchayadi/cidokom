@@ -8,6 +8,7 @@ use App\Models\Breeding;
 use App\Models\Breeding_detail;
 use App\Models\Commercial;
 use App\Models\Commercial_detail;
+use App\Models\Daily_feed;
 use App\Models\Kandang;
 use App\Models\Pakan;
 use App\Models\Pen;
@@ -146,7 +147,7 @@ class CommercialController extends Controller
         $pen = Pen::with('kandang')
         ->where('status', 'inactive')
         ->whereHas('kandang', function ($query) {
-            $query->where('jenis_kandang', 'breeding')->orWhere(function ($subQuery) {
+            $query->where('jenis_kandang', 'commerce')->orWhere(function ($subQuery) {
                 $subQuery->where('jenis_kandang', 'afkir')->where('code_pen', 'like', '%CMR');
             });
         })
@@ -157,11 +158,10 @@ class CommercialController extends Controller
             },
             'pen',
             ])->find($id);
-            
+            $latest = $commercial->commercialDetails->sortByDesc('created_at')->values()->first();
             $chicken = [
-                'total'=> $commercial->commercialDetails[0]->last_population??$commercial->last_population,
+                'total'=> $latest->last_population??$commercial->last_population,
             ];
-            // dd("test");
         $name = $commercial->pen->code_pen;
         
 
@@ -181,22 +181,32 @@ class CommercialController extends Controller
             'feed' => 'required|numeric',
             'feed_name' => 'required',
             'inputBy' => 'required',
+            'date' => 'date',
         ]);
         
         $commercial = Commercial::where('id_commercial', $input['id_commercial'])->firstOrFail();
+        $previousDetail = Commercial_detail::where('id_commercial', $input['id_commercial'])->latest('created_at')->first();
+        
+        
         
         if (!$commercial) {
             return back()->withErrors('Data Commercial tidak ditemukan');
         }
         $input['begining_population'] = $commercial->entry_population;
-        $input['date'] = $commercial->date;
         
-        $previousDetail = Commercial_detail::where('id_commercial', $input['id_commercial'])->latest('created_at')->first();
+        
         
         if (!$previousDetail) {
             $input['last_population'] = $input['begining_population'] - $input['depreciation_die'] - $input['depreciation_afkir'] - $input['depreciation_panen'];
             $costchicken = $this->countService->costChicken($commercial->unit_Cost ?? 0, $input['begining_population']);
         } else {
+            if(Carbon::parse($previousDetail->created_at)->greaterThanOrEqualTo(Carbon::parse($input['date']))) {
+                return back()->withErrors('data terakhir update adalah ' . $previousDetail->created_at->format('d-m-y'));
+            }
+            if(isset($input['date'])){
+                $input['created_at'] = Carbon::parse($input['date'])->addHours(7);
+            }
+
             $input['last_population'] = $previousDetail->last_population - $input['depreciation_die'] - $input['depreciation_afkir'] - $input['depreciation_panen'];
             if ($previousDetail->last_population == 0) {
                 Commercial::where('id_commercial', $input['id_commercial'])->update(['status'=>'inactive']);
@@ -270,6 +280,12 @@ class CommercialController extends Controller
             $feed->update([
                 'qty' => $currentfeed,
             ]);
+            Daily_feed::create([
+                'id_pen' => $commercial->id_pen,
+                'id_pakan' => $feed->id,
+                'qty' => $input['feed'],
+                'stock_feed' => $currentfeed
+            ]);
             $status = 'active';
             if ($input['last_population'] == 0) {
                 $status = 'inactive';
@@ -292,14 +308,14 @@ class CommercialController extends Controller
 
     public function moveForm($id)
     {
-        $pen = Pen::with('kandang')
-            ->where('status', 'inactive')
-            ->whereHas('kandang', function ($query) {
-                $query->where('jenis_kandang', 'breeding')->orWhere(function ($subQuery) {
-                    $subQuery->where('jenis_kandang', 'afkir')->where('code_pen', 'like', '%CMR');
-                });
-            })
-            ->get();
+        $pen = $pen = Pen::with('kandang')
+        ->where('status', 'inactive')
+        ->whereHas('kandang', function ($query) {
+            $query->where('jenis_kandang', 'commerce')->orWhere(function ($subQuery) {
+                $subQuery->where('jenis_kandang', 'afkir')->where('code_pen', 'like', '%CMR');
+            });
+        })
+        ->get();
             $commercial = Commercial::with([
                 'commercialDetails' => function ($query) {
                     $query->orderBy('created_at', 'desc');

@@ -6,6 +6,16 @@
 
         </div>
         <form @submit.prevent="handleSubmit">
+            <div v-if="store.getters.user.role_id == 6">
+                <InputFragment
+                    v-model="date"
+                    name="date"
+                    content="changes date (default Today)"
+                    type="dropdown"
+                    
+                    :datas="dateList"
+                />
+            </div>
             <InputFragment
                 v-model="depreciation_die"
                 name="depreciation_die"
@@ -108,6 +118,7 @@ const penList = computed(() =>
 
 // Define the state for each input
 const id_commercial = ref(props.id_commercial);
+const date = ref(null);
 const depreciation_die = ref(0);
 const depreciation_afkir = ref(0);
 const depreciation_panen = ref(0);
@@ -117,10 +128,35 @@ const maleMove = ref(0);
 const feed = ref(0);
 const feed_name = ref("");
 const loading = ref(false);
+
+const dateList = ref([]);
+const today = new Date()
+const monthNames = [
+  'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+  'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+]
+for (let i = 0; i < 3; i++) {
+  const d = new Date(today)
+  d.setDate(d.getDate() - i)
+
+  const year = d.getFullYear()
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+
+  const fullDate = `${year}-${month}-${day}`
+  const readableDate = `${day} ${monthNames[d.getMonth()]}`
+
+  dateList.value.push({
+    id: fullDate,
+    name: readableDate
+  })
+}
+
 // Handle form submission
 const handleSubmit = () => {
     loading.value = true;
     router.post("/user/commercial/input", {
+        date: date.value,
         id_commercial: id_commercial.value,
             depreciation_die: depreciation_die.value,
             depreciation_afkir: depreciation_afkir.value,

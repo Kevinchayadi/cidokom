@@ -21,7 +21,7 @@ class isGuest
             if(Auth::user()->role_id != 2){
                 return redirect()->route('admin.dashboard');
             }
-            if(Auth::user()->role_id != 1){
+            if(Auth::user()->role_id != 1 || Auth::user()->role_id != 3 || Auth::user()->role_id != 4 || Auth::user()->role_id != 5){
                 return redirect()->route('user.dashboard');
             }
         }
