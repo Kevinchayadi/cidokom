@@ -29,7 +29,7 @@
                             <td :class="classestd">{{ index + 1 }}</td>
                             <td :class="classestd">{{ item.nama }}</td>
                             <td :class="classestd">{{ item.qty }}</td>
-                            <td :class="classestd">{{ item.price }}</td>
+                            <td :class="classestd">{{ formatRupiah(item.price) }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -66,6 +66,7 @@
         onMounted,
         ref
     } from 'vue';
+import formatRupiah from '../../../composables/currency';
 
     // Props definition
     const props = defineProps({

@@ -30,6 +30,6 @@ class Commercial_detail extends Model
 
     public function commercial()
     {
-        return $this->belongsTo(Commercial::class, 'id_breeding', 'id');
+        return $this->belongsTo(Commercial::class, 'id_commercial', 'id_commercial');
     }
 }

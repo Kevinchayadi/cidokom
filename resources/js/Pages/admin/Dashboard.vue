@@ -2,7 +2,7 @@
 <template>
 
     <Sidebarnew title="Dashboard">
-        <Dashboard :totalAfkir="totalAfkir" :totalBreeding="totalBreeding" :totalDeath="totalDeath" :afkir="afkir" :breeding="breeding" :hatchery="hatchery"/>
+        <Dashboard :totalAfkir="totalAfkir" :totalBreeding="totalBreeding" :totalDeath="totalDeath" :afkir="afkir" :breeds="breeds" :hatchery="hatchery"/>
     </Sidebarnew>
     <!-- <BreedingHeaderTable /> -->
   
@@ -30,7 +30,7 @@ const props = defineProps({
     afkir:{
         type: Array,
     },
-    breeding:{
+    breeds:{
         type: Array,
     },
     hatchery:{

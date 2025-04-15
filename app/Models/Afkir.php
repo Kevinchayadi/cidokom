@@ -24,6 +24,7 @@ class Afkir extends Model
         'female_come',
         'male_out',
         'female_out',
+        'created_at'
     ];
     
     public function pen()

@@ -98,7 +98,7 @@ class CommercialController extends Controller
         ])->orderBy('status')->get();
         foreach ($commercial as $item) {
             $item->age =
-                $item->age??0 +
+                ($item->age??0) +
                 Carbon::parse($item->created_at)
                     ->startOfDay()
                     ->diffInDays(Carbon::now()->startOfDay());
@@ -308,7 +308,7 @@ class CommercialController extends Controller
 
     public function moveForm($id)
     {
-        $pen = $pen = Pen::with('kandang')
+       $pen = Pen::with('kandang')
         ->where('status', 'inactive')
         ->whereHas('kandang', function ($query) {
             $query->where('jenis_kandang', 'commerce')->orWhere(function ($subQuery) {

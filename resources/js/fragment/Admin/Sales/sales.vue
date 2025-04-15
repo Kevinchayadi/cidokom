@@ -36,8 +36,8 @@
                         <td :class="classestd">{{ item.name }}</td>
                         <td :class="classestd">{{ item.chickenSize }}</td>
                         <td :class="classestd">{{ item.qty }}</td>
-                        <td :class="classestd">{{ item.price }}</td>
-                        <td :class="classestd">{{ item.total }}</td>
+                        <td :class="classestd">{{ formatRupiah(item.price) }}</td>
+                        <td :class="classestd">{{ formatRupiah(item.total) }}</td>
                         <td :class="classestd" class="w-[250px]">{{ item.desc }}</td>
                         <td :class="classestd" class="w-[250px]">{{ item.sales }}</td>
                     </tr>
@@ -59,6 +59,7 @@
     import ModalComp from '../../../components/displayComponent/ModalComp.vue';
     import CreateSale from '../../addFragment/sales/createSale.vue';
     import EditSales from '../../addFragment/sales/editSales.vue';
+import formatRupiah from '../../../composables/currency';
 
     const classesth = ' bg-blue-300 text-center text-xs border-gray-300 text-table font-medium text-gray-700 uppercase tracking-wider sticky top-[0px] min-w-[120px] shadow-[inset_1px_-1px_1px_white]';
     const classestd = 'p-1 text-xs text-gray-900 text-table text-center min-w-[75px] shadow-[inset_1px_-1px_1px_rgba(128,128,128,0.2)]';

@@ -97,7 +97,7 @@ class BreedingController extends Controller
         ])->orderBy('status')->get();
         foreach ($breeding as $item) {
             $item->age =
-                $item->age??0 +
+                ($item->age??0) +
                 Carbon::parse($item->created_at)
                     ->startOfDay()
                     ->diffInDays(Carbon::now()->startOfDay());
@@ -305,8 +305,13 @@ class BreedingController extends Controller
             //--------------------------------------------------------------------------------------------------------------------------------
             // $currentfeed = $pakan->qty - $input['feed'];
             $current_cost = $this->countService->costegg($pakan, $input['feed'], $input['total_egg'] + $input['sale']);
-            $input['cost_unit'] = $current_cost * $input['total_egg'];
-            $input['cost_total'] = $current_cost * ($input['total_egg'] + $input['sale']);
+            if($input['total_egg']==0 ||($input['total_egg'] + $input['sale'])==0){
+                $input['cost_unit'] =  $pakan->harga * $input['feed'];
+                $input['cost_total'] =  $pakan->harga * $input['feed'];
+            }else{
+                $input['cost_unit'] = $current_cost * $input['total_egg'];
+                $input['cost_total'] = $current_cost * ($input['total_egg'] + $input['sale']);
+            }
             $pakan->update([
                 'qty' => $currentfeed,
             ]);

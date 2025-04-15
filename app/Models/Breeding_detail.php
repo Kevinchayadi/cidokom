@@ -39,7 +39,7 @@ class Breeding_detail extends Model
 
     public function breeding()
     {
-        return $this->belongsTo(Breeding::class, 'id_breeding', 'id');
+        return $this->belongsTo(Breeding::class, 'id_breeding', 'id_breeding');
     }
     
 }

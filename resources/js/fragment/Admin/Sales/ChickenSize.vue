@@ -39,7 +39,7 @@
                             {{ item.ChickenType }}
                         </td>
                         <td :class="classestd">
-                            {{ item.price }}
+                            {{ formatRupiah(item.price) }}
                         </td>
                     </tr>
                 </tbody>
@@ -62,6 +62,7 @@
     import ModalComp from '../../../components/displayComponent/ModalComp.vue';
     import CreateChickenSize from '../../addFragment/sales/createChickenSize.vue';
     import EditChickenSize from '../../addFragment/sales/editChickenSize.vue';
+import formatRupiah from '../../../composables/currency';
 
     const classesth = 'bg-blue-300 text-center text-xs border-gray-300 text-table font-medium text-gray-700 uppercase tracking-wider sticky top-[0px] min-w-[120px] shadow-[inset_1px_-1px_1px_white]';
     const classestd = 'p-1 text-xs text-gray-900 text-table text-center min-w-[75px] shadow-[inset_1px_-1px_1px_rgba(128,128,128,0.2)]';

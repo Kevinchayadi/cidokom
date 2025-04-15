@@ -38,7 +38,7 @@
                             {{ item.Name }}
                         </td>
                         <td :class="classestd">
-                            {{ item.disc }}
+                            {{ formatRupiah(item.disc) }}
                         </td>
                     </tr>
                 </tbody>
@@ -63,6 +63,7 @@ import ModalComp from '../../../components/displayComponent/ModalComp.vue';
 import CreateCustHandle from '../../addFragment/sales/createCustHandle.vue';
 import EditCustHandler from '../../addFragment/sales/editCustHandler.vue';
 import axios from 'axios';
+import formatRupiah from '../../../composables/currency';
 
 const classesth =
     'bg-blue-300 text-center text-xs border-gray-300 text-table font-medium text-gray-700 uppercase tracking-wider sticky top-[0px] min-w-[120px] shadow-[inset_1px_-1px_1px_white]';

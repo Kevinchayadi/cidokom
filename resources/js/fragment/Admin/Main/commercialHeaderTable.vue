@@ -107,13 +107,14 @@
                     <td class=" "
                         :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
                                 .costCenter, [classestd]: true }">
-                       {{item.totalCost}}
+                       {{formatRupiah(item.totalCost)}}
                     </td>
                     <td class=" "
                         :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
                                 .costCenter, [classestd]: true }">
-                       {{item.unitCost}}
+                       {{formatRupiah(item.unitCost)}}
                     </td>
+                    
                     <td class=" "
                         :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
                                 .costCenter, [classestd]: true }">
@@ -143,6 +144,7 @@
         defineEmits,
         computed
     } from "vue";
+import formatRupiah from "../../../composables/currency";
 
     const selectedId = ref(null);
     const classesth =
@@ -199,8 +201,8 @@
             entryPopulation: item.entry_population,
             lastPopulation: item.last_population,
             age: item.age,
-            totalCost: item.total_cost,
-            unitCost: item.unit_cost,
+            totalCost: item.unit_Cost,
+            unitCost: (item.unit_Cost/item.last_population).toFixed(2)??0,
             remark: '',
             inputBy: item.input_by,
             status: item.status,

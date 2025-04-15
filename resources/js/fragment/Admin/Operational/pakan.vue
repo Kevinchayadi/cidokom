@@ -50,7 +50,7 @@
                                 {{ item.qty }}
                             </td>
                             <td :class="classestd">
-                                {{ item.harga }}
+                                {{ formatRupiah(item.harga) }}
                             </td>
                         </tr>
                     </tbody>
@@ -81,6 +81,7 @@
 import ModalComp from '../../../components/displayComponent/ModalComp.vue';
 import CreatePakan from '../../addFragment/createPakan.vue';
 import AddPakan from '../../addFragment/addPakan.vue';
+import formatRupiah from '../../../composables/currency';
 
     const classesth =
         ' bg-blue-300 text-center  text-xs border-gray-300 text-table font-medium text-gray-700 uppercase tracking-wider  sticky top-[0px] min-w-[120px] shadow-[inset_1px_-1px_1px_white]'

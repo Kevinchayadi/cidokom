@@ -2,7 +2,7 @@
 <template>
 
     <Sidebarnew title="Dashboard">
-        <Summary :breeding="breeding" :commercial="commercial" :total_egg="total_egg" :pakan="pakan" :date="date" />
+        <Summary :breeding="breeding" :commercial="commercial"  :startDate="startDate" :endDate="endDate" />
     </Sidebarnew>
     <!-- <BreedingHeaderTable /> -->
   
@@ -23,17 +23,12 @@ const props = defineProps({
         type: Array,
         required: true
     },
-    total_egg: {
-        type: Number,
-        required: true
-    },
-    pakan:{
-        type: Array,
-        required: true
-    },
-    date:{
+    startDate:{
         type: String,
-    }
+    },
+    endDate:{
+        type: String,
+    },
 
 })
 const store = useStore();

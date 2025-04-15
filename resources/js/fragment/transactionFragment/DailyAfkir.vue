@@ -8,6 +8,16 @@
 
         </div>
         <form @submit.prevent="handleSubmit">
+            <div v-if="store.getters.user.role_id == 6">
+                <InputFragment
+                    v-model="date"
+                    name="date"
+                    content="changes date (default Today)"
+                    type="dropdown"
+                    
+                    :datas="dateList"
+                />
+            </div>
             <InputFragment
                 v-model="feedName"
                 name="feedName"
@@ -129,6 +139,30 @@ const penList = computed(() =>
 
 const store = useStore();
 
+const dateList = ref([]);
+const today = new Date()
+const monthNames = [
+  'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+  'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+]
+for (let i = 0; i < 3; i++) {
+  const d = new Date(today)
+  d.setDate(d.getDate() - i)
+
+  const year = d.getFullYear()
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+
+  const fullDate = `${year}-${month}-${day}`
+  const readableDate = `${day} ${monthNames[d.getMonth()]}`
+
+  dateList.value.push({
+    id: fullDate,
+    name: readableDate
+  })
+}
+
+const date = ref(null);
 const feedName = ref(0);
 const feedMale = ref(0);
 const feedFemale = ref(0);

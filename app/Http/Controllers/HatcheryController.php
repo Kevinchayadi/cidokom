@@ -98,6 +98,101 @@ class HatcheryController extends Controller
         $machine = Machine::where('status', 'active')->get();
         return Inertia::render('user/FormCreateHatchery', ['pen' => $pen, 'pen2' => $pen2, 'machine' => $machine]);
     }
+    public function createAllHatchery()
+    {
+        $breedings = Breeding::with('breedingDetails')
+                ->where('status', 'active')
+                ->get();
+
+            $totalEggs = 0;
+
+            foreach ($breedings as $breeding) {
+                $totalEggs += $breeding->breedingDetails->where('status', 'active')->sum('total_egg');
+            }
+            $curr = currEgg::get();
+            if($curr->isEmpty()){
+                foreach($curr as $item){
+                    $totalEggs += $item->qty;
+                }
+            }
+
+        $machine = Machine::where('status', 'active')->get();
+        return Inertia::render('user/FormCreateHatchery', ['total_egg' => $totalEggs, 'machine' => $machine]);
+    }
+    public function storeAllHatchery(Request $request){
+
+        $input = $request->validate([
+            'id_machine' => 'required|integer',
+            'inputBy' => 'required',
+        ]);
+        $input['id_pen'] = 0;
+
+        $input['setting_date'] = Carbon::now();
+
+        $input2 = $request->validate([
+            'total_setting' => 'required|integer',
+            'inputBy' => 'required',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            Machine::where('id', $input['id_machine'])->update([
+                'status' => 'inactive',
+            ]);
+            
+            $breedings = Breeding::with('breedingDetails')
+                ->where('status', 'active')
+                ->get();
+
+            $cost = 0;
+
+            foreach ($breedings as $breeding) {
+                $cost += $breeding->breedingDetails()->where('status', 'active')->sum('cost_unit');
+                $breeding
+                    ->breedingDetails()
+                    ->where('status', 'active')
+                    ->update(['status' => 'inactive']);
+            }
+                $curr = currEgg::get();
+                if($curr->isEmpty()){
+                    foreach($curr as $item){
+                        $cost += $item->cost_egg;
+                        $item->delete();
+                    }
+                }
+            $input['cost_total'] = $cost;
+
+            $machine = Machine::where('id', $input['id_machine'])->first();
+            if ($input2['total_setting'] > $machine->kapasitas) {
+                $cost_egg = $cost / $input2['total_setting'];
+                $input['cost_total'] = $cost_egg * $machine->kapasitas;
+                $curr_egg = $input2['total_setting'] - $machine->kapasitas;
+                $curr_cost = $curr_egg * $cost_egg;
+                $input2['total_setting'] = $machine->kapasitas;
+                currEgg::create([
+                    'id_pen' => 1,
+                    'qty' => $curr_egg,
+                    'cost_egg' => $curr_cost,
+                ]);
+            }
+
+            $hatchery = Hatchery::create($input);
+
+            $input2['id_hatchery'] = $hatchery->id_hatchery;
+
+            Hatchery_detail::create($input2);
+
+            DB::commit();
+
+            return redirect()->route('user.hatchery')->with('success', 'Berhasil membuat kandang Hatchery baru');
+        } catch (\Exception $e) {
+            DB::rollback();
+
+            // dd($e->getMessage());
+            return back()->withErrors('error', 'Gagal membuat kandang Hatchery baru: ' . $e->getMessage());
+        }
+    }
     public function storeHatchery(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -134,7 +229,7 @@ class HatcheryController extends Controller
             Machine::where('id', $input['id_machine'])->update([
                 'status' => 'inactive',
             ]);
-            // dd($validator['id_pen']);
+            
             $id = $input['id_pen'];
             $breedings = Breeding::with('breedingDetails')
                 ->whereHas('pen', function ($query) use ($id) {
@@ -173,7 +268,6 @@ class HatcheryController extends Controller
                     'cost_egg' => $curr_cost,
                 ]);
             }
-            // dd($input);
 
             $hatchery = Hatchery::create($input);
 

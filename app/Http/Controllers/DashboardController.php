@@ -10,6 +10,7 @@ use App\Models\Commercial_detail;
 use App\Models\Customer;
 use App\Models\Hatchery;
 use App\Models\Pakan;
+use App\Models\Pen;
 use App\Models\Sale;
 use App\Models\saleTransaction;
 use Carbon\Carbon;
@@ -35,24 +36,54 @@ class DashboardController extends Controller
             ])
             ->get();
 
+        $breedingPens = Pen::with('kandang')
+            ->whereHas('kandang', function ($query) {
+                $query->where('jenis_kandang', 'breeding');
+            })
+            ->get();
+        $breeds = [];
+
         $totalBreeding = 0;
         $totalDeath = 0;
+        foreach($breedingPens as $pens){
+            $data=[
+                'id_pen'=> $pens->id,
+                'code_pen' => $pens->code_pen,
+                'male' =>0,
+                'female' =>0,
+                'dead' => 0,
+            ];
+            $breeds[] = $data;
+        }
+
 
         foreach ($breeding as $item) {
-            $item->live = 0;
-            $item->Death = 0;
-
             $lastMale = $item->breedingDetails[0]->last_male ?? $item->jumlah_jantan;
             $lastFemale = $item->breedingDetails[0]->last_female ?? $item->jumlah_betina;
+            $temp = 0;
             $totalBreeding += $lastMale + $lastFemale;
-            $item->live = $lastMale + $lastFemale;
-
             foreach ($item->breedingDetails as $data) {
                 $maleDead = $data->male_die ?? 0;
                 $femaleDead = $data->female_die ?? 0;
                 $totalDeath += $maleDead + $femaleDead;
-                $item->Death += $maleDead + $femaleDead;
+                $temp += $maleDead + $femaleDead;
             }
+            foreach ($breeds as &$breed) {
+                if ($item->id_pen == $breed['id_pen']) {
+                    $breed['male'] = $lastMale;
+                    $breed['female'] = $lastFemale;
+                    $breed['dead'] = $temp;
+                }
+            }
+            // $totalBreeding += $lastMale + $lastFemale;
+            // $item->live = $lastMale + $lastFemale;
+
+            // foreach ($item->breedingDetails as $data) {
+            //     $maleDead = $data->male_die ?? 0;
+            //     $femaleDead = $data->female_die ?? 0;
+            //     $totalDeath += $maleDead + $femaleDead;
+            //     $item->Death += $maleDead + $femaleDead;
+            // }
         }
 
         $afkir = Afkir::with('pen')
@@ -70,77 +101,147 @@ class DashboardController extends Controller
         }
         $hatchery = Hatchery::with('hatcheryDetails')->whereNotNull('pull_chicken_date')->latest('created_at')->take(4)->get();
 
-        return Inertia::render('admin/Dashboard', compact('totalAfkir', 'totalBreeding', 'totalDeath', 'afkir', 'breeding', 'hatchery'));
+        return Inertia::render('admin/Dashboard', compact('totalAfkir', 'totalBreeding', 'totalDeath', 'afkir', 'breeds', 'hatchery'));
     }
     function Summary(Request $request)
     {
-        $dateInput = $request->input('date');
+        $firstInputed = $request->input('first');
 
-        $breedings = Breeding::where('status', 'active')->get();
-        $breedingDetails = [];
-        $TotalEgg = Breeding_detail::where('status', 'active')->sum('total_egg');
-        $pakan = Pakan::get();
+        $endInputed = $request->input('end');
+        
         $latestBreedingDetail = Breeding_detail::latest('created_at')->first();
-        if (is_null($dateInput)) {
-            $date = Carbon::parse($latestBreedingDetail->created_at)->format('Y-m-d');
+        if (is_null($firstInputed)) {
+            $startDate = Carbon::parse($latestBreedingDetail->created_at)->format('Y-m-d');
         } else {
-            $date = Carbon::parse($dateInput)->startOfDay();
+            $startDate = Carbon::parse($firstInputed)->startOfDay()->format('Y-m-d');
         }
-        foreach ($breedings as $item) {
-            $breedingDetail = Breeding_detail::where('id_breeding', $item->id_breeding)->whereDate('created_at', $date)->latest('created_at')->first();
-            if($breedingDetail !=null){
+        if (is_null($endInputed)) {
+            $endDate = Carbon::parse($latestBreedingDetail->created_at)->format('Y-m-d');
+        } else {
+            $endDate = Carbon::parse($endInputed)->startOfDay()->format('Y-m-d');
+        }
+        // dd($startDate, $endDate);
 
-                $total_feed = Breeding_detail::where('id_breeding', $item->id_breeding)->sum('feed');
-                $total_male_sale = Breeding_detail::where('id_breeding', $item->id_breeding)->sum('male_reject');
-                $total_female_sale = Breeding_detail::where('id_breeding', $item->id_breeding)->sum('female_reject');
-                $last_breed = Breeding_detail::where('id_breeding', $item->id_breeding)->latest('created_at')->first();
-                $breedingDetail->FCR = 0;
-                if(($total_male_sale + $total_female_sale + ($last_breed->last_male ?? 0) + ($last_breed->last_female ?? 0))!=0){
-                    $breedingDetail->FCR = number_format(
-                        $total_feed / ($total_male_sale + $total_female_sale + ($last_breed->last_male ?? 0) + ($last_breed->last_female ?? 0)),
-                        2, // Jumlah digit di belakang koma
-                        '.', // Pemisah desimal
-                        ''  // Pemisah ribuan (opsional, bisa diabaikan)
-                    );
-                }
-
+        $breedingDetails=[];
+        $breedingPens = Pen::with('kandang')
+        ->whereHas('kandang', function ($query) {
+            $query->where('jenis_kandang', 'breeding');
+        })
+        ->get();
+        
+        foreach ($breedingPens as $breed) {
+            // dd($breed->id);
+            $breedingDetail = Breeding_detail::whereHas('breeding', function ($query) use ($breed) {
+                $query->where('id_pen', $breed->id);
+            })
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->get();
+            $lastDetail = Breeding_detail::whereHas('breeding', function ($query) use ($breed) {
+                $query->where('id_pen', $breed->id);
+            })
+            ->whereDate('created_at', $startDate)
+            ->latest('created_at')
+            ->first();
+            if($breedingDetail->isEmpty()){
+                $detailBreed = [
+                    'code_pen'=>$breed->code_pen,
+                    'male_come' => 0,
+                    'female_come' => 0,
+                    'male_die' => 0,
+                    'female_die' => 0,
+                    'male_out' => 0,
+                    'female_out' => 0,
+                    'last_male' => 0,
+                    'last_female' => 0,
+                    'egg' =>0,
+                    'broken' =>0,
+                    'abnormal'=>0,
+                    'HE'=>0,
+                    'cost'=>0,
+                    'last_male'=>0,
+                    'last_female'=>0,
+                ];
+            }else{
+                $detailBreed = [
+                    'code_pen'=>$breed->code_pen,
+                    'male_come' => $breedingDetail->sum('total_male_receive'),
+                    'female_come' => $breedingDetail->sum('total_male_receive'),
+                    'male_die' => $breedingDetail->sum('male_die'),
+                    'female_die' => $breedingDetail->sum('female_die'),
+                    'male_out' => $breedingDetail->sum('total_male_out'),
+                    'female_out' => $breedingDetail->sum('total_male_out'),
+                    'last_male' => $breedingDetail->sum('last_male'),
+                    'last_female' => $breedingDetail->sum('last_female'),
+                    'egg' => $breedingDetail->sum('egg_morning') + $breedingDetail->sum('egg_afternoon'),
+                    'broken' => $breedingDetail->sum('broken'),
+                    'abnormal' => $breedingDetail->sum('abnormal'),
+                    'HE' => $breedingDetail->sum('total_egg'),
+                    'cost' => $breedingDetail->sum('cost_total'),
+                    'last_male' => $lastDetail->last_male ?? 0,
+                    'last_female' => $lastDetail->last_female ?? 0,
+                ];
             }
 
-            $breedingDetails[] = $breedingDetail;
+            $breedingDetails[] = $detailBreed;
 
             if (empty($breedingDetail)) {
                 $test = false;
             }
         }
 
-        $breedingDetail = Breeding_detail::where('status', 'active')->get();
-
-        $commercials = Commercial::where('status', 'active')->get();
+    
         $commercialDetails = [];
 
-        foreach ($commercials as $com) {
-            $commercialDetail = Commercial_detail::where('id_commercial', $com->id_commercial)->whereDate('created_at', $date)->latest('created_at')->first();
-            if($commercialDetail != null){
-                $total_feed = Commercial_detail::where('id_commercial', $com->id_commercial)->sum('feed');
-                $total_sale = Commercial_detail::where('id_commercial', $com->id_commercial)->sum('depreciation_panen');
-                $last_commercial = Commercial_detail::where('id_commercial', $com->id_commercial)->latest('created_at')->first();
-                $commercialDetail->FCR = number_format( $total_feed/($total_sale + $last_commercial->last_population??0),
-                2, // Jumlah digit di belakang koma
-                '.', // Pemisah desimal
-                ''  // Pemisah ribuan (opsional, bisa diabaikan)
-            );
-
+        $commercePens = Pen::with('kandang')
+        ->whereHas('kandang', function ($query) {
+            $query->where('jenis_kandang', 'commerce');
+        })
+        ->get();
+        
+        foreach ($commercePens as $commercial) {
+            $commercialDetail = commercial_detail::whereHas('commercial', function ($query) use ($commercial) {
+                $query->where('id_pen', $commercial->id);
+            })
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->get();
+            $lastDetail2 = Commercial_detail::whereHas('commercial', function ($query) use ($commercial) {
+                $query->where('id_pen', $commercial->id);
+            })
+            ->whereDate('created_at', $startDate)
+            ->latest('created_at')
+            ->first();
+            
+            if($commercialDetail->isEmpty()){
+                $detailcommercial = [
+                    'code_pen'=>$commercial->code_pen,
+                    'die' => 0,
+                    'sale' => 0,
+                    'come' => 0,
+                    'out' => 0,
+                    'feed' => 0,
+                    'last_stock'=> 0,
+                ];
+            }else{
+                $detailcommercial = [
+                    'code_pen'=>$commercial->code_pen,
+                    'die' => $commercialDetail->sum('depreciation_die'),
+                    'sale' => $commercialDetail->sum('depreciation_panen'),
+                    'come' => $commercialDetail->sum('total_move'),
+                    'out' => $commercialDetail->sum('total_move'),
+                    'feed' => $commercialDetail->sum('feed'),
+                    'last_stock'=> $lastDetail2->last_population??0,
+                ];
             }
-            $commercialDetails[] = $commercialDetail;
+
+            $commercialDetails[] = $detailcommercial;
         }
         // dd([$breedingDetails, $commercialDetails]);
 
         return Inertia::render('admin/summary', [
             'breeding' => $breedingDetails,
             'commercial' => $commercialDetails,
-            'total_egg' => $TotalEgg,
-            'pakan' => $pakan,
-            'date'=>$date
+            'startDate'=>$startDate,
+            'endDate'=>$endDate,
         ]);
     }
 

@@ -50,7 +50,7 @@
                                 {{ item.qty }}
                             </td>
                             <td :class="classestd">
-                                {{ item.harga }}
+                                {{ formatRupiah(item.harga) }}
                             </td>
                         </tr>
                     </tbody>
