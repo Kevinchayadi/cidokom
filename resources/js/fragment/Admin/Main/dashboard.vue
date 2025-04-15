@@ -284,7 +284,7 @@ const chartPieOptions = ref({
 });
 
 
-const updowndate = 4 * 24 * 3600 * 1000;
+const updowndate = 7 * 24 * 3600 * 1000;
 
 const allDates = [
   ...chickIn.value,
@@ -296,8 +296,8 @@ const allDates = [
   return date.getTime();
 });
 
-const minDate = Math.min(...allDates) - updowndate;
-const maxDate = Math.max(...allDates) + updowndate;
+const minDate = Math.min(...allDates) 
+const maxDate = Math.max(...allDates) 
 
 
 const chartOptions = ref({
@@ -307,7 +307,7 @@ const chartOptions = ref({
     chart: {
         type: "line",
         zoomType: "x",
-        height: maxChartHeight,
+        // height: maxChartHeight,
     },
     xAxis: {
         type: "datetime",
@@ -316,8 +316,6 @@ const chartOptions = ref({
         },
         min: minDate,
         max: maxDate,
-        minPadding: 0.2, // Tambahkan 10% ruang di sisi kiri
-        maxPadding: 1, // Tambahkan 10% ruang di sisi kanan
         tickInterval: 7 * 24 * 3600 * 1000,
         dateTimeLabelFormats: {
             day: "%e %b", // 1 Jan, 2 Jan, dst
@@ -344,7 +342,7 @@ const chartOptions = ref({
         series: {
             grouping: true, // Pastikan dibutuhkan jika Anda menggunakan bar yang dikelompokkan
             pointPadding: 0.1, // Jarak antar bar
-            groupPadding: 0.10, // Jarak antar grup bar
+            groupPadding: 0.35, // Jarak antar grup bar
             borderWidth: 0, // Jika ingin menghilangkan border
             dataLabels: {
                 enabled: true, // Jika Anda ingin menampilkan label data

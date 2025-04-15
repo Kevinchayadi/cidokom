@@ -116,9 +116,9 @@ class DashboardController extends Controller
             $startDate = Carbon::parse($firstInputed)->startOfDay()->format('Y-m-d');
         }
         if (is_null($endInputed)) {
-            $endDate = Carbon::parse($latestBreedingDetail->created_at)->format('Y-m-d');
+            $endDate = Carbon::parse($latestBreedingDetail->created_at)->setTime(23, 50)->format('Y-m-d');
         } else {
-            $endDate = Carbon::parse($endInputed)->startOfDay()->format('Y-m-d');
+            $endDate = Carbon::parse($endInputed)->startOfDay()->setTime(23, 50)->format('Y-m-d');
         }
         // dd($startDate, $endDate);
 
