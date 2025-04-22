@@ -35,6 +35,9 @@
                     <th class=" bg-blue-300" colspan="2" :class="classesth">
                         Cost
                     </th>
+                    <th class=" bg-blue-300" rowspan="2" :class="classesth">
+                        fcr
+                    </th>
                     <th class=" bg-blue-300" rowspan="2" :class="classesth" style="min-width: 250px;">
                         remark
                     </th>
@@ -113,6 +116,11 @@
                         :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
                                 .costCenter, [classestd]: true }">
                        {{formatRupiah(item.unitCost)}}
+                    </td>
+                    <td class=" "
+                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
+                                .costCenter, [classestd]: true }">
+                       {{item.FCR}}
                     </td>
                     
                     <td class=" "
@@ -203,6 +211,7 @@ import formatRupiah from "../../../composables/currency";
             age: item.age,
             totalCost: item.unit_Cost,
             unitCost: (item.unit_Cost/item.last_population).toFixed(2)??0,
+            FCR: parseFloat(item.fcr.toFixed(2))??0,
             remark: '',
             inputBy: item.input_by,
             status: item.status,

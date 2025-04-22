@@ -102,9 +102,20 @@ class CommercialController extends Controller
                 Carbon::parse($item->created_at)
                     ->startOfDay()
                     ->diffInDays(Carbon::now()->startOfDay());
-                if($item->entryDate == null){
-                    $item->entryDate = Carbon::parse($item->created_at)->format('Y-m-d');
+
+                $FCR = 0;
+                foreach($item->commercialDetails as $detail){
+                    if(($detail->last_population)!=0){
+                        $FCR += $detail->feed/$detail->last_population;
+                    }else{
+                        $FCR = 0;
+                    }
                 }
+                $item->fcr = $FCR;
+
+            if($item->entryDate == null){
+                $item->entryDate = Carbon::parse($item->created_at)->format('Y-m-d');
+            }
             }
         return Inertia::render('admin/commercial', compact('commercial'));
     }

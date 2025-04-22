@@ -35,6 +35,9 @@
                     <th class=" bg-blue-300" colspan="2" :class="classesth">
                         Age
                     </th>
+                    <th class=" bg-blue-300" rowspan="2" :class="classesth">
+                        FCR
+                    </th>
                     <th class=" bg-blue-300" rowspan="2" :class="classesth" style="min-width: 200px;">
                         Laying
                     </th>
@@ -141,6 +144,11 @@
                                 .costCenter, [classestd]: true }">
                         {{ item.week }}    
                     </td>
+                    <td class=""
+                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white  ': selectedId !== item
+                                .costCenter, [classestd]: true }">
+                        {{ item.FCR }}    
+                    </td>
                     <td class=" "
                         :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
                                 .costCenter, [classestd]: true }">
@@ -229,6 +237,7 @@
             last_male: item.breeding_details?.[0]?.last_male ?? 0,
             age: item.age,
             week: Math.floor(item.age / 7),
+            FCR: parseFloat(item.fcr.toFixed(2))??0,
             laying: '',
             status: item.status,
         };

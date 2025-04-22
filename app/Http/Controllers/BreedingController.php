@@ -94,19 +94,28 @@ class BreedingController extends Controller
                 $query->orderBy('created_at', 'desc');
             },
             'pen',
-        ])->orderBy('status')->get();
+        ])
+        ->orderBy('status')->get();
         foreach ($breeding as $item) {
             $item->age =
                 ($item->age??0) +
                 Carbon::parse($item->created_at)
                     ->startOfDay()
                     ->diffInDays(Carbon::now()->startOfDay());
+            $FCR = 0;
+            foreach($item->breedingDetails as $detail){
+                if(($detail->last_male + $detail->lastfemale)!=0){
+                    $FCR += $detail->feed/($detail->last_male + $detail->lastfemale);
+                }else{
+                    $FCR = 0;
+                }
+            }
+            $item->fcr = $FCR;
+            
             if($item->entryDate == null){
                 $item->entryDate = Carbon::parse($item->created_at)->format('Y-m-d');
             }
         }
-        
-        // dd($breeding->toArray());
         
         return Inertia::render('admin/breeding', compact('breeding'));
     }

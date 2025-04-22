@@ -111,14 +111,14 @@ class DashboardController extends Controller
         
         $latestBreedingDetail = Breeding_detail::latest('created_at')->first();
         if (is_null($firstInputed)) {
-            $startDate = Carbon::parse($latestBreedingDetail->created_at)->format('Y-m-d');
+            $startDate = Carbon::parse($latestBreedingDetail->created_at)->format('Y-m-d H:i:s');
         } else {
-            $startDate = Carbon::parse($firstInputed)->startOfDay()->format('Y-m-d');
+            $startDate = Carbon::parse($firstInputed)->startOfDay()->format('Y-m-d H:i:s');
         }
         if (is_null($endInputed)) {
-            $endDate = Carbon::parse($latestBreedingDetail->created_at)->setTime(23, 50)->format('Y-m-d');
+            $endDate = Carbon::parse($latestBreedingDetail->created_at)->setTime(23, 59)->format('Y-m-d H:i:s');
         } else {
-            $endDate = Carbon::parse($endInputed)->startOfDay()->setTime(23, 50)->format('Y-m-d');
+            $endDate = Carbon::parse($endInputed)->startOfDay()->setTime(23, 59)->format('Y-m-d H:i:s');
         }
         // dd($startDate, $endDate);
 
@@ -236,6 +236,8 @@ class DashboardController extends Controller
             $commercialDetails[] = $detailcommercial;
         }
         // dd([$breedingDetails, $commercialDetails]);
+        $endDate = Carbon::parse($endDate)->startOfDay()->setTime(23, 50)->format('Y-m-d');
+        $startDate = Carbon::parse($startDate)->startOfDay()->setTime(23, 50)->format('Y-m-d');
 
         return Inertia::render('admin/summary', [
             'breeding' => $breedingDetails,

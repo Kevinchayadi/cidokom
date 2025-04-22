@@ -44,7 +44,6 @@
                     <thead>
                         <tr>
                             <th :class="classesth">No.</th>
-                            <th :class="classesth">Umur / Minggu</th>
                             <th :class="classesth">Kandang</th>
                             <th :class="classesth">Satuan</th>
                             <th :class="classesth">Masuk HI</th>
@@ -62,7 +61,6 @@
                             :key="index"
                         >
                             <td :class="classestd">{{ index + 1 }}</td>
-                            <td :class="classestd">{{ item.umur }}</td>
                             <td :class="classestd">{{ item.kandang }}</td>
                             <td :class="classestd">{{ item.satuan }}</td>
                             <td :class="classestd">
@@ -79,7 +77,7 @@
                         </tr>
 
                         <tr class="bg-blue-300 font-bold">
-                            <td colspan="4" :class="classestd">Sub-total</td>
+                            <td colspan="3" :class="classestd">Sub-total</td>
                             <td :class="classestd">{{ totalStock.masuk }}</td>
                             <td :class="classestd">{{ totalStock.mati }}</td>
                             <td :class="classestd">{{ totalStock.keluar }}</td>
@@ -98,7 +96,6 @@
                     <thead>
                         <tr>
                             <th :class="classesth">No.</th>
-                            <th :class="classesth">Age</th>
                             <th :class="classesth">Pen</th>
                             <th :class="classesth">Gender</th>
                             <th :class="classesth">Masuk HI</th>
@@ -117,9 +114,6 @@
                             <tr>
                                 <td :class="classestd" rowspan="2">
                                     {{ index + 1 }}
-                                </td>
-                                <td :class="classestd" rowspan="2">
-                                    {{ item.age }}
                                 </td>
                                 <td :class="classestd" rowspan="2">
                                     {{ item.pen }}
@@ -155,7 +149,7 @@
                             </tr>
 
                             <tr class="bg-gray-300 font-bold">
-                                <td colspan="4" :class="classestd">
+                                <td colspan="3" :class="classestd">
                                     Sub-total
                                 </td>
                                 <td :class="classestd">
@@ -174,7 +168,7 @@
                         </template>
 
                         <tr class="bg-yellow-300 font-bold">
-                            <td colspan="4" :class="classestd">Grand Total</td>
+                            <td colspan="3" :class="classestd">Grand Total</td>
                             <td :class="classestd">{{ grandTotal.masuk }}</td>
                             <td :class="classestd">{{ grandTotal.mati }}</td>
                             <td :class="classestd">{{ grandTotal.keluar }}</td>
@@ -210,7 +204,7 @@
                             <td :class="classestd">{{ item.pecah }}</td>
                             <td :class="classestd">{{ item.utuh }}</td>
                             <td :class="classestd">
-                                {{ item.cost || "-" }}
+                                {{ formatRupiah(item.cost) || "-" }}
                             </td>
                         </tr>
 
@@ -222,7 +216,7 @@
                             <td :class="classestd">{{ totalEggs.abnormal }}</td>
                             <td :class="classestd">{{ totalEggs.pecah }}</td>
                             <td :class="classestd">{{ totalEggs.utuh }}</td>
-                            <td :class="classestd">-</td>
+                            <td :class="classestd">{{ formatRupiah(totalEggs.cost) || "-" }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -294,6 +288,8 @@ const totalEggs = computed(() => {
     let abnormal = 0;
     let pecah = 0;
     let utuh = 0;
+    let biaya = 0;
+    let cost = 0;
 
     props.breeding.forEach((item) => {
         if (item) {
@@ -302,14 +298,17 @@ const totalEggs = computed(() => {
             abnormal += item.abnormal || 0;
             pecah += item.broken || 0;
             utuh += item.HE || 0;
+            biaya += item.cost || 0;
         }
     });
+    cost = biaya/utuh;
 
     return {
         total,
         abnormal,
         pecah,
         utuh,
+        cost
     };
 });
 
@@ -425,7 +424,7 @@ const totalStock = computed(() => {
             masuk += item.come || 0;
             mati += item.die || 0;
             keluar += (item.sale || 0) + (item.out || 0);
-            stock_akhir += item.last_population || 0;
+            stock_akhir += item.last_stock || 0;
         }
     });
 
@@ -468,6 +467,7 @@ import { jsPDF } from "jspdf"; // Mengimpor jsPDF
 import html2canvas from "html2canvas"; // Mengimpor html2canvas
 import InputFragment from "../../../components/InputFragment.vue";
 import DateSubmitted from "../../../components/inputComponent/DateSubmitted.vue";
+import formatRupiah from "../../../composables/currency";
 
 const downloadItem = () => {
     const element = document.getElementById("printAble"); // Ambil elemen dengan ID 'printAble'
