@@ -286,7 +286,7 @@ class DashboardController extends Controller
                 $query->where('created_at', '>=', Carbon::now()->subDays($jumlah));
             })
             ->orderBy('nama_pelanggan')
-            ->get();
+            ->get()->toArray();
 
         // Customer dengan transaksi terbaru dalam jumlah hari yang ditentukan
         $customersWithRecentSales = Customer::whereHas('salesTransaction', function ($query) use ($jumlah) {
@@ -303,8 +303,8 @@ class DashboardController extends Controller
                 $customer->total_harga = $customer->salesTransaction->sum('total_harga');
                 return $customer;
             })
-            ->sortBy('nama_pelanggan');
-        // dd([$dailySales,$customersWithoutRecentSales,$customersWithRecentSales]);
+            ->sortBy('nama_pelanggan')->toArray();
+        // dd([$dailySales,$customersWithoutRecentSales,$customersWithRecentSales->toArray()]);
         // Kirim data ke frontend menggunakan Inertia
         return Inertia::render('admin/sales/Summary', [
             'dailySales' => $dailySales,

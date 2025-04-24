@@ -34,7 +34,8 @@ import SummarySales from '../../../fragment/Admin/Sales/SummarySales.vue';
     })
     const store = useStore();
     onMounted(() => {
-        // console.log(props.commercial[0].id_commercial)
+        // console.log(props.recentCust)
+        // console.log(props.passiveCust)
 
         if (!localStorage.getItem('page_refreshed')) {
             localStorage.setItem('page_refreshed', true);
@@ -42,7 +43,7 @@ import SummarySales from '../../../fragment/Admin/Sales/SummarySales.vue';
             window.location.reload(true);
         }
         if (!store.getters.user) {
-            console.log('test')
+            // console.log('test')
             window.location.reload();
             window.location.reload(true);
         }
