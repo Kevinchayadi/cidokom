@@ -1,7 +1,7 @@
 <template>
     <div class="flex justify-start sticky top-0 left-0 bg-primary">
         <button :class="buttonclasses" @click="createItem">
-            Create Sales
+            Create 
         </button>
         <button :class="[buttonclasses, { 'text-primary-text-light-hover': !selectedId }]" @click="addItem"
             :disabled="!selectedId">

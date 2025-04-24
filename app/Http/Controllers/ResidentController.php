@@ -25,7 +25,7 @@ class ResidentController extends Controller
             Resident::create($input);
             return redirect()->route('admin.Residence')->with('success', 'berhasil membuat Residence baru!');;
         } catch (\Throwable $th) {
-            return back()->withErrors('Failed to create Resident');
+            return back()->withErrors('Failed to create Residence');
         }
     }
     function editResident(Request $request, $id)
@@ -39,7 +39,7 @@ class ResidentController extends Controller
             Resident::where('id',$id)->update($input);
             return redirect()->route('admin.resident')->with('success', 'berhasil membuat Residence baru!');
         } catch (\Throwable $th) {
-            return back()->withErrors('Failed to update Resident');
+            return back()->withErrors('Failed to update Residence');
         }
     }
 

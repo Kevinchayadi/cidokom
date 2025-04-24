@@ -15,6 +15,7 @@ class saleTransaction extends Model
         'id_ayam',
         'harga',
         'total_harga',
+        'diskon',
         'status',
         'description'
     ];

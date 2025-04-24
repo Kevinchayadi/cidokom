@@ -254,13 +254,13 @@ class DashboardController extends Controller
 
         // Ambil transaksi dengan status 'pending' dalam periode yang ditentukan
         $saleTransactions = SaleTransaction::where('status', 'pending')
-            ->where('created_at', '>=', Carbon::now()->subDays($jumlah))
+            ->where('tanggal_Penjualan', '>=', Carbon::now()->subDays($jumlah))
             ->get();
 
         $dailySales = [];
 
         foreach ($saleTransactions as $transaction) {
-            $date = Carbon::parse($transaction->created_at)->format('Y-m-d');
+            $date = Carbon::parse($transaction->tanggal_Penjualan)->format('Y-m-d');
 
             if (isset($dailySales[$date])) {
                 $dailySales[$date] += $transaction->jumlah_ayam;

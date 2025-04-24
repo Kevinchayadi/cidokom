@@ -60,7 +60,7 @@
     const residenceData= computed(() =>
         props.residence.map(residence => ({ 
             id: residence.id, 
-            name: residence.nama_Resident
+            name: `${residence.nama_Resident} ( ${residence.tipe} )` 
         })))
     const qtyLabel = `QTY (Stock : ${props.stock})`
 

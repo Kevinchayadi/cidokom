@@ -107,8 +107,6 @@ class CommercialController extends Controller
                 foreach($item->commercialDetails as $detail){
                     if(($detail->last_population)!=0){
                         $FCR += $detail->feed/$detail->last_population;
-                    }else{
-                        $FCR = 0;
                     }
                 }
                 $item->fcr = $FCR;

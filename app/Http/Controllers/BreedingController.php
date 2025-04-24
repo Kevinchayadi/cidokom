@@ -90,7 +90,7 @@ class BreedingController extends Controller
     public function adminIndex()
     {
         $breeding = Breeding::with([
-            'BreedingDetails' => function ($query) {
+            'breedingDetails' => function ($query) {
                 $query->orderBy('created_at', 'desc');
             },
             'pen',
@@ -106,8 +106,6 @@ class BreedingController extends Controller
             foreach($item->breedingDetails as $detail){
                 if(($detail->last_male + $detail->lastfemale)!=0){
                     $FCR += $detail->feed/($detail->last_male + $detail->lastfemale);
-                }else{
-                    $FCR = 0;
                 }
             }
             $item->fcr = $FCR;
@@ -116,6 +114,7 @@ class BreedingController extends Controller
                 $item->entryDate = Carbon::parse($item->created_at)->format('Y-m-d');
             }
         }
+        // dd($breeding->toArray());
         
         return Inertia::render('admin/breeding', compact('breeding'));
     }

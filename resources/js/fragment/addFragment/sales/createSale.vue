@@ -81,6 +81,7 @@
                     }
                 });
                 alert(errorMessage);
+                console.log('test');
                 loading.value = false;
             }, 
             onSuccess: () => {

@@ -13,7 +13,7 @@ class CustHandleController extends Controller
     function storeSales(Request $request)
     {
         $input = $request->validate([
-            'nama_sales' => 'required|String',
+            'nama_sales' => 'required|String|unique:cust_handles,nama_sales',
             'diskon' => 'required|numeric'
         ]);
 
@@ -27,7 +27,7 @@ class CustHandleController extends Controller
         } catch (\Throwable $th) {
             return back()->withErrors('Failed to create Sales');
         } 
-        return redirect()->route('admin.CustHandle')->with('success', 'Sales created successfully');
+        return redirect()->route('admin.CustHandle')->with('success', 'Sales data created successfully');
     }
     function editSales(Request $request, $id)
     {
@@ -40,7 +40,7 @@ class CustHandleController extends Controller
         } catch (\Throwable $th) {
             return back()->withErrors('Failed to Update Sales');
         } 
-        return redirect()->route('admin.CustHandle')->with('success', 'Sales Update successfully');
+        return redirect()->route('admin.CustHandle')->with('success', 'Sales data Updated successfully');
         
     }
 

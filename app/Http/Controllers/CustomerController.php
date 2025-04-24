@@ -22,6 +22,7 @@ class CustomerController extends Controller
             'id_residence' => 'required|integer',
         ]);
         $check = Customer::where('nama_pelanggan' , $input['nama_pelanggan'])->where('id_residence', $input['id_residence'])->where('id_sales', $input['id_sales'])->first();
+        // dd($check);
         if($check){
             return back()->withErrors('Data Already Exist!');
         }

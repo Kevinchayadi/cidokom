@@ -22,6 +22,7 @@
                         <th class="z-20" rowspan="3" :class="classesth"> Chicken Size </th>
                         <th class="z-20" rowspan="3" :class="classesth"> qty </th>
                         <th class="z-20" rowspan="3" :class="classesth"> price </th>
+                        <th class="z-20" rowspan="3" :class="classesth"> discount </th>
                         <th class="z-20" rowspan="3" :class="classesth"> Total Price </th>
                         <th class="z-20" rowspan="3" :class="classesth"> description </th>
                         <th class="z-20" rowspan="3" :class="classesth"> Sales Name </th>
@@ -37,6 +38,7 @@
                         <td :class="classestd">{{ item.chickenSize }}</td>
                         <td :class="classestd">{{ item.qty }}</td>
                         <td :class="classestd">{{ formatRupiah(item.price) }}</td>
+                        <td :class="classestd">{{ formatRupiah(item.discount) }}</td>
                         <td :class="classestd">{{ formatRupiah(item.total) }}</td>
                         <td :class="classestd" class="w-[250px]">{{ item.desc }}</td>
                         <td :class="classestd" class="w-[250px]">{{ item.sales }}</td>
@@ -84,6 +86,7 @@ import formatRupiah from '../../../composables/currency';
             chickenSize: item.chicken_size.size,
             qty: item.jumlah_ayam,
             price: item.harga,
+            discount: item.diskon,
             total: item.total_harga,
             desc: item.description,
             sales: item.customers.sales.nama_sales,

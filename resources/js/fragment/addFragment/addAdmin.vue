@@ -1,6 +1,6 @@
 <template>
     <div class="w-[80%] ">
-        <Headers tittle="Add Pakan" />
+        <Headers tittle="Add Admin" />
         <form @submit.prevent="handleSubmit">
             <InputFragment v-model="formData.name" name="name" content="Admin Name" type="dropDown"
                 :data="adminNames" label="black" />
