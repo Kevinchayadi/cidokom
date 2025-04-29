@@ -308,8 +308,8 @@ class DashboardController extends Controller
         // Kirim data ke frontend menggunakan Inertia
         return Inertia::render('admin/sales/Summary', [
             'dailySales' => $dailySales,
-            'recentCust' => $customersWithRecentSales,
-            'passiveCust' => $customersWithoutRecentSales,
+            'recentCust' => array_values($customersWithRecentSales),
+            'passiveCust' => array_values($customersWithoutRecentSales),
         ]);
     }
 }

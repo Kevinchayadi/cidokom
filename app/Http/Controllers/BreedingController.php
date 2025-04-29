@@ -254,7 +254,7 @@ class BreedingController extends Controller
         try {
             DB::beginTransaction();
             $new_cost = 0;
-            if ($request->move_to != 0) {
+            if ($request->move_to != 0 &&(($request->total_female_move + $request->total_male_move)  != 0)) {
                 $unitCostAsFloat = (float) $Breeding->cost_Total_induk;
                 $datas = $this->moveService->moveTable($input['move_to'], $Breeding->id_pen, $unitCostAsFloat, $input['last_male'], $input['last_female'], $input['total_male_move'], $input['total_female_move']);
 
@@ -334,6 +334,10 @@ class BreedingController extends Controller
                 $Breeding->update([
                     'status' => 'inactive',
                 ]);
+                Pen::find($Breeding->id_pen)->update([
+                    'status'=>'active'
+                ]);
+                
             }
             DB::commit();
             return redirect()->route('user.breeding')->with('success', 'berhasil membuat kandang Breeding baru');

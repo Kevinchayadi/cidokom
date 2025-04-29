@@ -110,7 +110,7 @@ Route::prefix('admin')->middleware(['auth','isAdmin'])->group(function(){
 
 
 Route::prefix('user')->middleware(['auth','isUser'])->group(function(){
-    Route::get('/getegg/{id}', [HatcheryController::class, 'getegg']); 
+    Route::post('/getegg', [HatcheryController::class, 'getegg']); 
     Route::get('/anotheregg/{id}', [HatcheryController::class, 'anotheregg']); 
 
     Route::get('/dashboard',[DashboardController::class, 'userIndex'])->name('user.dashboard');

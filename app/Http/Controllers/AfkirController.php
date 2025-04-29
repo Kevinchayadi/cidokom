@@ -28,32 +28,25 @@ class AfkirController extends Controller
         })
             ->with('kandang')
             ->get();
-        dd($afkir);
+        // dd($afkir);
         foreach ($afkir as $item) {
             
             $item->isTrue = true;
-            $data = Afkir::where('id_pen', $item->id)->whereDate('created_at', now())->get();
-            // dd(!$data->isEmpty());
-            
+            $data = Afkir::where('id_pen', $item->id)->get();
 
             if (!$data->isEmpty()) {
-                // dd($data);
-                if($data[0]->id_pen == 33){
-                    dd('$data');
-                }
-                
                 $latestData = $data->sortByDesc('created_at')->first();
-                $createdDate = Carbon::parse($latestData->created_at)->toDateString();
-
                 $today = Carbon::now('Asia/Jakarta')->toDateString();
-                if ($createdDate === $today) {
-                    continue;
-                }
+
+                $checkData = $data->filter(function ($record) use ($today) {
+                    return Carbon::parse($record->created_at)->toDateString() === $today;
+                })->sortByDesc('created_at');
 
                 if ($latestData && $latestData->male == 0 && $latestData->female == 0) {
                     $item->isTrue = false;
                 }
-                foreach ($data as $record) {
+
+                foreach ($checkData as $record) {
                     if ($record->feed_female !== null || $record->feed_male !== null) {
                         $item->isTrue = false;
                         break;
@@ -113,7 +106,9 @@ class AfkirController extends Controller
         $pakan = Pakan::where('nama_pakan', $input['feedName'])->first();
         $feed = $input['feed_male'] + $input['feed_female'];
         $currentfeed = $pakan->qty - $feed;
+        // dd($input['date']);
         if (isset($input['date'])) {
+            // dd('test');
             $DataCust = Afkir::where('id_pen', $id)
                 ->whereDate('created_at', Carbon::parse($input['date'])->toDateString())
                 ->get();
@@ -130,11 +125,14 @@ class AfkirController extends Controller
             } else {
                 $isCurrent = false;
                 $data = Afkir::where('id_pen', $id)
-                    ->whereDate('created_at', Carbon::parse($input['date'])->toDateString())
+                    ->whereDate('created_at','<=', Carbon::parse($input['date'])->toDateString())
                     ->latest('created_at')
                     ->first();
                 $input['created_at'] = Carbon::parse($input['date'])->addHours(7);
             }
+        }
+        if($data==null){
+            return back()->withErrors('This data Not have been created before!!');
         }
         $input['male_cost'] = $data->male_cost + $pakan->harga * $input['feed_male'];
         $input['female_cost'] = $data->female_cost + $pakan->harga * $input['feed_female'];
@@ -149,7 +147,6 @@ class AfkirController extends Controller
             return back()->withErrors('Female qty cant less than 0');
         }
         try {
-            //     //code...
             $pakan->update([
                 'qty' => $currentfeed,
             ]);
@@ -182,11 +179,12 @@ class AfkirController extends Controller
                 foreach ($datas as $data) {
                     $data->male -= $input['male_die'] + $input['male_sale'] + $input['male_out'];
                     $data->female -= $input['female_die'] + $input['female_sale'] + $input['male_out'];
-                    $data->male_cost -= $new_cost * $input['male_out'];
-                    $data->female_cost -= $new_cost * $input['female_out'];
+                    $data->male_cost -= ($new_cost??0 * $input['male_out'])-( $pakan->harga * $input['feed_male']);
+                    $data->female_cost -= ($new_cost??0 * $input['female_out'])-($pakan->harga * $input['feed_female']);
                     $data->save();
                 }
             }
+
 
             Afkir::create($input);
 

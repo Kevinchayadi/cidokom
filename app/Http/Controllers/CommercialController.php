@@ -298,6 +298,9 @@ class CommercialController extends Controller
             $status = 'active';
             if ($input['last_population'] == 0) {
                 $status = 'inactive';
+                Pen::find( $commercial->id_pen)->update([
+                    'status'=>'active'
+                ]);
             }
 
             Commercial::where('id_commercial', $input['id_commercial'])->update([

@@ -12,7 +12,8 @@ class Pen extends Model
         'id_kandang',
         'code_pen',
         'total_egg',
-        'total_cost'
+        'total_cost',
+        'status'
     ];
 
     public function kandang(){

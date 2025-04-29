@@ -1,25 +1,25 @@
 <template>
-    <div v-if="type === 'dropdown'" :class="classes">
+    <div v-if="type === 'dropdown'" :class="[classes, custom]">
         <Label :name="name" :content="content"  :label="label"/>
         <DropDown :name="name" :datas="datas" v-model="internalValue" />
     </div>
-    <div v-else-if="type === 'textArea'" :class="classes">
+    <div v-else-if="type === 'textArea'" :class="[classes, custom]">
         <Label :name="name" :content="content" :label="label" />
         <TextArea :name="name" :placeholder="placeholder" v-model="internalValue" />
     </div>
-    <div v-else-if="type === 'multipleCB'" :class="classes">
+    <div v-else-if="type === 'multipleCB'" :class="[classes, custom]">
         <Label :name="name" :content="content" :label="label"/>
         <Multiple :name="name" :datas="datas" v-model="internalValue" />
     </div>
-    <div v-else-if="type === 'multipleDP'" :class="classes">
+    <div v-else-if="type === 'multipleDP'" :class="[classes, custom]">
         <Label :name="name" :content="content" :label="label"/>
         <MulipleSelected :name="name" :datas="datas" v-model="internalValue" />
     </div>
-    <div v-else-if="type === 'decimal'" :class="classes">
+    <div v-else-if="type === 'decimal'" :class="[classes, custom]">
         <Label :name="name" :content="content" :label="label"/>
         <Input :name="name" :type="number" :isStep="true" :placeholder="placeholder" v-model="internalValue"/>
     </div>
-    <div v-else :class="classes">
+    <div v-else :class="[classes, custom]">
         <Label :name="name" :content="content" :label="label"/>
         <Input :name="name" :type="type" :placeholder="placeholder" v-model="internalValue"/>
     </div>
@@ -60,6 +60,9 @@ const props = defineProps({
     label:{
         type: String,
         default: 'white',
+    },
+    custom:{
+        type: String,
     }
 });
 

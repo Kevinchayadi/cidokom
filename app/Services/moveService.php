@@ -70,7 +70,11 @@ class moveService
         if ($move_pen != 0) {
             // $last_male =  $last_male - $input['total_male_move'] - $input['total_female_move'];
             $data = Pen::with('kandang')->where('id', $move_pen)->firstorfail();
-            $cost = $current_cost / ($last_male + $last_female);
+            if(($last_male + $last_female)!=0){
+                $cost = $current_cost / ($last_male + $last_female);
+            }else{
+                $cost = 0;
+            }
 
             $new_cost = $cost * ($male + $female);
             // dd($new_cost);
@@ -108,7 +112,7 @@ class moveService
                     $total_female = $breeding->breedingDetails[0]->total_female_receive + $female;
                     $total_male = $breeding->breedingDetails[0]->total_male_receive + $male;
                     $total_cost_breeding = (float) ($breeding->cost_Total_induk + $new_cost);
-                    $costInduk = (float) ($total_cost_breeding / ($last_male_breeding + $last_female_breeding));
+                    $costInduk = (float) (($total_cost_breeding / ($last_male_breeding + $last_female_breeding))??0);
 
                     $this->moveToBreeding($breeding, $last_female_breeding, $last_male_breeding, $current_pen, $total_female, $total_male, $total_cost_breeding, $costInduk);
 

@@ -27,7 +27,7 @@ import SummarySales from '../../../fragment/Admin/Sales/SummarySales.vue';
             required: true
         },
         passiveCust: {
-            type: Number,
+            type: Array,
             required: true
         },
 
