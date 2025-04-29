@@ -279,6 +279,10 @@ class DashboardController extends Controller
             $dailySales,
             array_keys($dailySales),
         );
+        usort($dailySales, function ($a, $b) {
+            return strtotime($a['date']) <=> strtotime($b['date']);
+        });
+        dd($dailySales);
 
         // Customer tanpa transaksi terbaru dalam jumlah hari yang ditentukan
         $customersWithoutRecentSales = Customer::with('sales')
