@@ -250,11 +250,11 @@ class DashboardController extends Controller
     function salesSummary(Request $request)
     {
         // Ambil parameter jumlah dari request, jika tidak ada, set default 30
-        $jumlah = $request->input('jumlah', 30);
+        $jumlah = $request->input('jumlah', 7);
 
         // Ambil transaksi dengan status 'pending' dalam periode yang ditentukan
         $saleTransactions = SaleTransaction::where('status', 'pending')
-            ->where('tanggal_Penjualan', '>=', Carbon::now()->subDays($jumlah))
+            ->where('tanggal_Penjualan', '>=', Carbon::now()->subDays(7))
             ->get();
 
         $dailySales = [];
