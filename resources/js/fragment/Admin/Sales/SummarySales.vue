@@ -56,7 +56,7 @@
         </div>
         <div>
             <!-- Inactive Customer Table -->
-            <h1 class="text-center font-extrabold">Inactive Customer</h1>
+            <h1 class="text-center font-extrabold">Inactive Customer (In 2 Month)</h1>
             <div
                 class="table-wrapper flex-1 overflow-auto min-h-[35vh] max-h-[35vh] justify-items-center"
             >
@@ -77,8 +77,9 @@
                             :key="index"
                         >
                             <td :class="classestd">{{ index + 1 }}</td>
-                            <td :class="classestd">{{ item.umur }}</td>
-                            <td :class="classestd">{{ item.kandang }}</td>
+                            <td :class="classestd">{{ item.sales }}</td>
+                            <td :class="classestd">{{ item.nama }}</td>
+                            <td :class="classestd">{{ item.phone }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -169,8 +170,9 @@ const grandTotal = computed(()=>{
 
 const InactiveCustData = computed(() =>
     (props.passiveCust ?? []).map((item) => ({
+        sales: item.sales.nama_sales,
         nama: item.nama_pelanggan,
-        qty: item.total_ayam,
+        phone: item.no_telepon_pelanggan,
     }))
 );
 

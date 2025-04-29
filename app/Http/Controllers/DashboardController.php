@@ -285,8 +285,8 @@ class DashboardController extends Controller
 
         // Customer tanpa transaksi terbaru dalam jumlah hari yang ditentukan
         $customersWithoutRecentSales = Customer::with('sales')
-            ->whereDoesntHave('salesTransaction', function ($query) use ($jumlah) {
-                $query->where('created_at', '>=', Carbon::now()->subDays($jumlah));
+            ->whereDoesntHave('salesTransaction', function ($query) {
+                $query->where('created_at', '>=', Carbon::now()->subDays(60));
             })
             ->orderBy('nama_pelanggan')
             ->get()->toArray();
