@@ -282,8 +282,9 @@ class HatcheryController extends Controller
             'hatcher' => $input['hatcher'],
         ]);
         $hatchery = Hatchery::where('id_hatchery', $input['id_hatchery'])->firstOrFail();
+        $date = Carbon::parse($hatchery->setting_date)->addDays(18);
         $hatchery->update([
-            'candling_date' => Carbon::now(),
+            'candling_date' =>  $date,
         ]);
 
         return redirect()->route('user.hatchery')->with('success', 'berhasil membuat kandang Breeding baru');
@@ -307,9 +308,9 @@ class HatcheryController extends Controller
         $hatcheryDetail = Hatchery_detail::where('id_hatchery', $input['id_hatchery'])->firstOrFail();
 
         $hatchery = Hatchery::where('id_hatchery', $input['id_hatchery'])->firstOrFail();
-
+        $date = Carbon::parse($hatchery->setting_date)->addDays(21);
         $hatchery->update([
-            'pull_chicken_date' => Carbon::now(),
+            'pull_chicken_date' =>  $date,
         ]);
         $hatcheryDetail->update([
             'dead_in_egg' => $input['dead_in_egg'],
