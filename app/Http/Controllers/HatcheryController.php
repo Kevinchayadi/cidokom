@@ -133,6 +133,8 @@ class HatcheryController extends Controller
         $start = $request->start;
         $end = $request->end;
 
+        // dd($start,$end);
+
         $input = $request->validate([
             'id_pen' => 'required',
             'another_pen' => 'nullable|integer',
@@ -182,13 +184,14 @@ class HatcheryController extends Controller
                     $curr->delete();
                 }
             }
+            // dd($breedings->toArray());
 
            foreach ($breedings as $breeding) {
-                $cost += $breeding->breedingDetails()->where('status', 'active')->sum('cost_unit');
-                $breeding
-                    ->breedingDetails()
-                    ->where('status', 'active')
-                    ->update(['status' => 'inactive']);
+                $cost += $breeding->breedingDetails()->where('status', 'active')->whereBetween('created_at',[$start,$end])->sum('cost_unit');
+                $details = $breeding->breedingDetails()
+                ->where('status', 'active')
+                ->whereBetween('created_at', [$start, $end]);
+                $details->update(['status' => 'inactive']);
             }
 
            
@@ -215,14 +218,14 @@ class HatcheryController extends Controller
 
             Hatchery_detail::create($input2);
 
-            foreach ($breedings as $breeding) {
-                $breeding
-                    ->breedingDetails()
-                    ->where('status', 'active')
-                    ->update([
-                        'status' => 'inactive',
-                    ]);
-            }
+            // foreach ($breedings as $breeding) {
+            //     $breeding
+            //         ->breedingDetails()
+            //         ->where('status', 'active')
+            //         ->update([
+            //             'status' => 'inactive',
+            //         ]);
+            // }
     
 
             DB::commit();

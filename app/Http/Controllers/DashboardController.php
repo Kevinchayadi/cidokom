@@ -45,17 +45,16 @@ class DashboardController extends Controller
 
         $totalBreeding = 0;
         $totalDeath = 0;
-        foreach($breedingPens as $pens){
-            $data=[
-                'id_pen'=> $pens->id,
+        foreach ($breedingPens as $pens) {
+            $data = [
+                'id_pen' => $pens->id,
                 'code_pen' => $pens->code_pen,
-                'male' =>0,
-                'female' =>0,
+                'male' => 0,
+                'female' => 0,
                 'dead' => 0,
             ];
             $breeds[] = $data;
         }
-
 
         foreach ($breeding as $item) {
             $lastMale = $item->breedingDetails[0]->last_male ?? $item->jumlah_jantan;
@@ -108,7 +107,7 @@ class DashboardController extends Controller
         $firstInputed = $request->input('first');
 
         $endInputed = $request->input('end');
-        
+
         $latestBreedingDetail = Breeding_detail::latest('created_at')->first();
         if (is_null($firstInputed)) {
             $startDate = Carbon::parse($latestBreedingDetail->created_at)->format('Y-m-d H:i:s');
@@ -122,29 +121,29 @@ class DashboardController extends Controller
         }
         // dd($startDate, $endDate);
 
-        $breedingDetails=[];
+        $breedingDetails = [];
         $breedingPens = Pen::with('kandang')
-        ->whereHas('kandang', function ($query) {
-            $query->where('jenis_kandang', 'breeding');
-        })
-        ->get();
-        
+            ->whereHas('kandang', function ($query) {
+                $query->where('jenis_kandang', 'breeding');
+            })
+            ->get();
+
         foreach ($breedingPens as $breed) {
             // dd($breed->id);
             $breedingDetail = Breeding_detail::whereHas('breeding', function ($query) use ($breed) {
                 $query->where('id_pen', $breed->id);
             })
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get();
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->get();
             $lastDetail = Breeding_detail::whereHas('breeding', function ($query) use ($breed) {
                 $query->where('id_pen', $breed->id);
             })
-            ->whereDate('created_at', $startDate)
-            ->latest('created_at')
-            ->first();
-            if($breedingDetail->isEmpty()){
+                ->whereDate('created_at', $startDate)
+                ->latest('created_at')
+                ->first();
+            if ($breedingDetail->isEmpty()) {
                 $detailBreed = [
-                    'code_pen'=>$breed->code_pen,
+                    'code_pen' => $breed->code_pen,
                     'male_come' => 0,
                     'female_come' => 0,
                     'male_die' => 0,
@@ -153,17 +152,17 @@ class DashboardController extends Controller
                     'female_out' => 0,
                     'last_male' => 0,
                     'last_female' => 0,
-                    'egg' =>0,
-                    'broken' =>0,
-                    'abnormal'=>0,
-                    'HE'=>0,
-                    'cost'=>0,
-                    'last_male'=>0,
-                    'last_female'=>0,
+                    'egg' => 0,
+                    'broken' => 0,
+                    'abnormal' => 0,
+                    'HE' => 0,
+                    'cost' => 0,
+                    'last_male' => 0,
+                    'last_female' => 0,
                 ];
-            }else{
+            } else {
                 $detailBreed = [
-                    'code_pen'=>$breed->code_pen,
+                    'code_pen' => $breed->code_pen,
                     'male_come' => $breedingDetail->sum('total_male_receive'),
                     'female_come' => $breedingDetail->sum('total_male_receive'),
                     'male_die' => $breedingDetail->sum('male_die'),
@@ -189,47 +188,46 @@ class DashboardController extends Controller
             }
         }
 
-    
         $commercialDetails = [];
 
         $commercePens = Pen::with('kandang')
-        ->whereHas('kandang', function ($query) {
-            $query->where('jenis_kandang', 'commerce');
-        })
-        ->get();
-        
+            ->whereHas('kandang', function ($query) {
+                $query->where('jenis_kandang', 'commerce');
+            })
+            ->get();
+
         foreach ($commercePens as $commercial) {
             $commercialDetail = commercial_detail::whereHas('commercial', function ($query) use ($commercial) {
                 $query->where('id_pen', $commercial->id);
             })
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get();
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->get();
             $lastDetail2 = Commercial_detail::whereHas('commercial', function ($query) use ($commercial) {
                 $query->where('id_pen', $commercial->id);
             })
-            ->whereDate('created_at', $startDate)
-            ->latest('created_at')
-            ->first();
-            
-            if($commercialDetail->isEmpty()){
+                ->whereDate('created_at', $startDate)
+                ->latest('created_at')
+                ->first();
+
+            if ($commercialDetail->isEmpty()) {
                 $detailcommercial = [
-                    'code_pen'=>$commercial->code_pen,
+                    'code_pen' => $commercial->code_pen,
                     'die' => 0,
                     'sale' => 0,
                     'come' => 0,
                     'out' => 0,
                     'feed' => 0,
-                    'last_stock'=> 0,
+                    'last_stock' => 0,
                 ];
-            }else{
+            } else {
                 $detailcommercial = [
-                    'code_pen'=>$commercial->code_pen,
+                    'code_pen' => $commercial->code_pen,
                     'die' => $commercialDetail->sum('depreciation_die'),
                     'sale' => $commercialDetail->sum('depreciation_panen'),
                     'come' => $commercialDetail->sum('total_move'),
                     'out' => $commercialDetail->sum('total_move'),
                     'feed' => $commercialDetail->sum('feed'),
-                    'last_stock'=> $lastDetail2->last_population??0,
+                    'last_stock' => $lastDetail2->last_population ?? 0,
                 ];
             }
 
@@ -242,8 +240,8 @@ class DashboardController extends Controller
         return Inertia::render('admin/summary', [
             'breeding' => $breedingDetails,
             'commercial' => $commercialDetails,
-            'startDate'=>$startDate,
-            'endDate'=>$endDate,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
         ]);
     }
 
@@ -251,10 +249,14 @@ class DashboardController extends Controller
     {
         // Ambil parameter jumlah dari request, jika tidak ada, set default 30
         $jumlah = $request->input('jumlah', 30);
+        $current = SaleTransaction::latest('tanggal_penjualan')->first();
+        
+        $start = $request->input('start') ? Carbon::parse($request->input('start')) : Carbon::parse($current->tanggal_Penjualan)->subMonth();
 
-        // Ambil transaksi dengan status 'pending' dalam periode yang ditentukan
+        $end = $request->input('end') ? Carbon::parse($request->input('end'))->addDay(1) : Carbon::parse($current->tanggal_Penjualan)->addDay(1);
+        // dd($start, $end);
         $saleTransactions = SaleTransaction::where('status', 'pending')
-            ->where('tanggal_Penjualan', '>=', Carbon::now()->subDays(30))
+            ->whereBetween('tanggal_Penjualan', [$start,$end])
             ->get();
 
         $dailySales = [];
@@ -262,42 +264,51 @@ class DashboardController extends Controller
         foreach ($saleTransactions as $transaction) {
             $date = Carbon::parse($transaction->tanggal_Penjualan)->format('Y-m-d');
 
-            if (isset($dailySales[$date])) {
-                $dailySales[$date] += $transaction->jumlah_ayam;
-            } else {
-                $dailySales[$date] = $transaction->jumlah_ayam;
+            if (!isset($dailySales[$date])) {
+                $dailySales[$date] = [
+                    'total_qty' => 0,
+                    'total_harga' => 0,
+                ];
             }
+
+            $dailySales[$date]['total_qty'] += $transaction->jumlah_ayam;
+            $dailySales[$date]['total_harga'] += $transaction->total_harga;
         }
 
+        // Ubah ke bentuk array numerik
         $dailySales = array_map(
-            function ($totalQty, $date) {
+            function ($values, $date) {
                 return [
                     'date' => $date,
-                    'total_qty' => $totalQty,
+                    'total_qty' => $values['total_qty'],
+                    'total_harga' => $values['total_harga'],
                 ];
             },
             $dailySales,
             array_keys($dailySales),
         );
+
+        // Urutkan berdasarkan tanggal naik
         usort($dailySales, function ($a, $b) {
             return strtotime($a['date']) <=> strtotime($b['date']);
         });
 
         // Customer tanpa transaksi terbaru dalam jumlah hari yang ditentukan
         $customersWithoutRecentSales = Customer::with('sales')
-            ->whereDoesntHave('salesTransaction', function ($query) {
-                $query->where('created_at', '>=', Carbon::now()->subDays(60));
+            ->whereDoesntHave('salesTransaction', function ($query) use($start, $end) {
+                $query->whereBetween('tanggal_Penjualan', [$start,$end]);
             })
             ->orderBy('nama_pelanggan')
-            ->get()->toArray();
+            ->get()
+            ->toArray();
 
         // Customer dengan transaksi terbaru dalam jumlah hari yang ditentukan
-        $customersWithRecentSales = Customer::whereHas('salesTransaction', function ($query) use ($jumlah) {
-            $query->where('created_at', '>=', Carbon::now()->subDays($jumlah));
+        $customersWithRecentSales = Customer::whereHas('salesTransaction', function ($query) use ($start,$end) {
+            $query->whereBetween('tanggal_Penjualan', [$start,$end]);
         })
             ->with([
-                'salesTransaction' => function ($query) use ($jumlah) {
-                    $query->where('created_at', '>=', Carbon::now()->subDays($jumlah));
+                'salesTransaction' => function ($query) use ($start, $end) {
+                    $query->whereBetween('tanggal_Penjualan', [$start,$end]);
                 },
             ])
             ->get()
@@ -306,13 +317,18 @@ class DashboardController extends Controller
                 $customer->total_harga = $customer->salesTransaction->sum('total_harga');
                 return $customer;
             })
-            ->sortBy('nama_pelanggan')->toArray();
+            ->sortBy('nama_pelanggan')
+            ->toArray();
+            $start = Carbon::parse($start)->format('Y-m-d');
+            $end = Carbon::parse($end)->subDay()->format('Y-m-d');
         // dd([$dailySales,$customersWithoutRecentSales,$customersWithRecentSales->toArray()]);
         // Kirim data ke frontend menggunakan Inertia
         return Inertia::render('admin/sales/Summary', [
             'dailySales' => $dailySales,
             'recentCust' => array_values($customersWithRecentSales),
             'passiveCust' => array_values($customersWithoutRecentSales),
+            'start'=> $start,
+            'end' => $end
         ]);
     }
 }

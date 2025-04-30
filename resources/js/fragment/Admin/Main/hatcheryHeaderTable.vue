@@ -126,7 +126,7 @@
     const data = computed(()=>
         props.hatchery.map(item =>({
             costCenter : item.id_hatchery,
-            pen : item.pen.code_pen,
+            pen: item.pen?.code_pen ?? 'ALL',
             machine: item.machine.machine_name,
             settingDate : item.setting_date,
             candlingDate : item.candling_date,

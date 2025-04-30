@@ -1,7 +1,7 @@
 <template>
 
     <Sidebarnew title="Dashboard">
-        <SummarySales :dailySales="dailySales" :recentCust="recentCust" :passiveCust="passiveCust"  />
+        <SummarySales :dailySales="dailySales" :recentCust="recentCust" :passiveCust="passiveCust" :start="start" :end="end" />
     </Sidebarnew>
 
 
@@ -30,6 +30,12 @@ import SummarySales from '../../../fragment/Admin/Sales/SummarySales.vue';
             type: Array,
             required: true
         },
+        start:{
+            type:String
+        },
+        end:{
+            type:String
+        }
 
     })
     const store = useStore();
