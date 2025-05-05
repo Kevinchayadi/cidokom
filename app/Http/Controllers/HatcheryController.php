@@ -357,7 +357,7 @@ class HatcheryController extends Controller
                 $input['age'] = 0;
                 $input['last_population'] = $input['entry_population'];
                 $input['total_cost'] = $hatchery->cost_total ?? 0;
-                $input['unit_cost'] = $hatchery->cost_total ?? 0;
+                $input['unit_Cost'] = $hatchery->cost_total ?? 0;
                 // dd( $input);
                 Commercial::create($input);
             }

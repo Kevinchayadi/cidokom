@@ -283,8 +283,6 @@ class CommercialController extends Controller
                 $input['total_recieve'] = $totalPopulation;
  
             }
-
-            $costTotal = $commercial->total_cost + $input['feed'] * $feed->harga - $new_cost + $costPopulation;
             $costUnit = $commercial->unit_Cost - $costchicken * $input['depreciation_panen'] + $input['feed'] * $feed->harga - $new_cost + $costPopulation;
 
             // dd($input);
@@ -308,7 +306,6 @@ class CommercialController extends Controller
 
             Commercial::where('id_commercial', $input['id_commercial'])->update([
                 'last_population' => $input['last_population'],
-                'total_cost' => $costTotal,
                 'unit_Cost' => $costUnit,
                 'status' => $status,
             ]);
@@ -375,7 +372,7 @@ class CommercialController extends Controller
         // dd($commercialDetail);
 
         // Lakukan perhitungan dan pemindahan
-        $unitCostAsFloat = (float) $commercial->cost_Total_induk;
+        $unitCostAsFloat = (float) $commercial->unit_Cost;
         $datas = $this->moveService->moveTable($input['move_to'], $commercial->id_pen, $unitCostAsFloat, $commercialDetail->last_population, 0, $input['total_male_move'], $input['total_female_move']);
 
         $new_cost = $datas['new_cost'];
@@ -387,8 +384,7 @@ class CommercialController extends Controller
         }
 
         // Menghitung total cost dan cost induk
-        $total_cost = $commercial->total_cost - $new_cost;
-        $unit_Cost = $commercial->unit_cost - $new_cost;
+        $unit_Cost = $commercial->unit_Cost - $new_cost;
 
         // Mulai transaksi DB
         DB::beginTransaction();
@@ -396,7 +392,6 @@ class CommercialController extends Controller
         try {
             // Update commercial data
             $commercial->update([
-                'total_cost' => $total_cost,
                 'unit_Cost' => $unit_Cost,
                 'last_population' => $input['last_population'],
             ]);
@@ -601,17 +596,17 @@ class CommercialController extends Controller
             }
 
             $feed = Pakan::where('id', $validated['feed_name'])->firstOrFail();
-            $costchicken = $this->countService->costChicken($commercial->unit_cost, $previousDetail->last_population ?? $validated['begining_population']);
+            $costchicken = $this->countService->costChicken($commercial->unit_Cost, $previousDetail->last_population ?? $validated['begining_population']);
             $costTotal = $commercial->total_cost + $validated['feed'] * $feed->harga;
 
-            $costUnit = $commercial->unit_cost - $costchicken * ($validated['depreciation_die'] + $validated['depreciation_afkir'] + $validated['depreciation_panen']) + $validated['feed'] * $feed->harga;
+            $costUnit = $commercial->unit_Cost - $costchicken * ($validated['depreciation_die'] + $validated['depreciation_afkir'] + $validated['depreciation_panen']) + $validated['feed'] * $feed->harga;
 
             Commercial_detail::create($validated);
 
             Commercial::where('id_commercial', $validated['id_commercial'])->update([
                 'last_population' => $validated['last_population'],
                 'total_cost' => $costTotal,
-                'unit_cost' => $costUnit,
+                'unit_Cost' => $costUnit,
             ]);
         }
 
