@@ -46,7 +46,7 @@ class Hatchery extends Model
 
         static::creating(function ($model) {
             
-            $time = Carbon::now()->format('dmy');
+            $time = Carbon::parse($model->setting_date)->format('dmy');
     
             
             $count = Hatchery::where('id_pen', $model->id_pen)->count() + 1;

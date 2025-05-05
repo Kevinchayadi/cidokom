@@ -115,6 +115,7 @@ class CommercialController extends Controller
                 $item->entryDate = Carbon::parse($item->created_at)->format('Y-m-d');
             }
             }
+            // dd($commercial->toArray());
         return Inertia::render('admin/commercial', compact('commercial'));
     }
 
@@ -208,12 +209,10 @@ class CommercialController extends Controller
         if (!$previousDetail) {
             $input['last_population'] = $input['begining_population'] - $input['depreciation_die'] - $input['depreciation_afkir'] - $input['depreciation_panen'];
             $costchicken = $this->countService->costChicken($commercial->unit_Cost ?? 0, $input['begining_population']);
+           
         } else {
             if(Carbon::parse($previousDetail->created_at)->greaterThanOrEqualTo(Carbon::parse($input['date']))) {
                 return back()->withErrors('data terakhir update adalah ' . $previousDetail->created_at->format('d-m-y'));
-            }
-            if(isset($input['date'])){
-                $input['created_at'] = Carbon::parse($input['date'])->addHours(7);
             }
 
             $input['last_population'] = $previousDetail->last_population - $input['depreciation_die'] - $input['depreciation_afkir'] - $input['depreciation_panen'];
@@ -222,6 +221,9 @@ class CommercialController extends Controller
                 return redirect()->route('user.commercial')->with('success', 'cage is empty!');
             }
             $costchicken = $this->countService->costChicken($commercial->unit_Cost ?? 0, $previousDetail->last_population);
+        }
+        if(isset($input['date'])){
+            $input['created_at'] = Carbon::parse($input['date'])->addHours(7);
         }
         if ($input['last_population'] < 0) {
             
@@ -279,6 +281,7 @@ class CommercialController extends Controller
                     ->update(['status' => 'inactive']);
                 $input['last_population'] += $totalPopulation;
                 $input['total_recieve'] = $totalPopulation;
+ 
             }
 
             $costTotal = $commercial->total_cost + $input['feed'] * $feed->harga - $new_cost + $costPopulation;
@@ -438,6 +441,9 @@ class CommercialController extends Controller
             $commercial->update([
                 'last_population' => 0,
                 'status' => 'inactive',
+            ]);
+            Pen::find( $commercial->id_pen)->update([
+                'status'=>'active'
             ]);
 
             if ($commercialDetail != null && $commercialDetail->created_at->isToday()) {

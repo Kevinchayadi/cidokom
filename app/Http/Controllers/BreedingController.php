@@ -233,13 +233,14 @@ class BreedingController extends Controller
             if(Carbon::parse($previousDetail->created_at)->greaterThanOrEqualTo(Carbon::parse($input['date']))) {
                 return back()->withErrors('data terakhir update adalah ' . $previousDetail->created_at->format('d-m-y'));
             }
-            if(isset($input['date'])){
-                $input['created_at'] = Carbon::parse($input['date'])->addHours(7);
-            }
+            
             $calculate_male = $previousDetail->last_male - $input['male_die'] - $input['male_reject'];
             $calculate_female = $previousDetail->last_female - $input['female_die'] - $input['female_reject'];
             $input['last_male'] = $calculate_male;
             $input['last_female'] = $calculate_female;
+        }
+        if(isset($input['date'])){
+            $input['created_at'] = Carbon::parse($input['date'])->addHours(7);
         }
         if ($input['last_male'] < 0) {
             return back()->withErrors('Female chicken cant be minus quantity!');
@@ -279,7 +280,7 @@ class BreedingController extends Controller
             $totalFemale = Table_move::where('destination_pen', $Breeding->id_pen)
             ->where('status', 'active')
             ->sum('totalFemale');
-            $totalPopulation = $totalMale ?? (0 + $totalFemale ?? 0);
+            $totalPopulation = ($totalMale ??0) + ($totalFemale ?? 0);
             $costMale = Table_move::where('destination_pen', $Breeding->id_pen)
             ->where('status', 'active')
             ->sum('maleCost');
@@ -301,13 +302,21 @@ class BreedingController extends Controller
             ]);
             // dd($request);
             // dd($totalPopulation);
-
             if ($totalPopulation != 0) {
+                $lastTable = Table_move::where('destination_pen', $Breeding->id_pen)->where('status', 'active')->first();
+                $input['receive_from'] = $lastTable->current_pen;
                 Table_move::where('destination_pen', $Breeding->id_pen)
                     ->where('status', 'active')
                     ->update(['status' => 'inactive']);
-                $input['last_population'] = $totalPopulation;
+                $input['last_female'] += $totalFemale;
+                $input['last_male'] += $totalMale;
+                $input['total_female_receive'] = $totalFemale;
+                $input['total_male_receive'] = $totalMale;
+
+ 
             }
+
+
             // dd("test");
             //feed
             //--------------------------------------------------------------------------------------------------------------------------------
@@ -491,6 +500,9 @@ class BreedingController extends Controller
             // Update Breeding data
             $Breeding->update([
                 'status'=> 'inactive'
+            ]);
+            Pen::find($Breeding->id_pen)->update([
+                'status'=>'active'
             ]);
             
             if ($breedingDetail->created_at->isToday()) {

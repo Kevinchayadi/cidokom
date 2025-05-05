@@ -217,15 +217,6 @@ class HatcheryController extends Controller
             $input2['id_hatchery'] = $hatchery->id_hatchery;
 
             Hatchery_detail::create($input2);
-
-            // foreach ($breedings as $breeding) {
-            //     $breeding
-            //         ->breedingDetails()
-            //         ->where('status', 'active')
-            //         ->update([
-            //             'status' => 'inactive',
-            //         ]);
-            // }
     
 
             DB::commit();
@@ -234,7 +225,7 @@ class HatcheryController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
 
-            dd($e->getMessage());
+            
             return back()->withErrors('error', 'Gagal membuat kandang Hatchery baru: ' . $e->getMessage());
         }
     }
