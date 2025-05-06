@@ -29,7 +29,7 @@
                     <th class=" bg-blue-300" rowspan="2" :class="classesth">
                         Last Population
                     </th>
-                    <th class=" bg-blue-300" rowspan="2" :class="classesth">
+                    <th class=" bg-blue-300" colspan="2" :class="classesth">
                         Age
                     </th>
                     <th class=" bg-blue-300" colspan="2" :class="classesth">
@@ -51,6 +51,12 @@
                 <tr>
                     <!-- ID Column (sticky) -->
                     <th class=" bg-blue-300" :class="classesth2">
+                        day
+                    </th>
+                    <th class=" bg-blue-300" :class="classesth2">
+                        week
+                    </th>
+                    <th class=" bg-blue-300" :class="classesth2">
                         total cost
                     </th>
                     <th class=" bg-blue-300" :class="classesth2">
@@ -69,73 +75,162 @@
 
                     <!-- ID Column (sticky) -->
                     <td class="  md:sticky  md:left-0"
-                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
-                                .costCenter, [classestd]: true }" style="min-width: 150px;">
+                        :class="[
+                            classestd,
+                            selectedId === item.costCenter ?
+                            'bg-gray-300' :
+                            item.status === 'inactive' ?
+                            'text-red-950 bg-slate-100' :
+                            'bg-white',
+                        ]" style="min-width: 150px;">
                         {{ item . costCenter }}
                     </td>
 
                     <!-- Name Column (sticky) -->
                     <td class="  md:sticky  md:left-[150px]"
-                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
-                                .costCenter, [classestd]: true }">
+                        :class="[
+                            classestd,
+                            selectedId === item.costCenter ?
+                            'bg-gray-300' :
+                            item.status === 'inactive' ?
+                            'text-red-950 bg-slate-100' :
+                            'bg-white',
+                        ]">
                         {{ item . pen }}
                     </td>
 
                     <!-- Action Column (sticky) -->
                     <td class=" "
-                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
-                                .costCenter, [classestd]: true }">
+                        :class="[
+                            classestd,
+                            selectedId === item.costCenter ?
+                            'bg-gray-300' :
+                            item.status === 'inactive' ?
+                            'text-red-950 bg-slate-100' :
+                            'bg-white',
+                        ]">
                        {{item.entryDate}}
                     </td>
                     <td class=" "
-                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
-                                .costCenter, [classestd]: true }">
+                        :class="[
+                            classestd,
+                            selectedId === item.costCenter ?
+                            'bg-gray-300' :
+                            item.status === 'inactive' ?
+                            'text-red-950 bg-slate-100' :
+                            'bg-white',
+                        ]">
                        {{item.lastUpdate}}
                     </td>
                     <td class=" "
-                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
-                                .costCenter, [classestd]: true }">
+                        :class="[
+                            classestd,
+                            selectedId === item.costCenter ?
+                            'bg-gray-300' :
+                            item.status === 'inactive' ?
+                            'text-red-950 bg-slate-100' :
+                            'bg-white',
+                        ]">
                        {{item.entryPopulation}}
                     </td>
                     <td class=" "
-                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
-                                .costCenter, [classestd]: true }">
+                        :class="[
+                            classestd,
+                            selectedId === item.costCenter ?
+                            'bg-gray-300' :
+                            item.status === 'inactive' ?
+                            'text-red-950 bg-slate-100' :
+                            'bg-white',
+                        ]">
                        {{item.lastPopulation}}
                     </td>
                     <td class=" "
-                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
-                                .costCenter, [classestd]: true }">
+                        :class="[
+                            classestd,
+                            selectedId === item.costCenter ?
+                            'bg-gray-300' :
+                            item.status === 'inactive' ?
+                            'text-red-950 bg-slate-100' :
+                            'bg-white',
+                        ]">
                        {{item.age}}
                     </td>
                     <td class=" "
-                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
-                                .costCenter, [classestd]: true }">
+                        :class="[
+                            classestd,
+                            selectedId === item.costCenter ?
+                            'bg-gray-300' :
+                            item.status === 'inactive' ?
+                            'text-red-950 bg-slate-100' :
+                            'bg-white',
+                        ]">
+                       {{item.week}}
+                    </td>
+                    <td class=" "
+                        :class="[
+                            classestd,
+                            selectedId === item.costCenter ?
+                            'bg-gray-300' :
+                            item.status === 'inactive' ?
+                            'text-red-950 bg-slate-100' :
+                            'bg-white',
+                        ]">
                        {{formatRupiah(item.totalCost)}}
                     </td>
                     <td class=" "
-                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
-                                .costCenter, [classestd]: true }">
+                        :class="[
+                            classestd,
+                            selectedId === item.costCenter ?
+                            'bg-gray-300' :
+                            item.status === 'inactive' ?
+                            'text-red-950 bg-slate-100' :
+                            'bg-white',
+                        ]">
                        {{formatRupiah(item.unitCost)}}
                     </td>
                     <td class=" "
-                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
-                                .costCenter, [classestd]: true }">
+                        :class="[
+                            classestd,
+                            selectedId === item.costCenter ?
+                            'bg-gray-300' :
+                            item.status === 'inactive' ?
+                            'text-red-950 bg-slate-100' :
+                            'bg-white',
+                        ]">
                        {{item.FCR}}
                     </td>
                     
                     <td class=" "
-                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
-                                .costCenter, [classestd]: true }">
+                        :class="[
+                            classestd,
+                            selectedId === item.costCenter ?
+                            'bg-gray-300' :
+                            item.status === 'inactive' ?
+                            'text-red-950 bg-slate-100' :
+                            'bg-white',
+                        ]">
                        {{item.remark}}
                     </td>
                     <td class=" "
-                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
-                                .costCenter, [classestd]: true }">
+                        :class="[
+                            classestd,
+                            selectedId === item.costCenter ?
+                            'bg-gray-300' :
+                            item.status === 'inactive' ?
+                            'text-red-950 bg-slate-100' :
+                            'bg-white',
+                        ]">
                        {{item.inputBy}}
                     </td>
                     <td class=" "
-                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white ': selectedId !== item
-                                .costCenter, [classestd]: true }">
+                        :class="[
+                            classestd,
+                            selectedId === item.costCenter ?
+                            'bg-gray-300' :
+                            item.status === 'inactive' ?
+                            'text-red-950 bg-slate-100' :
+                            'bg-white',
+                        ]">
                        {{item.status}}
                     </td>
 
@@ -208,6 +303,7 @@ import formatRupiah from "../../../composables/currency";
             lastUpdate: lastUpdate,
             entryPopulation: item.entry_population,
             lastPopulation: item.last_population,
+            week: Math.floor(item.age / 7),
             age: item.age,
             totalCost: item.unit_Cost,
             unitCost: (item.unit_Cost/item.last_population).toFixed(2)??0,

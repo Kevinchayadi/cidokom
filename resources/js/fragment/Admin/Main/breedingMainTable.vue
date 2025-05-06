@@ -25,8 +25,17 @@
         <!-- Component Bawah -->
         <div class="row-span-10 bg-gray-100 h-[62vh]  overflow-x-auto overflow-y-auto p-0 m-0">
             <div
-                class="text-xs w-full bg-primary pl-2 text-primary-text-light z-20 p-0 m-0 text-xxs  border-t-2 border-t-black sticky top-0 left-0">
-                Daily Report
+                class="text-xs w-full bg-primary pl-2 text-primary-text-light z-20 p-0 my-0 text-xs  border-t-2 border-t-black sticky top-0 left-0">
+                <div class="flex justify-between pl-4 pr-6">
+                    <div>
+                        <h1> Daily Report</h1>
+                    </div>
+                    <div class="flex gap-3 ">
+                        <p><span  class="inline-block w-2 h-2 rounded-full bg-black"></span>    ACTIVE</p>
+                        <p><span  class="inline-block w-2 h-2 rounded-full bg-red-900"></span> INACTIVE</p>
+                    </div>
+                </div>
+                
             </div>
             <div v-if="showdata === null">
                 <p class="text-sm p-1 text-primary-text-light-hover pointer-events-none">select one table!</p>

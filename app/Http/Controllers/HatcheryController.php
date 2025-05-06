@@ -35,36 +35,45 @@ class HatcheryController extends Controller
         $id_another_cage = $request->another_pen;
         $totalEggs = 0;
         try {
-            if($id_cage==='ALL'|| $id_another_cage ==='ALL'){
-                $breedings = Breeding::with(['breedingDetails'=> function($q)use($start,$end){
-                    $q->whereBetween('created_at',[$start,$end]);
-                }])
-                    ->where('status', 'active')
-                    ->get();
-                $curr = currEgg::first();
-                foreach ($breedings as $breeding) {
-                    $totalEggs += $breeding->breedingDetails->where('status', 'active')->sum('total_egg');
-                }
-                $totalEggs += $curr??0;
-                
-            }else{
-                $breedings = Breeding::with(['breedingDetails'=> function($q)use($start,$end){
-                    $q->whereBetween('created_at',[$start,$end]);
-                }])
-                    ->whereHas('pen', function ($query) use ($id_cage) {
-                        $query->where('code_pen', 'like', $id_cage . '%');
-                    })
-                    ->where('status', 'active')
-                    ->get();
-                $curr = currEgg::where('id_pen', $id_another_cage)->first();
-                foreach ($breedings as $breeding) {
-                    $totalEggs += $breeding->breedingDetails->where('status', 'active')->sum('total_egg');
-                }
-               
-                
-                $totalEggs += $curr??0;
-               
+            $breedingQuery = Breeding::with([
+                'breedingDetails' => function ($q) use ($start, $end) {
+                    $q->whereBetween('created_at', [$start, $end]);
+                },
+            ])->where('status', 'active');
+
+            $InactivebreedingQuery = Breeding::with([
+                'breedingDetails' => function ($q) use ($start, $end) {
+                    $q->whereBetween('created_at', [$start, $end]);
+                },
+            ])
+                ->where('status', 'active')
+                ->whereDate('updated_at', '>=', $start);
+
+            if ($id_cage !== 'ALL') {
+                $breedingQuery->whereHas('pen', function ($query) use ($id_cage) {
+                    $query->where('code_pen', 'like', $id_cage . '%');
+                });
+                $InactivebreedingQuery->whereHas('pen', function ($query) use ($id_cage) {
+                    $query->where('code_pen', 'like', $id_cage . '%');
+                });
             }
+            $breedings = $breedingQuery->get();
+            $inactiveBreedings = $InactivebreedingQuery->get();
+
+            $curr = $id_cage === 'ALL' || $id_another_cage === 'ALL' ? currEgg::get() : currEgg::where('id_pen', $id_another_cage)->get();
+
+            foreach ($breedings as $breeding) {
+                $totalEggs += $breeding->breedingDetails->where('status', 'active')->sum('total_egg');
+            }
+            foreach ($inactiveBreedings as $breeding) {
+                $totalEggs += $breeding->breedingDetails->where('status', 'active')->sum('total_egg');
+            }
+            if ($curr) {
+                foreach ($curr as $current) {
+                    $totalEggs += $current->qty;
+                }
+            }
+
             return $totalEggs;
         } catch (\Throwable $th) {
             return response()->json(['error' => 'pen data not found!'], 404);
@@ -105,7 +114,7 @@ class HatcheryController extends Controller
             })
             ->selectRaw('DISTINCT CAST(REGEXP_SUBSTR(code_pen, "^[0-9]+") AS UNSIGNED) AS indukan')
             ->get();
-            // ->unique();
+        // ->unique();
         $pen2 = currEgg::get();
         // dd($pen2);
 
@@ -125,7 +134,6 @@ class HatcheryController extends Controller
             'inputBy' => 'required',
         ]);
 
-
         // dd($validator);
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
@@ -142,7 +150,7 @@ class HatcheryController extends Controller
             'inputBy' => 'required',
         ]);
 
-        $input['setting_date'] =  Carbon::parse($end)->addHours(8);
+        $input['setting_date'] = Carbon::parse($end)->addHours(8);
 
         $input2 = $request->validate([
             'total_setting' => 'required|integer',
@@ -152,80 +160,96 @@ class HatcheryController extends Controller
         DB::beginTransaction();
 
         try {
-            Machine::where('id', $input['id_machine'])->update([
-                'status' => 'inactive',
-            ]);
-            
-            $id = $input['id_pen'];
-            $cost = 0;
-            if($input['id_pen']=='ALL'){
-                $breedings = Breeding::with(['breedingDetails'=> function($q)use($start,$end){
-                    $q->whereBetween('created_at',[$start,$end]);
-                }])
-                    ->where('status', 'active')
-                    ->get();
-                    $curr = currEgg::get();
-                    if($curr->isNotEmpty()){
-                        $cost += $curr->sum('cost_egg');
-                    }
-                    $input['id_pen'] = 0;
-            }else{
-                $breedings = Breeding::with(['breedingDetails'=> function($q)use($start,$end){
-                    $q->whereBetween('created_at',[$start,$end]);
-                }])
-                    ->whereHas('pen', function ($query) use ($id) {
-                        $query->where('code_pen', 'like', $id . '%');
-                    })
-                    ->where('status', 'active')
-                    ->get();
-                if ($request->another_pen) {
-                    $curr = currEgg::where('id_pen', $request->another_pen)->first();
-                    $cost += $curr->cost_egg;
-                    $curr->delete();
-                }
-            }
-            // dd($breedings->toArray());
+        Machine::where('id', $input['id_machine'])->update([
+            'status' => 'inactive',
+        ]);
 
-           foreach ($breedings as $breeding) {
-                $cost += $breeding->breedingDetails()->where('status', 'active')->whereBetween('created_at',[$start,$end])->sum('cost_unit');
-                $details = $breeding->breedingDetails()
+        $id = $input['id_pen'];
+        $cost = 0;
+        $breedingQuery = Breeding::with([
+            'breedingDetails' => function ($q) use ($start, $end) {
+                $q->whereBetween('created_at', [$start, $end]);
+            },
+        ])->where('status', 'active');
+
+        $inactiveBreedingQuery = Breeding::with([
+            'breedingDetails' => function ($q) use ($start, $end) {
+                $q->whereBetween('created_at', [$start, $end]);
+            },
+        ])
+            ->where('status', 'inactive')
+            ->whereDate('updated_at', '>=', $start);
+
+        $curr = $input['id_pen'] === 'ALL' ? currEgg::get() : currEgg::where('id_pen', $request->another_pen)->get();
+        if ($input['id_pen'] !== 'ALL') {
+            $breedingQuery->whereHas('pen', fn($query) => $query->where('code_pen', 'like', $input['id_pen'] . '%'));
+            $inactiveBreedingQuery->whereHas('pen', fn($query) => $query->where('code_pen', 'like', $input['id_pen'] . '%'));
+        }else{
+            $input['id_pen'] ='0';
+        }
+
+        if ($curr->isNotEmpty()) {
+            $cost += $curr->sum('cost_egg');
+            $curr->delete();
+        }
+
+        $breedings = $breedingQuery->get();
+        $inactiveBreedings = $inactiveBreedingQuery->get();
+        // dd($breedings->toArray());
+
+        foreach ($breedings as $breeding) {
+            $cost += $breeding
+                ->breedingDetails()
+                ->where('status', 'active')
+                ->whereBetween('created_at', [$start, $end])
+                ->sum('cost_unit');
+            $details = $breeding
+                ->breedingDetails()
                 ->where('status', 'active')
                 ->whereBetween('created_at', [$start, $end]);
-                $details->update(['status' => 'inactive']);
-            }
+            $details->update(['status' => 'inactive']);
+        }
+        foreach ($inactiveBreedings as $breeding) {
+            $cost += $breeding
+                ->breedingDetails()
+                ->where('status', 'active')
+                ->whereBetween('created_at', [$start, $end])
+                ->sum('cost_unit');
+            $details = $breeding
+                ->breedingDetails()
+                ->where('status', 'active')
+                ->whereBetween('created_at', [$start, $end]);
+            $details->update(['status' => 'inactive']);
+        }
 
-           
-            $input['cost_total'] = $cost;
+        $input['cost_total'] = $cost;
 
-            $machine = Machine::where('id', $input['id_machine'])->first();
-            if ($input2['total_setting'] > $machine->kapasitas) {
-                $cost_egg = $cost / $input2['total_setting'];
-                $input['cost_total'] = $cost_egg * $machine->kapasitas;
-                $curr_egg = $input2['total_setting'] - $machine->kapasitas;
-                $curr_cost = $curr_egg * $cost_egg;
-                $input2['total_setting'] = $machine->kapasitas;
-                currEgg::create([
-                    'id_pen' => $input['id_pen'],
-                    'qty' => $curr_egg,
-                    'cost_egg' => $curr_cost,
-                ]);
-            }
+        $machine = Machine::where('id', $input['id_machine'])->first();
+        if ($input2['total_setting'] > $machine->kapasitas) {
+            $cost_egg = $cost / $input2['total_setting'];
+            $input['cost_total'] = $cost_egg * $machine->kapasitas;
+            $curr_egg = $input2['total_setting'] - $machine->kapasitas;
+            $curr_cost = $curr_egg * $cost_egg;
+            $input2['total_setting'] = $machine->kapasitas;
+            currEgg::create([
+                'id_pen' => $input['id_pen'],
+                'qty' => $curr_egg,
+                'cost_egg' => $curr_cost,
+            ]);
+        }
 
+        $hatchery = Hatchery::create($input);
 
-            $hatchery = Hatchery::create($input);
+        $input2['id_hatchery'] = $hatchery->id_hatchery;
 
-            $input2['id_hatchery'] = $hatchery->id_hatchery;
+        Hatchery_detail::create($input2);
 
-            Hatchery_detail::create($input2);
-    
+        DB::commit();
 
-            DB::commit();
-
-            return redirect()->route('user.hatchery')->with('success', 'Berhasil membuat kandang Hatchery baru');
+        return redirect()->route('user.hatchery')->with('success', 'Berhasil membuat kandang Hatchery baru');
         } catch (\Exception $e) {
             DB::rollback();
 
-            
             return back()->withErrors('error', 'Gagal membuat kandang Hatchery baru: ' . $e->getMessage());
         }
     }
@@ -278,7 +302,7 @@ class HatcheryController extends Controller
         $hatchery = Hatchery::where('id_hatchery', $input['id_hatchery'])->firstOrFail();
         $date = Carbon::parse($hatchery->setting_date)->addDays(18);
         $hatchery->update([
-            'candling_date' =>  $date,
+            'candling_date' => $date,
         ]);
 
         return redirect()->route('user.hatchery')->with('success', 'berhasil membuat kandang Breeding baru');
@@ -304,7 +328,7 @@ class HatcheryController extends Controller
         $hatchery = Hatchery::where('id_hatchery', $input['id_hatchery'])->firstOrFail();
         $date = Carbon::parse($hatchery->setting_date)->addDays(21);
         $hatchery->update([
-            'pull_chicken_date' =>  $date,
+            'pull_chicken_date' => $date,
         ]);
         $hatcheryDetail->update([
             'dead_in_egg' => $input['dead_in_egg'],
@@ -348,7 +372,7 @@ class HatcheryController extends Controller
             DB::beginTransaction();
             $hatchery = Hatchery::with('hatcheryDetails')->find($id);
             $input['entry_population'] = $hatchery->hatcheryDetails[0]->saleable;
-            $check = Commercial::with('commercialDetails')->where('id_pen', $input['id_pen'])->where('status','active')->first();
+            $check = Commercial::with('commercialDetails')->where('id_pen', $input['id_pen'])->where('status', 'active')->first();
             // dd($check);
             if (isset($check)) {
                 $this->moveService->moveTable($input['id_pen'], 0, $hatchery->cost_total, $input['entry_population'], 0, $input['entry_population'], 0);

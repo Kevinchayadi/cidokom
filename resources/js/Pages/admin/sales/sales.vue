@@ -1,7 +1,7 @@
 <template>
 
     <Sidebarnew title="Dashboard">
-        <Sales :sale="sale" :saleTransaction="saleTransaction" :stockleft="stockleft" :customer="customer" :chickenSize="chickenSize"  />
+        <Sales :sale="sale" :saleTransaction="saleTransaction" :stockleft="stockleft" :customer="customer" :chickenSize="chickenSize" :start="start" :end="end"  />
     </Sidebarnew>
 
   
@@ -32,7 +32,13 @@ const props = defineProps({
     flash: {
         type: Object,
         default: () => ({})
-    }
+    },
+    start: {
+        type: String,
+    },
+    end: {
+        type: String,
+    },
 })
 const emit = defineEmits(['updateFlash']);
 
