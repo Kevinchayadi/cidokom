@@ -1,7 +1,7 @@
 <template>
-    <div class="w-[80%] ">
+    <div class="w-[80%]">
         <Headers tittle="Add Vaccine" />
-        <form @submit.prevent="handleSubmit">
+        <form @submit.prevent="handleSubmit" class=" max-h-[65vh] overflow-y-auto">
             <InputFragment v-model="formData.nama_vaksin" name="nama_vaksin" content="Vaccine Name" type="text" label="black" />
             <InputFragment v-model="formData.qty" name="qty" content="qty (in ml/ds)" type="decimal" label="black" />
             <InputFragment v-model="formData.harga" name="harga" content="total Price" type="decimal"

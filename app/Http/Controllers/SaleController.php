@@ -88,6 +88,8 @@ class SaleController extends Controller
         $start = $request->input('start');
         $end = $request->input('end');
         $query = saleTransaction::with(['Customers.sales', 'ChickenSize']);
+        $startDate=null;
+        $endDate=null;
 
         if (!empty($start) && !empty($end)) {
             $startDate = Carbon::parse($start)->startOfDay();
@@ -101,11 +103,11 @@ class SaleController extends Controller
         $totalQtyTransactions = SaleTransaction::sum('jumlah_ayam');
         $totalQtySales = Sale::sum('qty');
         $stockLeft = $totalQtySales - $totalQtyTransactions;
-        $customer = Customer::get();
+        $customer = Customer::orderBy('nama_pelanggan')->get();
         $chickenSize = ChickenSize::get();
 
-        $start = Carbon::parse($startDate)->format('Y-m-d');
-        $end = Carbon::parse($endDate)->format('Y-m-d');
+        $start = $startDate!=null?Carbon::parse($startDate)->format('Y-m-d'):null;
+        $end = $endDate!=null?Carbon::parse($endDate)->format('Y-m-d'):null;
 
         return Inertia::render('admin/sales/sales', ['sale' => $sale, 'saleTransaction' => $saleTransaction, 'stockLeft' => $stockLeft, 'customer' => $customer, 'chickenSize' => $chickenSize, 'start'=>$start, 'end' =>$end]);
     }

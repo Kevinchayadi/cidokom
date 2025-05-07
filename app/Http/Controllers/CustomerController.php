@@ -54,7 +54,7 @@ class CustomerController extends Controller
 
     function CustomerIndex()
     {
-        $customer = Customer::with('sales','Residence')->get();
+        $customer = Customer::with('sales','Residence')->orderBy('nama_pelanggan')->get();
         $sales = CustHandle::get();
         $residence = Resident::get();
         // dd($customer->toArray());

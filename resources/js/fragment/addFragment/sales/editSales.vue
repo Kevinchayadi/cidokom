@@ -1,7 +1,7 @@
 <template>
-    <div class="w-[80%] ">
+    <div class="w-[80%]">
         <Headers tittle="Edit Sales" />
-        <form @submit.prevent="handleSubmit">
+        <form @submit.prevent="handleSubmit" class=" max-h-[65vh] overflow-y-auto">
             <InputFragment v-model="formData.jumlah_ayam" name="qty" :content='qtyLabel' type="number"label="black" />
             <InputFragment v-model="formData.id_ayam" name="id_ayam" content="Select Chicken Type" type="dropdown"label="black"  :datas="chickenList"/>
             <InputFragment v-model="formData.diskon" name="discount" content='Discount' type="numeric"label="black" />

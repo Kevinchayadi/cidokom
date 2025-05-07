@@ -1,7 +1,7 @@
 <template>
     <div class="w-[80%]">
         <Headers tittle="Edit Residence" />
-        <form @submit.prevent="handleSubmit">
+        <form @submit.prevent="handleSubmit" class=" max-h-[65vh] overflow-y-auto">
             <!-- Residence Name Input -->
             <InputFragment v-model="formData.nama_Resident" name="nama_Residence" content="Residence Name" type="text" label="black" />
 

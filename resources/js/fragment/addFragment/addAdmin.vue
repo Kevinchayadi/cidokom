@@ -1,7 +1,7 @@
 <template>
-    <div class="w-[80%] ">
+    <div class="w-[80%]">
         <Headers tittle="Add Admin" />
-        <form @submit.prevent="handleSubmit">
+        <form @submit.prevent="handleSubmit" class=" max-h-[65vh] overflow-y-auto">
             <InputFragment v-model="formData.name" name="name" content="Admin Name" type="dropDown"
                 :data="adminNames" label="black" />
             <InputFragment v-model="formData.username" name="username" content="Username" type="text" label="black" />

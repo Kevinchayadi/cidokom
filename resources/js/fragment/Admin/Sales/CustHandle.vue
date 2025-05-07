@@ -1,15 +1,24 @@
 <template>
-    <div class="flex justify-start sticky top-0 left-0 bg-primary">
-        <button :class="buttonclasses" @click="createItem">
-            Create 
-        </button>
-        <button :class="[buttonclasses, { 'text-primary-text-light-hover': !selectedId }]" @click="addItem"
-            :disabled="!selectedId">
-            Edit
-        </button>
-        <button :class="buttonclasses" @click="downloadItem">
-            Download
-        </button>
+    <div class="flex justify-between sticky px-2 py-1 top-0 left-0 bg-primary">
+        <div>
+            <button :class="buttonclasses" @click="createItem">Create</button>
+            <button
+                :class="[
+                    buttonclasses,
+                    { 'text-primary-text-light-hover': !selectedId },
+                ]"
+                @click="addItem"
+                :disabled="!selectedId"
+            >
+                Edit
+            </button>
+            <button :class="buttonclasses" @click="downloadItem">
+                Download
+            </button>
+        </div>
+        <div class="flex gap-1 justify-center">
+            <Search v-model="search" place="Sales Name"/>
+        </div>
     </div>
 
     <div class="row-span-10 bg-gray-100 h-[95vh] overflow-x-auto overflow-y-auto p-0 m-0">
@@ -29,13 +38,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(item, index) in sales" :key="item.id" @click="selectItem(item.id)"
+                    <tr v-for="(item, index) in salesList" :key="item.id" @click="selectItem(item.id)"
                         :class="[classestd, { 'bg-gray-300': item.id === selectedId }]">
                         <td :class="classestd">
                             {{ index + 1 }}
                         </td>
                         <td :class="classestd">
-                            {{ item.Name }}
+                            {{ item.name }}
                         </td>
                         <td :class="classestd">
                             {{ formatRupiah(item.disc) }}
@@ -58,12 +67,13 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import ModalComp from '../../../components/displayComponent/ModalComp.vue';
 import CreateCustHandle from '../../addFragment/sales/createCustHandle.vue';
 import EditCustHandler from '../../addFragment/sales/editCustHandler.vue';
 import axios from 'axios';
 import formatRupiah from '../../../composables/currency';
+import Search from '../../../components/inputComponent/search.vue';
 
 const classesth =
     'bg-blue-300 text-center text-xs border-gray-300 text-table font-medium text-gray-700 uppercase tracking-wider sticky top-[0px] min-w-[120px] shadow-[inset_1px_-1px_1px_white]';
@@ -84,14 +94,30 @@ const props = defineProps({
     }
 });
 
-// Computed property to process data from props
-const sales = computed(() =>
+
+const originalSalesList = computed(() =>
     props.sales.map(item => ({
-        Name: item.nama_sales,
+        name: item.nama_sales,
         disc: item.diskon,
         id: item.id
     }))
-);
+)
+
+const salesList = ref([...originalSalesList.value])
+
+const search = ref("");
+watch(search, (newVal) => {
+    const keyword = newVal.toLowerCase()
+    console.log(keyword)
+
+    if (!keyword) {
+        salesList.value = [...originalSalesList.value]
+    } else {
+        salesList.value = originalSalesList.value.filter(item =>
+            item.name.toLowerCase().includes(keyword)
+        )
+    }
+})
 
 const selectItem = (id) => {
     selectedId.value = id;

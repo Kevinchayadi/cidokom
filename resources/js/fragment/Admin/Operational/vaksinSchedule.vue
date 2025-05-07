@@ -1,97 +1,101 @@
 <template>
     <div class="overflow-x-auto overflow-y-auto h-screen">
-
-        <div class="flex justify-start sticky top-0 left-0 bg-primary">
-            <!-- <button :class="buttonclasses" @click="selectItem">
-                Select
-            </button> -->
-            <!-- <button :class="[buttonclasses, { 'text-primary-text-light-hover': !selectedId }]" @click="editItem" :disabled="!selectedId">
-                Edit
-            </button> -->
-            <button :class="buttonclasses" @click="createItem" >
-                Create new schedule
-            </button>
-            <!-- <button :class="[buttonclasses, { 'text-primary-text-light-hover': !selectedId }]" @click="addItem" :disabled="!selectedId">
-                add
-            </button> -->
-            <button  :class="buttonclasses" @click="downloadItem"
-                >
-                Download
-            </button>
+        <div class="flex justify-between py-1 px-2 sticky top-0 left-0 bg-primary">
+            <div>
+                <!-- <button :class="buttonclasses" @click="selectItem">
+                    Select
+                </button> -->
+                <!-- <button :class="[buttonclasses, { 'text-primary-text-light-hover': !selectedId }]" @click="editItem" :disabled="!selectedId">
+                    Edit
+                </button> -->
+                <button :class="buttonclasses" @click="createItem">
+                    Create new schedule
+                </button>
+                <!-- <button :class="[buttonclasses, { 'text-primary-text-light-hover': !selectedId }]" @click="addItem" :disabled="!selectedId">
+                    add
+                </button> -->
+                <button :class="buttonclasses" @click="downloadItem">
+                    Download
+                </button>
+            </div>
+            <div class="flex gap-1 justify-center">
+                <Search v-model="search" place="Vaccine Name Search" />
+            </div>
         </div>
-        <div class="row-span-10 bg-gray-100 h- h-[95vh]   overflow-x-auto overflow-y-auto p-0 m-0">
+        <div class="row-span-10 bg-gray-100 h- h-[95vh] overflow-x-auto overflow-y-auto p-0 m-0">
             <div class="divide-y divide-x divide-gray-300 border-collapse">
                 <table>
                     <thead>
                         <tr>
-                            <th class="  z-20" rowspan="3" :class="classesth">
-                            No.
-                        </th>
-                            <th class="  z-20" rowspan="3" :class="classesth">
+                            <th class="z-20" rowspan="3" :class="classesth">
+                                No.
+                            </th>
+                            <th class="z-20" rowspan="3" :class="classesth">
                                 vaccine name
-                        </th>
-                            <th class="  z-20" rowspan="3" :class="classesth">
-                                vaccine type 
-                        </th>
-                            <th class="  z-20" rowspan="3" :class="classesth">
+                            </th>
+                            <th class="z-20" rowspan="3" :class="classesth">
+                                vaccine type
+                            </th>
+                            <th class="z-20" rowspan="3" :class="classesth">
                                 for (in days)
-                        </th>
-                            
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(item, index) in vaksinlist" :key="item.id"  @click="selectItem(item.id)"
-                        :class="[classestd]">
+                        <tr v-for="(item, index) in vaksinlist" :key="item.id" @click="selectItem(item.id)"
+                            :class="[
+                                classestd,
+                                { 'bg-gray-300': item.id === selectedId },
+                            ]">
                             <td :class="classestd">
                                 {{ index + 1 }}
                             </td>
                             <td :class="classestd">
-                                {{ item.name }}
+                                {{ item . name }}
                             </td>
                             <td :class="classestd">
-                                {{ item.type }}
+                                {{ item . type }}
                             </td>
                             <td :class="classestd">
-                                {{ item.hari }}
+                                {{ item . hari }}
                             </td>
                         </tr>
                     </tbody>
                 </table>
-                
             </div>
         </div>
-        
-    
-            <ModalComp :isVisible="isModalOpen" @update:isVisible="isModalOpen = $event">
+
+        <ModalComp :isVisible="isModalOpen" @update:isVisible="isModalOpen = $event">
             <!-- <AddAdmin :role="role" /> -->
-             <CreatePakan />
-            </ModalComp>
-            <ModalComp :isVisible="isModalOpen2" @update:isVisible="isModalOpen2 = $event">
+            <CreatePakan />
+        </ModalComp>
+        <ModalComp :isVisible="isModalOpen2" @update:isVisible="isModalOpen2 = $event">
             <!-- <AddAdmin :role="role" /> -->
-             <AddPakan :id="selectedId" />
-            </ModalComp>
+            <AddPakan :id="selectedId" />
+        </ModalComp>
     </div>
-    
 </template>
-
-
 
 <script setup>
     import {
         computed,
-        ref
-    } from 'vue';
-import ModalComp from '../../../components/displayComponent/ModalComp.vue';
-import CreatePakan from '../../addFragment/createPakan.vue';
-import AddPakan from '../../addFragment/addPakan.vue';
+        ref,
+        watch
+    } from "vue";
+    import ModalComp from "../../../components/displayComponent/ModalComp.vue";
+    import CreatePakan from "../../addFragment/createPakan.vue";
+    import AddPakan from "../../addFragment/addPakan.vue";
+    import Search from "../../../components/inputComponent/search.vue";
 
     const classesth =
-        ' bg-blue-300 text-center  text-xs border-gray-300 text-table font-medium text-gray-700 uppercase tracking-wider  sticky top-[0px] min-w-[120px] shadow-[inset_1px_-1px_1px_white]'
+        " bg-blue-300 text-center  text-xs border-gray-300 text-table font-medium text-gray-700 uppercase tracking-wider  sticky top-[0px] min-w-[120px] shadow-[inset_1px_-1px_1px_white]";
 
-    const classestd = 'p-1 text-xs  text-gray-900 text-table text-center min-w-[75px] shadow-[inset_1px_-1px_1px_rgba(128,128,128,0.2)]'
+    const classestd =
+        "p-1 text-xs  text-gray-900 text-table text-center min-w-[75px] shadow-[inset_1px_-1px_1px_rgba(128,128,128,0.2)]";
 
     const selectedId = ref(null);
-    const buttonclasses = '  text-primary-text-light rounded hover:text-primary-text-light-hover sticky top-0 px-2'
+    const buttonclasses =
+        "  text-primary-text-light rounded hover:text-primary-text-light-hover sticky top-0 px-2";
     const breedingDetail = ref([]);
     const isModalOpen = ref(false);
     const isModalOpen2 = ref(false);
@@ -100,26 +104,40 @@ import AddPakan from '../../addFragment/addPakan.vue';
     const props = defineProps({
         vaksin: {
             type: Array,
+        },
+    });
 
+    // Computed property untuk memproses data dari props
+    const originalvaksinlist = computed(() =>
+        props.vaksin.map((item) => ({
+            id: item.id,
+            name: item.nama,
+            type: item.type,
+            hari: item.hari,
+        }))
+    );
+    const vaksinlist = ref([...originalvaksinlist.value]);
+
+    const search = ref("");
+    watch(search, (newVal) => {
+        const keyword = newVal.toLowerCase();
+        console.log(keyword);
+
+        if (!keyword) {
+            vaksinlist.value = [...originalvaksinlist.value];
+        } else {
+            vaksinlist.value = originalvaksinlist.value.filter((item) =>
+                item.name.toLowerCase().includes(keyword)
+            );
         }
-});
-
-// Computed property untuk memproses data dari props
-const vaksinlist = computed(() =>
-  props.vaksin.map(item => ({
-    id: item.id,
-    name: item.nama,
-    type: item.type,
-    hari: item.hari,
-  }))
-);
+    });
 
     const selectedData = ref([]);
 
     const selectItem = (id) => {
-    selectedId.value = id;
-    console.log('Selected ID:', selectedId.value);
-};
+        selectedId.value = id;
+        console.log("Selected ID:", selectedId.value);
+    };
 
     const editItem = () => {
         console.log("Edit:", selectedId.value);
@@ -134,21 +152,24 @@ const vaksinlist = computed(() =>
 
     const downloadItem = () => {
         console.log("Download:", selectedId.value);
-        axios.get(`/download/vaksinSchedule`, { responseType: 'blob' })
-        .then((response) => {
-          // Membuat URL objek untuk file binary
-          const url = window.URL.createObjectURL(new Blob([response.data]));
-          // Membuat elemen <a> untuk mendownload file
-          const link = document.createElement('a');
-          link.href = url;
-          link.setAttribute('download', `breeding.xlsx`); // Nama file
-          document.body.appendChild(link);
-          link.click(); // Memicu unduhan
-          document.body.removeChild(link); // Menghapus link setelah klik
-        })
-        .catch(error => {
-          console.error("Error downloading file:", error);
-        });
+        axios
+            .get(`/download/vaksinSchedule`, {
+                responseType: "blob"
+            })
+            .then((response) => {
+                // Membuat URL objek untuk file binary
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                // Membuat elemen <a> untuk mendownload file
+                const link = document.createElement("a");
+                link.href = url;
+                link.setAttribute("download", `breeding.xlsx`); // Nama file
+                document.body.appendChild(link);
+                link.click(); // Memicu unduhan
+                document.body.removeChild(link); // Menghapus link setelah klik
+            })
+            .catch((error) => {
+                console.error("Error downloading file:", error);
+            });
     };
 </script>
 

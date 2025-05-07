@@ -1,7 +1,7 @@
 <template>
     <div class="w-[80%]">
         <Headers tittle="Edit Chicken Type" />
-        <form @submit.prevent="handleSubmit">
+        <form @submit.prevent="handleSubmit" class=" max-h-[65vh] overflow-y-auto">
             <!-- Pre-fill form fields with the data from the selected item -->
             <InputFragment v-model="formData.size" name="Size" content="Size Chicken (character)" type="text" label="black" />
             <InputFragment v-model="formData.harga" name="harga" content="Price" type="decimal" label="black" />

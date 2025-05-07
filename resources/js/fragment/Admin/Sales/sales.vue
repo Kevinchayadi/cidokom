@@ -136,6 +136,7 @@ import CreateSale from "../../addFragment/sales/createSale.vue";
 import EditSales from "../../addFragment/sales/editSales.vue";
 import formatRupiah from "../../../composables/currency";
 import DateSubmitted from "../../../components/inputComponent/DateSubmitted.vue";
+import Search from "../../../components/inputComponent/search.vue";
 
 const classesth =
     " bg-blue-300 text-center text-xs border-gray-300 text-table font-medium text-gray-700 uppercase tracking-wider sticky top-[0px] min-w-[120px] shadow-[inset_1px_-1px_1px_white]";

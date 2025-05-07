@@ -2,7 +2,7 @@
     <div class="w-[80%]">
         <Headers tittle="Edit Sales" />
 
-        <form @submit.prevent="handleSubmit">
+        <form @submit.prevent="handleSubmit" class=" max-h-[65vh] overflow-y-auto">
             <!-- Sales Name Input -->
             <InputFragment
                 v-model="formData.nama_sales"

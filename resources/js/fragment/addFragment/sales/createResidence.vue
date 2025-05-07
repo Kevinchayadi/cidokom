@@ -1,7 +1,7 @@
 <template>
-    <div class="w-[80%] ">
+    <div class="w-[80%]">
         <Headers tittle="Create New Residence" />
-        <form @submit.prevent="handleSubmit">
+        <form @submit.prevent="handleSubmit"class=" max-h-[65vh] overflow-y-auto">
             <InputFragment v-model="formData.nama_Resident" name="nama_Residence" content="Residence Name" type="text" label="black" />
             <InputFragment v-model="formData.tipe" name="tipe" content="Type Building" type="dropdown" label="black" :datas="data"/>
 

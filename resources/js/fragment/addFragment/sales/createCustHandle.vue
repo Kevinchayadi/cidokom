@@ -1,7 +1,7 @@
 <template>
-    <div class="w-[80%] ">
+    <div class="w-[80%]">
         <Headers tittle="Create New Handler" />
-        <form @submit.prevent="handleSubmit">
+        <form @submit.prevent="handleSubmit"class=" max-h-[65vh] overflow-y-auto">
             <InputFragment v-model="formData.nama_sales" name="nama_sales" content="Sales Name" type="text" label="black" />
             <InputFragment v-model="formData.diskon" name="diskon" content="Diskon(for pcs)" type="decimal" label="black" />
             <div class="w-full flex text-center justify-center">

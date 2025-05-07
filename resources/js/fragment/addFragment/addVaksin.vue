@@ -1,7 +1,7 @@
 <template>
     <div class="w-[80%]">
         <Headers tittle="Add Vaccine" />
-        <form @submit.prevent="handleSubmit">
+        <form @submit.prevent="handleSubmit" class=" max-h-[65vh] overflow-y-auto">
             <InputFragment
                 v-model="formData.qty"
                 name="qty"

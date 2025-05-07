@@ -98,7 +98,7 @@ class DashboardController extends Controller
         } else {
             $totalAfkir = 0;
         }
-        $hatchery = Hatchery::with('hatcheryDetails')->whereNotNull('pull_chicken_date')->latest('created_at')->take(4)->get();
+        $hatchery = Hatchery::with('hatcheryDetails')->whereNotNull('pull_chicken_date')->latest('setting_date')->take(4)->get();
 
         return Inertia::render('admin/Dashboard', compact('totalAfkir', 'totalBreeding', 'totalDeath', 'afkir', 'breeds', 'hatchery'));
     }

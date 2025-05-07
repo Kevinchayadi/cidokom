@@ -46,7 +46,7 @@ class CustHandleController extends Controller
 
     function salesIndex()
     {
-        $sales = CustHandle::all();
+        $sales = CustHandle::orderBy('nama_sales')->get();
         
         return Inertia::render('admin/sales/CustHandle', compact('sales'));
     }

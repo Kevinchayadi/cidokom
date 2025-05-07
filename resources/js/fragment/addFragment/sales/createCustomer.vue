@@ -1,7 +1,7 @@
 <template>
-    <div class="w-[80%] ">
+    <div class="w-[80%]">
         <Headers tittle="Create New Customer" />
-        <form @submit.prevent="handleSubmit">
+        <form @submit.prevent="handleSubmit"class=" max-h-[65vh] overflow-y-auto">
             <InputFragment v-model="formData.nama_pelanggan" name="nama_pelanggan" content="Customer Name" type="text" label="black" />
             <InputFragment v-model="formData.alamat_pelanggan" name="alamat_pelanggan" content="Customer Address" type="text" label="black" />
             <InputFragment v-model="formData.no_telepon_pelanggan" name="no_telepon_pelanggan" content='no_telepon_pelanggan' type="numeric"label="black" />
