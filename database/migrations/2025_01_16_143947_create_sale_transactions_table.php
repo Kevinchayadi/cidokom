@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('jumlah_ayam');
             $table->unsignedBigInteger('id_ayam');
             $table->decimal('harga',15,2)->nullable();
+            $table->decimal('diskon',15,2)->nullable();
             $table->decimal('total_harga',15,2)->nullable();
             $table->string('status',20)->default('pending');
             $table->text('description')->nullable();

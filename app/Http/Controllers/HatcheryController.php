@@ -46,7 +46,7 @@ class HatcheryController extends Controller
                     $q->whereBetween('created_at', [$start, $end]);
                 },
             ])
-                ->where('status', 'active')
+                ->where('status', 'inactive')
                 ->whereDate('updated_at', '>=', $start);
 
             if ($id_cage !== 'ALL') {

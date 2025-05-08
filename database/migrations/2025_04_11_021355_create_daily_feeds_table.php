@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('id_pen');
             $table->unsignedBigInteger('id_pakan');
-            $table->decimal('qty',15,2);
+            $table->unsignedBigInteger('id_pakan');
             $table->decimal('stock_feed',15,2);
             $table->timestamps();
         });

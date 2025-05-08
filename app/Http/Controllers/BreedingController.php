@@ -287,8 +287,8 @@ class BreedingController extends Controller
             $costFemale = Table_move::where('destination_pen', $Breeding->id_pen)
             ->where('status', 'active')
             ->sum('femaleCost');
-            $input['last_male'] += $totalMale ?? 0;
-            $input['last_female'] += $totalFemale ?? 0;
+            // $input['last_male'] += $totalMale ?? 0;
+            // $input['last_female'] += $totalFemale ?? 0;
             
             $total_cost = $Breeding->cost_Total_induk - $new_cost + $costMale + $costFemale - $Breeding->cost_induk * ($input['female_reject'] + $input['male_reject']);
             $cost_induk= 0;

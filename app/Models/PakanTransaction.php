@@ -10,6 +10,7 @@ class PakanTransaction extends Model
     use HasFactory;
     protected $fillable = [
         'id_pakan',
+        'first_stock',
         'qty',
         'harga_pembelian'
     ];
