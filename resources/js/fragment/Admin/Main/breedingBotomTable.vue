@@ -135,7 +135,7 @@
                         feed(kg)
                     </th>
                     <th :class="classesth3">
-                        percentage
+                        feed Name
                     </th>
 
                 </tr>
@@ -267,7 +267,7 @@
                     </td>
                     <td
                         :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white': selectedId !== item.id, [classestd]: true }">
-                        {{ item . feed_percentage }}
+                        {{ item . feed_name }}
                     </td>
                     <td
                         :class="{ 'bg-gray-300': selectedId === item.id, 'bg-white': selectedId !== item.id, [classestd]: true }">
@@ -349,7 +349,7 @@
             he_percentage: ((item.total_egg / (item.egg_afternoon + item.egg_morning)) * 100).toFixed(2) +
                 '%',
             feed: item.feed + ' kg',
-            feed_percentage: (((item.feed) / (item.last_female + item.last_male))).toFixed(2) + ' %',
+            feed_name: item.feed_name,
             inputBy: item.inputBy
         }))
     );
