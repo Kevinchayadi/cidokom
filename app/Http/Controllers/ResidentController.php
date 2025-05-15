@@ -31,13 +31,13 @@ class ResidentController extends Controller
     function editResident(Request $request, $id)
     {
         $input = $request->validate([
-            'tipe_Resident' => 'required',
+            'nama_Resident' => 'required',
             'tipe' => 'required|string'
         ]);
         
         try {
             Resident::where('id',$id)->update($input);
-            return redirect()->route('admin.resident')->with('success', 'berhasil membuat Residence baru!');
+            return redirect()->route('admin.Residence')->with('success', 'berhasil membuat Residence baru!');
         } catch (\Throwable $th) {
             return back()->withErrors('Failed to update Residence');
         }

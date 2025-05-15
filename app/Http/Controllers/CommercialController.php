@@ -95,27 +95,29 @@ class CommercialController extends Controller
                 $query->orderBy('created_at', 'desc');
             },
             'pen',
-        ])->orderBy('status')->get();
+        ])
+            ->orderBy('status')
+            ->get();
         foreach ($commercial as $item) {
             $item->age =
-                ($item->age??0) +
+                ($item->age ?? 0) +
                 Carbon::parse($item->created_at)
                     ->startOfDay()
                     ->diffInDays(Carbon::now()->startOfDay());
 
-                $FCR = 0;
-                foreach($item->commercialDetails as $detail){
-                    if(($detail->last_population)!=0){
-                        $FCR += $detail->feed/$detail->last_population;
-                    }
+            $FCR = 0;
+            foreach ($item->commercialDetails as $detail) {
+                if ($detail->last_population != 0) {
+                    $FCR += $detail->feed / $detail->last_population;
                 }
-                $item->fcr = $FCR;
+            }
+            $item->fcr = $FCR;
 
-            if($item->entryDate == null){
+            if ($item->entryDate == null) {
                 $item->entryDate = Carbon::parse($item->created_at)->format('Y-m-d');
             }
-            }
-            // dd($commercial->toArray());
+        }
+        // dd($commercial->toArray());
         return Inertia::render('admin/commercial', compact('commercial'));
     }
 
@@ -154,28 +156,28 @@ class CommercialController extends Controller
     public function dailyForm($id)
     {
         $feed = Pakan::get()->toArray();
-        $pen = Pen::with('kandang')
-        ->where('status', 'inactive')
-        ->whereHas('kandang', function ($query) {
-            $query->where('jenis_kandang', 'commerce')->orWhere(function ($subQuery) {
-                $subQuery->where('jenis_kandang', 'afkir')->where('code_pen', 'like', '%CMR');
-            });
-        })
-        ->get();
+
         $commercial = Commercial::with([
             'commercialDetails' => function ($query) {
                 $query->orderBy('created_at', 'desc');
             },
             'pen',
-            ])->find($id);
-            $latest = $commercial->commercialDetails->sortByDesc('created_at')->values()->first();
-            $chicken = [
-                'total'=> $latest->last_population??$commercial->last_population,
-            ];
+        ])->find($id);
+        $pen = Pen::with('kandang')
+            ->whereHas('kandang', function ($query) {
+                $query->where('jenis_kandang', 'commerce')->orWhere(function ($subQuery) {
+                    $subQuery->where('jenis_kandang', 'afkir')->where('code_pen', 'like', '%CMR');
+                });
+            })
+            ->whereNot('id', $commercial->id_pen)
+            ->get();
+        $latest = $commercial->commercialDetails->sortByDesc('created_at')->values()->first();
+        $chicken = [
+            'total' => $latest->last_population ?? $commercial->last_population,
+        ];
         $name = $commercial->pen->code_pen;
-        
 
-        return Inertia::render('user/FormDailyCommercial', ['id_commercial' => $id, 'feed' => $feed, 'pen' => $pen, 'name' =>$name, 'chicken' => $chicken]);
+        return Inertia::render('user/FormDailyCommercial', ['id_commercial' => $id, 'feed' => $feed, 'pen' => $pen, 'name' => $name, 'chicken' => $chicken]);
     }
 
     public function dailyStore(Request $request)
@@ -193,62 +195,57 @@ class CommercialController extends Controller
             'inputBy' => 'required',
             'date' => 'date',
         ]);
-        
+
         $commercial = Commercial::where('id_commercial', $input['id_commercial'])->firstOrFail();
         $previousDetail = Commercial_detail::where('id_commercial', $input['id_commercial'])->latest('created_at')->first();
-        
-        
-        
+
         if (!$commercial) {
             return back()->withErrors('Data Commercial tidak ditemukan');
         }
         $input['begining_population'] = $commercial->entry_population;
-        
-        
-        
+
         if (!$previousDetail) {
             $input['last_population'] = $input['begining_population'] - $input['depreciation_die'] - $input['depreciation_afkir'] - $input['depreciation_panen'];
             $costchicken = $this->countService->costChicken($commercial->unit_Cost ?? 0, $input['begining_population']);
-           
         } else {
-            if(Carbon::parse($previousDetail->created_at)->greaterThanOrEqualTo(Carbon::parse($input['date']))) {
+            if (Carbon::parse($previousDetail->created_at)->greaterThanOrEqualTo(Carbon::parse($input['date']))) {
                 return back()->withErrors('data terakhir update adalah ' . $previousDetail->created_at->format('d-m-y'));
             }
 
             $input['last_population'] = $previousDetail->last_population - $input['depreciation_die'] - $input['depreciation_afkir'] - $input['depreciation_panen'];
             if ($previousDetail->last_population == 0) {
-                Commercial::where('id_commercial', $input['id_commercial'])->update(['status'=>'inactive']);
+                Commercial::where('id_commercial', $input['id_commercial'])->update(['status' => 'inactive']);
                 return redirect()->route('user.commercial')->with('success', 'cage is empty!');
             }
             $costchicken = $this->countService->costChicken($commercial->unit_Cost ?? 0, $previousDetail->last_population);
         }
-        if(isset($input['date'])){
+        $datemove = null;
+        if (isset($input['date'])) {
             $input['created_at'] = Carbon::parse($input['date'])->addHours(7);
+            $datemove = Carbon::parse($input['date']);
         }
         if ($input['last_population'] < 0) {
-            
             return back()->withErrors('Population chicken cant be minus quantity!');
         }
-        
+
         // dd($costchicken);;
         $new_cost = 0.0;
         //feed
         //----------------------------------------------------------------------------------------------------------------------------------------
         $feed = Pakan::where('nama_pakan', $input['feed_name'])->firstorfail();
-        
+
         $currentfeed = $feed->qty - $input['feed'];
-        
+
         if ($currentfeed < 0) {
             // dd('test');
             return back()->withErrors('pakan is not enough!! please check pakan stock or call jakarta admin to check the stock!');
         }
         try {
             DB::beginTransaction();
-            //move transaction
-            //---------------------------------------------------------------------------------------------------------------------------------------------
+
             if ($request->move_to != 0) {
                 $unitCostAsFloat = (float) $commercial->unit_Cost;
-                $datas = $this->moveService->moveTable($input['move_to'], $commercial->id_pen, $unitCostAsFloat, $input['last_population'], 0, $input['total_male_move'], $input['total_female_move']);
+                $datas = $this->moveService->moveTable($input['move_to'], $commercial->id_pen, $unitCostAsFloat, $input['last_population'], 0, $input['total_male_move'], $input['total_female_move'], $datemove, $input['inputBy']);
                 $new_cost = $datas['new_cost'];
                 // dd( $datas['last_male']);
                 $input['last_population'] = $datas['last_male'] + $datas['last_female'];
@@ -262,16 +259,13 @@ class CommercialController extends Controller
                     'qty' => $qtysale,
                 ]);
             }
-            //if table move not null
-            // dd('test');
-            //-----------------------------------------------------------------------------------------------------------------------------------------
+
             $totalMale = Table_move::where('destination_pen', $commercial->id_pen)->where('status', 'active')->sum('totalMale');
             $totalFemale = Table_move::where('destination_pen', $commercial->id_pen)->where('status', 'active')->sum('totalFemale');
             $totalPopulation = $totalMale ?? (0 + $totalFemale ?? 0);
             $costMale = Table_move::where('destination_pen', $commercial->id_pen)->where('status', 'active')->sum('maleCost');
             $costFemale = Table_move::where('destination_pen', $commercial->id_pen)->where('status', 'active')->sum('femaleCost');
             $costPopulation = $costMale ?? (0 + $costFemale ?? 0);
-            // dd($totalPopulation);
 
             if ($totalPopulation != 0) {
                 $lastTable = Table_move::where('destination_pen', $commercial->id_pen)->where('status', 'active')->first();
@@ -281,11 +275,9 @@ class CommercialController extends Controller
                     ->update(['status' => 'inactive']);
                 $input['last_population'] += $totalPopulation;
                 $input['total_recieve'] = $totalPopulation;
- 
             }
             $costUnit = $commercial->unit_Cost - $costchicken * $input['depreciation_panen'] + $input['feed'] * $feed->harga - $new_cost + $costPopulation;
 
-            // dd($input);
             Commercial_detail::create($input);
             $feed->update([
                 'qty' => $currentfeed,
@@ -294,13 +286,13 @@ class CommercialController extends Controller
                 'id_pen' => $commercial->id_pen,
                 'id_pakan' => $feed->id,
                 'qty' => $input['feed'],
-                'stock_feed' => $currentfeed
+                'stock_feed' => $currentfeed,
             ]);
             $status = 'active';
             if ($input['last_population'] == 0) {
                 $status = 'inactive';
-                Pen::find( $commercial->id_pen)->update([
-                    'status'=>'active'
+                Pen::find($commercial->id_pen)->update([
+                    'status' => 'active',
                 ]);
             }
 
@@ -320,27 +312,27 @@ class CommercialController extends Controller
 
     public function moveForm($id)
     {
-       $pen = Pen::with('kandang')
-        ->where('status', 'inactive')
-        ->whereHas('kandang', function ($query) {
-            $query->where('jenis_kandang', 'commerce')->orWhere(function ($subQuery) {
-                $subQuery->where('jenis_kandang', 'afkir')->where('code_pen', 'like', '%CMR');
-            });
-        })
-        ->get();
-            $commercial = Commercial::with([
-                'commercialDetails' => function ($query) {
-                    $query->orderBy('created_at', 'desc');
-                },
-                'pen',
-            ])->find($id);
-    
-            $chicken = [
-                'total'=> $commercial->commercialDetails[0]->last_population,
-            ];
-            $name = $commercial->pen->code_pen;
+        $pen = Pen::with('kandang')
+            ->where('status', 'inactive')
+            ->whereHas('kandang', function ($query) {
+                $query->where('jenis_kandang', 'commerce')->orWhere(function ($subQuery) {
+                    $subQuery->where('jenis_kandang', 'afkir')->where('code_pen', 'like', '%CMR');
+                });
+            })
+            ->get();
+        $commercial = Commercial::with([
+            'commercialDetails' => function ($query) {
+                $query->orderBy('created_at', 'desc');
+            },
+            'pen',
+        ])->find($id);
 
-        return Inertia::render('user/FormMoveCommercial', ['id' => $id, 'pen' => $pen,'chicken'=> $chicken, 'name' => $name]);
+        $chicken = [
+            'total' => $commercial->commercialDetails[0]->last_population,
+        ];
+        $name = $commercial->pen->code_pen;
+
+        return Inertia::render('user/FormMoveCommercial', ['id' => $id, 'pen' => $pen, 'chicken' => $chicken, 'name' => $name]);
     }
     public function moveTable(Request $request, $id)
     {
@@ -437,8 +429,8 @@ class CommercialController extends Controller
                 'last_population' => 0,
                 'status' => 'inactive',
             ]);
-            Pen::find( $commercial->id_pen)->update([
-                'status'=>'active'
+            Pen::find($commercial->id_pen)->update([
+                'status' => 'active',
             ]);
 
             if ($commercialDetail != null && $commercialDetail->created_at->isToday()) {

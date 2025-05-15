@@ -346,12 +346,12 @@ const grandTotal = computed(() => {
         if (item) {
             // Hanya proses jika item tidak null
             masuk +=
-                (item.female_come || 0) +
-                (item.male_come || 0);
-            mati += (item.female_die || 0) + (item.male_die || 0);
+                Number(item.female_come || 0) +
+                Number(item.male_come || 0);
+            mati += Number(item.female_die || 0) + Number(item.male_die || 0);
             keluar +=
-                (item.female_out || 0) + (item.male_out || 0);
-            stock_akhir += (item.last_male || 0) + (item.last_female || 0);
+                Number(item.female_out || 0) + Number(item.male_out || 0);
+            stock_akhir += Number(item.last_male || 0) + Number(item.last_female || 0);
         }
     });
 
@@ -401,12 +401,12 @@ const groupedData = computed(() => {
             Female_keluar_hi: item.female_out || 0,
             Female_stock_akhir: item.last_female || 0,
             total_masuk:
-                (item.male_come || 0) +
-                (item.female_come || 0),
-            total_mati: (item.female_die || 0) + (item.male_die || 0),
+                Number(item.male_come || 0) +
+                Number(item.female_come || 0),
+            total_mati: Number(item.female_die || 0) + Number(item.male_die || 0),
             total_keluar:
-                (item.female_out || 0) + (item.male_out || 0),
-            total_stock: (item.last_male || 0) + (item.last_female || 0),
+                Number(item.female_out || 0) + Number(item.male_out || 0),
+            total_stock: Number(item.last_male || 0) + Number(item.last_female || 0),
            
         };
     });
@@ -423,7 +423,7 @@ const totalStock = computed(() => {
             // Hanya proses jika item tidak null
             masuk += item.come || 0;
             mati += item.die || 0;
-            keluar += (item.sale || 0) + (item.out || 0);
+            keluar += Number(item.sale || 0) + Number(item.out || 0);
             stock_akhir += item.last_stock || 0;
         }
     });
@@ -457,7 +457,7 @@ const otherChickenStock = computed(() => {
             satuan: "QTY",
             masuk_hi: item.come || 0,
             mati_hi: item.die || 0,
-            keluar_hi: (item.sale || 0) + (item.out || 0),
+            keluar_hi: Number(item.sale || 0) + Number(item.out || 0),
             stock_akhir: item.last_stock || 0,
         };
     });

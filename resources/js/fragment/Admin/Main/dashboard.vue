@@ -180,49 +180,94 @@ const formatDate = (date) => {
     return Date.UTC(year, month, day); // Bulan dimulai dari 0, jadi langsung bisa digunakan
 };
 // Ambil data saleable dari hatcheryDetails[0]
+// const chickIn = computed(() => {
+//     return props.hatchery.map((hatcheryItem) => {
+//         const createdAt = hatcheryItem.pull_chicken_date;
+//         const saleable = hatcheryItem.hatchery_details?.[0]?.saleable;
+
+//         // Format created_at menjadi dd/mm/yy
+//         const formattedDate = createdAt ? formatDate(createdAt) : null;
+
+//         return [formattedDate, saleable];
+//     });
+// });
+
+// // Ambil data doc_afkir dari hatcheryDetails[0]
+// const afkir = computed(() => {
+//     return props.hatchery.map((hatcheryItem) => {
+//         const createdAt = hatcheryItem.pull_chicken_date;
+//         const saleable = hatcheryItem.hatchery_details?.[0]?.doc_afkir;
+
+//         // Format created_at menjadi dd/mm/yy
+//         const formattedDate = createdAt ? formatDate(createdAt) : null;
+
+//         return [formattedDate, saleable];
+//     });
+// });
+
+// // Ambil data (dead_in_egg + explode + Infertile) dari hatcheryDetails[0]
+// const death = computed(() => {
+//     return props.hatchery.map((hatcheryItem) => {
+//         const details = hatcheryItem.hatchery_details?.[0] || {};
+//         const createdAt = hatcheryItem.pull_chicken_date;
+//         const saleable =
+//             (details.dead_in_egg || 0) +
+//             (details.explode || 0) +
+//             (details.infertile || 0);
+//         console.log(details.dead_in_egg, details.explode, details.infertile);
+//         // Format created_at menjadi dd/mm/yy
+//         const formattedDate = createdAt ? formatDate(createdAt) : null;
+
+//         return [formattedDate, saleable];
+//     });
+// });
 const chickIn = computed(() => {
     return props.hatchery.map((hatcheryItem) => {
         const createdAt = hatcheryItem.pull_chicken_date;
-        const saleable = hatcheryItem.hatchery_details?.[0]?.saleable;
+        const saleable = Number(hatcheryItem.hatchery_details?.[0]?.saleable ?? 0);
 
-        // Format created_at menjadi dd/mm/yy
-        const formattedDate = createdAt ? formatDate(createdAt) : null;
+        const timestamp = createdAt ? new Date(createdAt).getTime() : null;
 
-        return [formattedDate, saleable];
-    });
+        return [timestamp, saleable];
+    }).filter(item => item[0]); // filter yang null (jika ada)
 });
 
-// Ambil data doc_afkir dari hatcheryDetails[0]
 const afkir = computed(() => {
     return props.hatchery.map((hatcheryItem) => {
         const createdAt = hatcheryItem.pull_chicken_date;
-        const saleable = hatcheryItem.hatchery_details?.[0]?.doc_afkir;
+        const afkirQty = Number(hatcheryItem.hatchery_details?.[0]?.doc_afkir ?? 0) ;
 
-        // Format created_at menjadi dd/mm/yy
-        const formattedDate = createdAt ? formatDate(createdAt) : null;
+        const timestamp = createdAt ? new Date(createdAt).getTime() : null;
 
-        return [formattedDate, saleable];
-    });
+        return [timestamp, afkirQty];
+    }).filter(item => item[0]);
 });
 
-// Ambil data (dead_in_egg + explode + Infertile) dari hatcheryDetails[0]
 const death = computed(() => {
     return props.hatchery.map((hatcheryItem) => {
         const details = hatcheryItem.hatchery_details?.[0] || {};
         const createdAt = hatcheryItem.pull_chicken_date;
-        const saleable =
-            (details.dead_in_egg || 0) +
-            (details.explode || 0) +
-            (details.infertile || 0);
-        console.log(details.dead_in_egg, details.explode, details.infertile);
-        // Format created_at menjadi dd/mm/yy
-        const formattedDate = createdAt ? formatDate(createdAt) : null;
+        console.log('detail:', details);
 
-        return [formattedDate, saleable];
-    });
+        const chickinDeath =
+        Number(details.dead_in_egg || 0) +
+        Number(details.explode || 0) +
+        Number(details.infertile || 0);
+
+        const timestamp = createdAt ? new Date(createdAt).getTime() : null;
+
+        return [timestamp, chickinDeath];
+    }).filter(item => item[0]);
 });
 
-onMounted(() => {});
+
+
+onMounted(() => {
+    console.log(props.hatchery)
+    console.log(chickIn.value);
+console.log(afkir.value);
+console.log(death.value);
+});
 
 const data1 = [
     ["death chicken", 200],
@@ -311,6 +356,7 @@ const chartOptions = ref({
     },
     xAxis: {
         type: "datetime",
+        reversed: true,
         title: {
             text: "Date",
         },
@@ -352,39 +398,33 @@ const chartOptions = ref({
         },
     },
     series: [
-        {
-            type: "bar",
-            name: "Chick In",
-            data: chickIn.value.map((item) => {
-                const date = new Date(item[0]);
-                date.setUTCHours(0, 0, 0, 0); // Menghapus jam dan hanya menyisakan tanggal
-                return [date.getTime(), item[1]];
-            }),
-            color: "#4CAF50",
-            // groupPadding: 3,
-        },
-        {
-            type: "bar",
-            name: "Reject Chick",
-            data: afkir.value.map((item) => {
-                const date = new Date(item[0]);
-                date.setUTCHours(0, 0, 0, 0); // Menghapus jam dan hanya menyisakan tanggal
-                return [date.getTime(), item[1]];
-            }),
-            color: "#FFEB3B",
-            // groupPadding: 3,
-        },
-        {
-            type: "bar",
-            name: "Dead Chick",
-            data: death.value.map((item) => {
-                const date = new Date(item[0]);
-                date.setUTCHours(0, 0, 0, 0); // Menghapus jam dan hanya menyisakan tanggal
-                return [date.getTime(), item[1]];
-            }),
-            color: "#F44336",
-            // groupPadding: 3,
-        },
+    {
+        type: "bar",
+        name: "Chick In",
+        data: chickIn.value.map((item) => {
+            console.log("Chick In Data:", item);
+            return [item[0], item[1]];
+        }),
+        color: "#4CAF50",
+    },
+    {
+        type: "bar",
+        name: "Reject Chick",
+        data: afkir.value.map((item) => {
+            console.log("Afkir Data:", item);
+            return [item[0], item[1]];
+        }),
+        color: "#FFEB3B",
+    },
+    {
+        type: "bar",
+        name: "Dead Chick",
+        data: death.value.map((item) => {
+            console.log("Death Data:", item);
+            return [item[0], item[1]];
+        }),
+        color: "#F44336",
+    },
     ],
 });
 

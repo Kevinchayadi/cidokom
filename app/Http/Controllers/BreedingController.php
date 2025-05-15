@@ -159,20 +159,20 @@ class BreedingController extends Controller
     public function inputBreeding($id)
     {
         $pakan = Pakan::get()->toArray();
-        $pen = Pen::with('kandang')
-        ->where('status', 'inactive')
-        ->whereHas('kandang', function ($query) {
-            $query->where('jenis_kandang', 'breeding')->orWhere(function ($subQuery) {
-                $subQuery->where('jenis_kandang', 'afkir')->where('code_pen', 'like', '%BRD');
-            });
-        })
-        ->get();
+        
         $breeding = Breeding::with([
             'BreedingDetails' => function ($query) {
                 $query->latest('created_at');
             },
             'pen',
         ])->find($id);
+        $pen = Pen::with('kandang')
+        ->whereHas('kandang', function ($query) {
+            $query->where('jenis_kandang', 'breeding')->orWhere(function ($subQuery) {
+                $subQuery->where('jenis_kandang', 'afkir')->where('code_pen', 'like', '%BRD');
+            });
+        })->whereNot('id', $breeding->id_pen)
+        ->get();
         $latest = $breeding->breedingDetails->sortByDesc('created_at')->values()->first();
         $chicken = [
             'male'=> $latest->last_male??$breeding->jumlah_jantan,
@@ -239,8 +239,10 @@ class BreedingController extends Controller
             $input['last_male'] = $calculate_male;
             $input['last_female'] = $calculate_female;
         }
+        $datemove = null;
         if(isset($input['date'])){
             $input['created_at'] = Carbon::parse($input['date'])->addHours(7);
+            $datemove =  Carbon::parse($input['date']);
         }
         if ($input['last_male'] < 0) {
             return back()->withErrors('Female chicken cant be minus quantity!');
@@ -257,7 +259,7 @@ class BreedingController extends Controller
             $new_cost = 0;
             if ($request->move_to != 0 &&(($request->total_female_move + $request->total_male_move)  != 0)) {
                 $unitCostAsFloat = (float) $Breeding->cost_Total_induk;
-                $datas = $this->moveService->moveTable($input['move_to'], $Breeding->id_pen, $unitCostAsFloat, $input['last_male'], $input['last_female'], $input['total_male_move'], $input['total_female_move']);
+                $datas = $this->moveService->moveTable($input['move_to'], $Breeding->id_pen, $unitCostAsFloat, $input['last_male'], $input['last_female'], $input['total_male_move'], $input['total_female_move'],$datemove,$input['inputBy']);
 
                 $new_cost = $datas['new_cost'];
                 $input['last_male'] = $datas['last_male'];
