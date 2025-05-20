@@ -35,10 +35,8 @@ class BreedingController extends Controller
     {
         $breeding = Breeding::with('BreedingDetails', 'vaksin')->where('status', 'active')->latest()->get();
         $vaksin = vaksin::where('type', 'BRD')->get();
-        // dd($breeding->toArray());
 
         foreach ($breeding as $item) {
-            // Hitung umur berdasarkan created_at dan update nilai age
             $item->age = floor(
                 $item->age +
                     Carbon::parse($item->created_at)
@@ -49,41 +47,32 @@ class BreedingController extends Controller
             $item->isTrue = false;
             $item->isReject = false;
 
-            if($item->age >= 525){
+            if ($item->age >= 525) {
                 $item->isReject = true;
             }
-            
 
             foreach ($item->BreedingDetails as $detail) {
                 $createdDate = Carbon::parse($detail->created_at)
-                    // ->startOfDay()
-                    ->toDateString();
-                    
+                ->toDateString();
+
                 $today = Carbon::now('Asia/Jakarta')->toDateString();
-                // dd($createdDate == $today);
+
                 if ($createdDate === $today) {
-                    // Jika ada detail pada hari ini, set isInputed menjadi true
                     $item->isInputed = true;
-                    break; // keluar dari loop karena sudah ditemukan detail hari ini
+                    break;
                 }
             }
-            
-            // Periksa apakah item sudah memenuhi kriteria vaksin
+
             foreach ($vaksin as $data) {
                 if ($item->age >= $data->hari) {
-                    // Jika vaksin dengan 'hari' yang tepat ditemukan, cek apakah vaksin sudah ada
                     $item->isTrue = in_array($data->id, $item->vaksin->pluck('id')->toArray());
-                    // dd($item->isTrue);
-                    // Jika vaksin sudah ada, set isTrue ke false dan keluar dari loop
+
                     if ($item->isTrue === false) {
                         break;
                     }
                 }
             }
         }
-        // dd($breeding[2]->age);
-
-        // dd($breeding[0]-> );
 
         return Inertia::render('user/Breeding', compact('breeding'));
     }
@@ -95,27 +84,27 @@ class BreedingController extends Controller
             },
             'pen',
         ])
-        ->orderBy('status')->get();
+            ->orderBy('status')
+            ->get();
         foreach ($breeding as $item) {
             $item->age =
-                ($item->age??0) +
+                ($item->age ?? 0) +
                 Carbon::parse($item->created_at)
                     ->startOfDay()
                     ->diffInDays(Carbon::now()->startOfDay());
             $FCR = 0;
-            foreach($item->breedingDetails as $detail){
-                if(($detail->last_male + $detail->lastfemale)!=0){
-                    $FCR += $detail->feed/($detail->last_male + $detail->lastfemale);
+            foreach ($item->breedingDetails as $detail) {
+                if ($detail->last_male + $detail->lastfemale != 0) {
+                    $FCR += $detail->feed / ($detail->last_male + $detail->lastfemale);
                 }
             }
             $item->fcr = $FCR;
-            
-            if($item->entryDate == null){
+
+            if ($item->entryDate == null) {
                 $item->entryDate = Carbon::parse($item->created_at)->format('Y-m-d');
             }
         }
-        // dd($breeding->toArray());
-        
+
         return Inertia::render('admin/breeding', compact('breeding'));
     }
 
@@ -143,10 +132,9 @@ class BreedingController extends Controller
             'cost_Total_induk' => 'required',
             'inputBy' => 'required',
         ]);
-        // $input['cost_total_induk'] = $input['cost'];
+
         $input['cost_induk'] = $input['cost_Total_induk'] / ($input['jumlah_jantan'] + $input['jumlah_betina']);
 
-        // dd($input);
         Breeding::create($input);
 
         Pen::where('id', $input['id_pen'])->update([
@@ -159,7 +147,7 @@ class BreedingController extends Controller
     public function inputBreeding($id)
     {
         $pakan = Pakan::get()->toArray();
-        
+
         $breeding = Breeding::with([
             'BreedingDetails' => function ($query) {
                 $query->latest('created_at');
@@ -167,22 +155,22 @@ class BreedingController extends Controller
             'pen',
         ])->find($id);
         $pen = Pen::with('kandang')
-        ->whereHas('kandang', function ($query) {
-            $query->where('jenis_kandang', 'breeding')->orWhere(function ($subQuery) {
-                $subQuery->where('jenis_kandang', 'afkir')->where('code_pen', 'like', '%BRD');
-            });
-        })->whereNot('id', $breeding->id_pen)
-        ->get();
+            ->whereHas('kandang', function ($query) {
+                $query->where('jenis_kandang', 'breeding')->orWhere(function ($subQuery) {
+                    $subQuery->where('jenis_kandang', 'afkir')->where('code_pen', 'like', '%BRD');
+                });
+            })
+            ->whereNot('id', $breeding->id_pen)
+            ->get();
         $latest = $breeding->breedingDetails->sortByDesc('created_at')->values()->first();
         $chicken = [
-            'male'=> $latest->last_male??$breeding->jumlah_jantan,
-            'female'=> $latest->last_female??$breeding->jumlah_betina,
+            'male' => $latest->last_male ?? $breeding->jumlah_jantan,
+            'female' => $latest->last_female ?? $breeding->jumlah_betina,
         ];
-        
 
         $name = $breeding->pen->code_pen;
-        
-        return Inertia::render('user/FormDailyBreeding', ['id_breeding' => $id, 'pakan' => $pakan, 'pen' => $pen, 'name' =>$name, 'chicken' =>$chicken]);
+
+        return Inertia::render('user/FormDailyBreeding', ['id_breeding' => $id, 'pakan' => $pakan, 'pen' => $pen, 'name' => $name, 'chicken' => $chicken]);
     }
 
     public function inputedBreeding(Request $request)
@@ -207,15 +195,11 @@ class BreedingController extends Controller
             'inputBy' => 'required',
             'date' => 'date|nullable',
         ]);
-        
+
         $Breeding = Breeding::find($input['id_breeding']);
         $pakan = Pakan::where('nama_pakan', $input['feed_name'])->first();
-        $previousDetail = Breeding_detail::where('id_breeding', $input['id_breeding'])
-            ->latest('created_at')
-            ->first();
-        
+        $previousDetail = Breeding_detail::where('id_breeding', $input['id_breeding'])->latest('created_at')->first();
 
-        // dd($input);
         if ($input['move_to'] == 0) {
             $input['total_female_move'] = 0;
             $input['total_male_move'] = 0;
@@ -230,19 +214,19 @@ class BreedingController extends Controller
             $input['last_male'] = $Breeding->jumlah_jantan - $input['male_die'] - $input['male_reject'];
             $input['last_female'] = $Breeding->jumlah_betina - $input['female_die'] - $input['female_reject'];
         } else {
-            if(Carbon::parse($previousDetail->created_at)->greaterThanOrEqualTo(Carbon::parse($input['date']))) {
+            if (Carbon::parse($previousDetail->created_at)->greaterThanOrEqualTo(Carbon::parse($input['date']))) {
                 return back()->withErrors('data terakhir update adalah ' . $previousDetail->created_at->format('d-m-y'));
             }
-            
+
             $calculate_male = $previousDetail->last_male - $input['male_die'] - $input['male_reject'];
             $calculate_female = $previousDetail->last_female - $input['female_die'] - $input['female_reject'];
             $input['last_male'] = $calculate_male;
             $input['last_female'] = $calculate_female;
         }
         $datemove = null;
-        if(isset($input['date'])){
+        if (isset($input['date'])) {
             $input['created_at'] = Carbon::parse($input['date'])->addHours(7);
-            $datemove =  Carbon::parse($input['date']);
+            $datemove = Carbon::parse($input['date']);
         }
         if ($input['last_male'] < 0) {
             return back()->withErrors('Female chicken cant be minus quantity!');
@@ -257,9 +241,9 @@ class BreedingController extends Controller
         try {
             DB::beginTransaction();
             $new_cost = 0;
-            if ($request->move_to != 0 &&(($request->total_female_move + $request->total_male_move)  != 0)) {
+            if ($request->move_to != 0 && $request->total_female_move + $request->total_male_move != 0) {
                 $unitCostAsFloat = (float) $Breeding->cost_Total_induk;
-                $datas = $this->moveService->moveTable($input['move_to'], $Breeding->id_pen, $unitCostAsFloat, $input['last_male'], $input['last_female'], $input['total_male_move'], $input['total_female_move'],$datemove,$input['inputBy']);
+                $datas = $this->moveService->moveTable($input['move_to'], $Breeding->id_pen, $unitCostAsFloat, $input['last_male'], $input['last_female'], $input['total_male_move'], $input['total_female_move'], $datemove, $input['inputBy']);
 
                 $new_cost = $datas['new_cost'];
                 $input['last_male'] = $datas['last_male'];
@@ -273,37 +257,24 @@ class BreedingController extends Controller
                     'qty' => $qtysale,
                 ]);
             }
-            
-            //if table move has breeding pending
-            //------------------------------------------------------------------------------------------------------------------------------------
-            $totalMale = Table_move::where('destination_pen', $Breeding->id_pen)
-            ->where('status', 'active')
-            ->sum('totalMale');
-            $totalFemale = Table_move::where('destination_pen', $Breeding->id_pen)
-            ->where('status', 'active')
-            ->sum('totalFemale');
-            $totalPopulation = ($totalMale ??0) + ($totalFemale ?? 0);
-            $costMale = Table_move::where('destination_pen', $Breeding->id_pen)
-            ->where('status', 'active')
-            ->sum('maleCost');
-            $costFemale = Table_move::where('destination_pen', $Breeding->id_pen)
-            ->where('status', 'active')
-            ->sum('femaleCost');
-            // $input['last_male'] += $totalMale ?? 0;
-            // $input['last_female'] += $totalFemale ?? 0;
-            
+
+            $totalMale = Table_move::where('destination_pen', $Breeding->id_pen)->where('status', 'active')->sum('totalMale');
+            $totalFemale = Table_move::where('destination_pen', $Breeding->id_pen)->where('status', 'active')->sum('totalFemale');
+            $totalPopulation = ($totalMale ?? 0) + ($totalFemale ?? 0);
+            $costMale = Table_move::where('destination_pen', $Breeding->id_pen)->where('status', 'active')->sum('maleCost');
+            $costFemale = Table_move::where('destination_pen', $Breeding->id_pen)->where('status', 'active')->sum('femaleCost');
+
             $total_cost = $Breeding->cost_Total_induk - $new_cost + $costMale + $costFemale - $Breeding->cost_induk * ($input['female_reject'] + $input['male_reject']);
-            $cost_induk= 0;
-            if(($input['last_male'] + $input['last_female']) >0){
+            $cost_induk = 0;
+            if ($input['last_male'] + $input['last_female'] > 0) {
                 $cost_induk = $total_cost / ($input['last_male'] + $input['last_female']);
             }
-            
+
             $Breeding->update([
                 'cost_Total_induk' => $total_cost,
                 'cost_induk' => $cost_induk,
             ]);
-            // dd($request);
-            // dd($totalPopulation);
+
             if ($totalPopulation != 0) {
                 $lastTable = Table_move::where('destination_pen', $Breeding->id_pen)->where('status', 'active')->first();
                 $input['receive_from'] = $lastTable->current_pen;
@@ -314,20 +285,13 @@ class BreedingController extends Controller
                 $input['last_male'] += $totalMale;
                 $input['total_female_receive'] = $totalFemale;
                 $input['total_male_receive'] = $totalMale;
-
- 
             }
 
-
-            // dd("test");
-            //feed
-            //--------------------------------------------------------------------------------------------------------------------------------
-            // $currentfeed = $pakan->qty - $input['feed'];
             $current_cost = $this->countService->costegg($pakan, $input['feed'], $input['total_egg'] + $input['sale']);
-            if($input['total_egg']==0 ||($input['total_egg'] + $input['sale'])==0){
-                $input['cost_unit'] =  $pakan->harga * $input['feed'];
-                $input['cost_total'] =  $pakan->harga * $input['feed'];
-            }else{
+            if ($input['total_egg'] == 0 || $input['total_egg'] + $input['sale'] == 0) {
+                $input['cost_unit'] = $pakan->harga * $input['feed'];
+                $input['cost_total'] = $pakan->harga * $input['feed'];
+            } else {
                 $input['cost_unit'] = $current_cost * $input['total_egg'];
                 $input['cost_total'] = $current_cost * ($input['total_egg'] + $input['sale']);
             }
@@ -338,7 +302,7 @@ class BreedingController extends Controller
                 'id_pen' => $Breeding->id_pen,
                 'id_pakan' => $pakan->id,
                 'qty' => $input['feed'],
-                'stock_feed' => $currentfeed
+                'stock_feed' => $currentfeed,
             ]);
             Breeding_detail::create($input);
             if ($input['last_male'] == 0 && $input['last_female'] == 0) {
@@ -346,9 +310,8 @@ class BreedingController extends Controller
                     'status' => 'inactive',
                 ]);
                 Pen::find($Breeding->id_pen)->update([
-                    'status'=>'active'
+                    'status' => 'active',
                 ]);
-                
             }
             DB::commit();
             return redirect()->route('user.breeding')->with('success', 'berhasil membuat kandang Breeding baru');
@@ -361,94 +324,76 @@ class BreedingController extends Controller
     public function moveForm($id)
     {
         $pen = $pen = Pen::with('kandang')
-        ->where('status', 'inactive')
-        ->whereHas('kandang', function ($query) {
-            $query->where('jenis_kandang', 'breeding')->orWhere(function ($subQuery) {
-                $subQuery->where('jenis_kandang', 'afkir')->where('code_pen', 'like', '%BRD');
-            });
-        })
-        ->get();
+            ->where('status', 'inactive')
+            ->whereHas('kandang', function ($query) {
+                $query->where('jenis_kandang', 'breeding')->orWhere(function ($subQuery) {
+                    $subQuery->where('jenis_kandang', 'afkir')->where('code_pen', 'like', '%BRD');
+                });
+            })
+            ->get();
         $breeding = Breeding::with([
-                'BreedingDetails' => function ($query) {
-                    $query->orderBy('created_at', 'desc');
-                },
-                'pen',
-            ])->find($id);
+            'BreedingDetails' => function ($query) {
+                $query->orderBy('created_at', 'desc');
+            },
+            'pen',
+        ])->find($id);
         $chicken = [
-                'male'=> $breeding->breedingDetails[0]->last_male,
-                'female'=> $breeding->breedingDetails[0]->last_female,
-            ];
+            'male' => $breeding->breedingDetails[0]->last_male,
+            'female' => $breeding->breedingDetails[0]->last_female,
+        ];
         $name = $breeding->pen->code_pen;
 
-
-        return Inertia::render('user/FormMoveBreeding', ['id' => $id, 'pen' => $pen,'name'=> $name, 'chicken' => $chicken]);
+        return Inertia::render('user/FormMoveBreeding', ['id' => $id, 'pen' => $pen, 'name' => $name, 'chicken' => $chicken]);
     }
 
     public function moveTable(Request $request, $id)
     {
-        // dd('test');
         $input = $request->validate([
             'move_to' => 'integer',
             'total_female_move' => 'integer',
             'total_male_move' => 'integer',
         ]);
-        // dd($input);
-    
+
         if ($input['move_to'] == 0) {
             return back()->withErrors('Select move pen');
         }
-    
-        // Mendapatkan Breeding berdasarkan ID
-        $Breeding = Breeding::with(['breedingDetails' => function ($query) {
-            $query->whereDate('created_at', Carbon::today());
-        }])->findOrFail($id); // pastikan ID valid
-    
-        // Mendapatkan data breedingDetails pertama
-        $breedingDetail = $Breeding->breedingDetails->first(); // atau bisa menggunakan firstOrFail()
-    
+
+        $Breeding = Breeding::with([
+            'breedingDetails' => function ($query) {
+                $query->whereDate('created_at', Carbon::today());
+            },
+        ])->findOrFail($id);
+
+        $breedingDetail = $Breeding->breedingDetails->first();
+
         if (!$breedingDetail) {
             return back()->withErrors('Breeding details not found!');
         }
-    
-        // Lakukan perhitungan dan pemindahan
-        // Mulai transaksi DB
-        
+
         try {
             DB::beginTransaction();
             $unitCostAsFloat = (float) $Breeding->cost_Total_induk;
-            $datas = $this->moveService->moveTable(
-                $input['move_to'],
-                $Breeding->id_pen,
-                $unitCostAsFloat,
-                $breedingDetail->last_male,
-                $breedingDetail->last_female,
-                $input['total_male_move'],
-                $input['total_female_move']
-            );
-        
+            $datas = $this->moveService->moveTable($input['move_to'], $Breeding->id_pen, $unitCostAsFloat, $breedingDetail->last_male, $breedingDetail->last_female, $input['total_male_move'], $input['total_female_move']);
+
             $new_cost = $datas['new_cost'];
             $input['last_male'] = $datas['last_male'];
             $input['last_female'] = $datas['last_female'];
-        
-            // Validasi agar jumlah ayam tidak menjadi negatif
+
             if ($input['last_male'] < 0) {
                 return back()->withErrors('Male chicken cant be negative quantity!');
             }
             if ($input['last_female'] < 0) {
                 return back()->withErrors('Female chicken cant be negative quantity!');
             }
-        
-            // Menghitung total cost dan cost induk
+
             $total_cost = $Breeding->cost_Total_induk - $new_cost;
             $cost_induk = $total_cost / ($input['last_male'] + $input['last_female']);
-        
-            // Update Breeding data
+
             $Breeding->update([
                 'cost_Total_induk' => $total_cost,
                 'cost_induk' => $cost_induk,
             ]);
-    
-            // Update BreedingDetails
+
             $breedingDetail->update([
                 'last_male' => $input['last_male'],
                 'last_female' => $input['last_female'],
@@ -456,60 +401,46 @@ class BreedingController extends Controller
                 'total_male_move' => $input['total_male_move'],
                 'total_female_move' => $input['total_female_move'],
             ]);
-    
-            // Commit transaksi jika berhasil
+
             DB::commit();
-    
+
             return redirect()->route('user.breeding')->with('success', 'Successfully moved to new pen!');
         } catch (\Exception $e) {
-            // Rollback transaksi jika terjadi error
             DB::rollback();
             return back()->withErrors('Failed to move to new pen, try again.');
         }
     }
     public function AfkirALL($id)
     {
-        // Mendapatkan Breeding berdasarkan ID
-        $Breeding = Breeding::with(['breedingDetails' => function ($query) {
-            $query->latest('created_at')->first();  
-        }])->findOrFail($id); 
+        $Breeding = Breeding::with([
+            'breedingDetails' => function ($query) {
+                $query->latest('created_at')->first();
+            },
+        ])->findOrFail($id);
         $pen = Pen::where('code_pen', 'AFKIR-BRD')->first();
-        // Mendapatkan data breedingDetails pertama
-        $breedingDetail = $Breeding->breedingDetails->first(); // atau bisa menggunakan firstOrFail()
-        
-        // Lakukan perhitungan dan pemindahan
+
+        $breedingDetail = $Breeding->breedingDetails->first();
+
         $unitCostAsFloat = (float) $Breeding->cost_Total_induk;
-        $datas = $this->moveService->moveTable(
-            $pen->id,
-            $Breeding->id_pen,
-            $unitCostAsFloat,
-            $breedingDetail->last_male,
-            $breedingDetail->last_female,
-            $breedingDetail->last_male,
-            $breedingDetail->last_female,
-        );
+        $datas = $this->moveService->moveTable($pen->id, $Breeding->id_pen, $unitCostAsFloat, $breedingDetail->last_male, $breedingDetail->last_female, $breedingDetail->last_male, $breedingDetail->last_female);
         $male = $breedingDetail->last_male;
         $female = $breedingDetail->last_female;
-        // dd($id);
+
         $new_cost = $datas['new_cost'];
         $input['last_male'] = $datas['last_male'];
         $input['last_female'] = $datas['last_female'];
-    
-        // Mulai transaksi DB
+
         DB::beginTransaction();
-    
+
         try {
-            // Update Breeding data
             $Breeding->update([
-                'status'=> 'inactive'
+                'status' => 'inactive',
             ]);
             Pen::find($Breeding->id_pen)->update([
-                'status'=>'active'
+                'status' => 'active',
             ]);
-            
+
             if ($breedingDetail->created_at->isToday()) {
-                // Lakukan update jika tanggalnya hari ini
-                // dd($input['last_female']);
                 $breedingDetail->update([
                     'last_male' => $input['last_male'],
                     'last_female' => $input['last_female'],
@@ -517,7 +448,6 @@ class BreedingController extends Controller
                     'total_female_move' => $female,
                 ]);
             } else {
-                // Lakukan pembuatan breeding detail baru jika tanggalnya bukan hari ini
                 Breeding_detail::create([
                     'id_breeding' => $id,
                     'last_male' => 0,
@@ -541,151 +471,20 @@ class BreedingController extends Controller
                     'cost_unit' => 0,
                     'cost_total' => 0,
                     'feed' => 0,
-                    'feed_name' => '0', 
+                    'feed_name' => '0',
                     'status' => 0,
-                    'inputBy' => 'system', 
+                    'inputBy' => 'system',
                 ]);
             }
-            
-            // dd('test');
-            
-            // Commit transaksi jika berhasil
+
             DB::commit();
-            
+
             return redirect()->route('user.breeding')->with('success', 'Successfully moved to new pen!');
         } catch (\Exception $e) {
-            // Rollback transaksi jika terjadi error
             DB::rollback();
             dd('es');
             return back()->withErrors('Failed to move to new pen, try again.');
         }
-    }
-    
-
-    public function dailyStoreBulk(Request $request)
-    {
-        $request->validate([
-            'file' => 'required|file|mimes:xlsx,xls,csv',
-        ]);
-
-        $data = \Maatwebsite\Excel\Facades\Excel::toArray([], $request->file('file'));
-
-        $rows = $data[0];
-
-        $rows = array_slice($rows, 1);
-
-        foreach ($rows as $row) {
-            $data = [
-                'id_breeding' => $row[0],
-                'female_die' => $row[1],
-                'female_reject' => $row[2],
-                'male_die' => $row[3],
-                'male_reject' => $row[4],
-                'egg_morning' => $row[5],
-                'egg_afternoon' => $row[6],
-                'broken' => $row[7],
-                'abnormal' => $row[8],
-                'sale' => $row[9],
-                'total_egg' => $row[10],
-                'move_to' => $row[11],
-                'total_female_move' => $row[12],
-                'total_male_move' => $row[13],
-                'feed' => $row[14],
-                'feed_name' => $row[15],
-                'inputBy' => $row[16],
-            ];
-
-            $input = Validator::make($data, [
-                'id_breeding' => 'required',
-                'female_die' => 'required|integer|min:0',
-                'female_reject' => 'required|integer|min:0',
-                'male_die' => 'required|integer|min:0',
-                'male_reject' => 'required|integer|min:0',
-                'egg_morning' => 'required|integer|min:0',
-                'egg_afternoon' => 'required|integer|min:0',
-                'broken' => 'required|integer|min:0',
-                'abnormal' => 'required|integer|min:0',
-                'sale' => 'required|integer',
-                'total_egg' => 'required',
-                'move_to' => 'integer',
-                'total_female_move' => 'integer',
-                'total_male_move' => 'integer',
-                'feed' => 'required|numeric|min:0',
-                'feed_name' => 'required|string',
-                'inputBy' => 'required',
-            ])->validate();
-
-            $Breeding = Breeding::find($input['id_breeding']);
-            $pakan = Pakan::where('nama_pakan', $input['feed_name'])->firstOrFail();
-
-            if (!$Breeding) {
-                return response()->json(['error' => 'Data Breeding tidak ditemukan'], 404);
-            }
-            $input['begining_population'] = $Breeding->begining_population;
-
-            $previousDetail = Breeding_detail::where('id_breeding', $input['id_breeding'])
-                ->latest('created_at')
-                ->first();
-            if (!$previousDetail) {
-                $input['last_male'] = $Breeding->jumlah_jantan - $input['male_die'] - $input['male_reject'];
-                $input['last_female'] = $Breeding->jumlah_betina - $input['female_die'] - $input['female_reject'];
-            } else {
-                $calculate_male = $previousDetail->last_male - $input['male_die'] - $input['male_reject'];
-                $calculate_female = $previousDetail->last_female - $input['female_die'] - $input['female_reject'];
-                $input['last_male'] = $calculate_male;
-                $input['last_female'] = $calculate_female;
-            }
-            if ($input['last_male'] < 0) {
-                return response()->json(['error' => 'Female chicken cant be minus quantity!'], 400);
-            }
-            if ($input['last_female'] < 0) {
-                return response()->json(['error' => 'Female chicken cant be minus quantity!'], 400);
-            }
-            $currentfeed = $pakan->qty - $input['feed'];
-            if ($currentfeed < 0) {
-                return back()->withErrors('pakan is not enough!! please check pakan stock or call jakarta admin to check the stock!');
-            }
-            try {
-                DB::beginTransaction();
-                if ($request->move_to != 0) {
-                    $unitCostAsFloat = (float) $Breeding->cost_unit;
-                    $datas = $this->moveService->moveTable($input['move_to'], $Breeding->id_pen, $unitCostAsFloat, $input['last_male'], $input['last_female'], $input['total_male_move'], $input['total_female_move']);
-                    $new_cost = $datas['new_cost'];
-
-                    $input['last_male'] = $datas['last_male'];
-                    $input['last_female'] = $datas['last_female'];
-                }
-
-                $current_cost = $this->countService->costegg($pakan, $input['feed'], $input['total_egg'] + $input['sale']);
-                $input['cost_unit'] = $current_cost * $input['total_egg'];
-                $input['cost_total'] = $current_cost * ($input['total_egg'] + $input['sale']);
-                $pakan->update([
-                    'qty' => $currentfeed,
-                ]);
-                Breeding_detail::create($input);
-                if ($input['last_male'] == 0 && $input['last_female'] == 0) {
-                    $Breeding->update([
-                        'status' => 'inactive',
-                    ]);
-                }
-                DB::commit();
-                return redirect()->route('user.breeding')->with('success', 'berhasil membuat kandang Breeding baru');
-            } catch (\Throwable $th) {
-                DB::rollback();
-                return back()->with('error', 'failed input!');
-            }
-        }
-    }
-
-    public function adminDashboar()
-    {
-        $breeding = Breeding::get();
-        return Inertia::render('admin/Dashboard', compact('breeding'));
-    }
-    public function getBreedingDetail($id)
-    {
-        $breeding = Breeding_detail::with('breeding')->where('id_breeding', $id)->get()->toArray();
-        return [$id, 1];
     }
 
     public function addVaccine($id)
@@ -700,20 +499,17 @@ class BreedingController extends Controller
                     ->startOfDay()
                     ->diffInDays(Carbon::now()->startOfDay()),
         );
-        // dd( $breeding->age);
+
         foreach ($vaksin as $data) {
             if ($breeding->age >= $data->hari) {
-                // Jika vaksin dengan 'hari' yang tepat dbreedingukan, cek apakah vaksin sudah ada
                 $breeding->isTrue = in_array($data->id, $breeding->vaksin->pluck('id')->toArray());
-                // dd($breeding->isTrue);
-                // Jika vaksin sudah ada, set isTrue ke false dan keluar dari loop
+
                 if ($breeding->isTrue === false) {
                     $vaksinList[] = $data;
                 }
             }
         }
 
-        // dd($vaksinList);
         return Inertia::render('user/FormAddBreedingVaksin', ['id' => $id, 'vaksin' => $vaksinList, 'pen' => 'breeding']);
     }
     public function storevaccine($id, Request $request)
@@ -725,7 +521,7 @@ class BreedingController extends Controller
         $breeding = Breeding::with('BreedingDetails', 'vaksin')->where('id_breeding', $id)->first();
         $vaksin = vaksin::find($input['id_vaksin']);
         $vaksintype = vaksinType::where('nama_vaksin', $vaksin->nama)->first();
-        // dd($vaksintype);
+
         if (!$vaksintype) {
             return back()->withErrors('Vaksin not found!, please call Jakarta Admin to add the vaksin!!');
         }
@@ -740,7 +536,6 @@ class BreedingController extends Controller
             ]);
             $breeding->vaksin()->attach($request->id_vaksin);
         } catch (\Throwable $th) {
-            //throw $th;
             return back()->withErrors('failed input!');
         }
 
@@ -755,4 +550,178 @@ class BreedingController extends Controller
 
         return $pdf->stream('invoice-' . $invoice->number . '.pdf');
     }
+
+    public function adjustment(Request $request,){
+        $input = $request->validate([
+            'id' => 'required',
+            'female_die' => 'required|integer|min:0',
+            'female_reject' => 'required|integer|min:0',
+            'male_die' => 'required|integer|min:0',
+            'male_reject' => 'required|integer|min:0',
+            'egg_morning' => 'required|integer|min:0',
+            'egg_afternoon' => 'required|integer|min:0',
+            'broken' => 'required|integer|min:0',
+            'abnormal' => 'required|integer|min:0',
+            'sale' => 'required|integer',
+            'total_egg' => 'required',
+            'feed' => 'required|numeric|min:0',
+            'feed_name' => 'required|string',
+            'inputBy' => 'required',
+            'remark' => 'required|string',
+        ]);
+        DB::transaction(function () use ($input) {
+
+            $prev = Breeding_detail::lockForUpdate()->find($input['id']);
+            $feed = Pakan::where('nama_pakan', $input['feed_name'])->first();
+    
+            $lastMale = $prev->last_male + $prev->male_die + $prev->male_reject;
+            $lastFemale = $prev->last_female + $prev->female_die + $prev->female_reject;
+            $current_cost = $this->countService->costegg($feed, $input['feed'], $input['total_egg'] + $input['sale']);
+            $input['last_male'] = $lastMale - $input['male_die'] - $input['male_reject'];
+            $input['last_female'] = $lastFemale - $input['female_die'] - $input['female_reject'];
+    
+            if($prev->feed_name != $input['feed_name']){
+                $prevFeed = Pakan::where('nama_pakan', $input['feed_name'])->increment('qty', $prev->feed);
+                Daily_feed::create([
+                    'id_pen' => $prev->id_breeding,
+                    'id_pakan' => $prevFeed->id,
+                    'qty' => $input['feed'],
+                    'stock_feed' => $prevFeed->qty,
+                ]);
+            }
+    
+    
+            if(($input['total_egg'] + $input['sale']) == 0){
+                $input['cost_unit'] = $current_cost;
+                $input['cost_total'] = $current_cost;
+            }else{
+                $input['cost_unit'] = $current_cost*$input['total_egg'];
+                $input['cost_total'] = $current_cost*$input['total_egg'] + $current_cost*$input['sale_egg'];
+            }
+    
+            $prev->update($input);
+            $currfeed = Pakan::where('nama_pakan', $input['feed_name'])->decrement('qty', $input['feed']);
+            
+            Daily_feed::create([
+                'id_pen' => $prev->id_breeding,
+                'id_pakan' => $feed->id,
+                'qty' => $input['feed'],
+                'stock_feed' => $currfeed->qty,
+            ]);
+        });
+    }
+
+
+        // public function dailyStoreBulk(Request $request)
+    // {
+    //     $request->validate([
+    //         'file' => 'required|file|mimes:xlsx,xls,csv',
+    //     ]);
+
+    //     $data = \Maatwebsite\Excel\Facades\Excel::toArray([], $request->file('file'));
+
+    //     $rows = $data[0];
+
+    //     $rows = array_slice($rows, 1);
+
+    //     foreach ($rows as $row) {
+    //         $data = [
+    //             'id_breeding' => $row[0],
+    //             'female_die' => $row[1],
+    //             'female_reject' => $row[2],
+    //             'male_die' => $row[3],
+    //             'male_reject' => $row[4],
+    //             'egg_morning' => $row[5],
+    //             'egg_afternoon' => $row[6],
+    //             'broken' => $row[7],
+    //             'abnormal' => $row[8],
+    //             'sale' => $row[9],
+    //             'total_egg' => $row[10],
+    //             'move_to' => $row[11],
+    //             'total_female_move' => $row[12],
+    //             'total_male_move' => $row[13],
+    //             'feed' => $row[14],
+    //             'feed_name' => $row[15],
+    //             'inputBy' => $row[16],
+    //         ];
+
+    //         $input = Validator::make($data, [
+    //             'id_breeding' => 'required',
+    //             'female_die' => 'required|integer|min:0',
+    //             'female_reject' => 'required|integer|min:0',
+    //             'male_die' => 'required|integer|min:0',
+    //             'male_reject' => 'required|integer|min:0',
+    //             'egg_morning' => 'required|integer|min:0',
+    //             'egg_afternoon' => 'required|integer|min:0',
+    //             'broken' => 'required|integer|min:0',
+    //             'abnormal' => 'required|integer|min:0',
+    //             'sale' => 'required|integer',
+    //             'total_egg' => 'required',
+    //             'move_to' => 'integer',
+    //             'total_female_move' => 'integer',
+    //             'total_male_move' => 'integer',
+    //             'feed' => 'required|numeric|min:0',
+    //             'feed_name' => 'required|string',
+    //             'inputBy' => 'required',
+    //         ])->validate();
+
+    //         $Breeding = Breeding::find($input['id_breeding']);
+    //         $pakan = Pakan::where('nama_pakan', $input['feed_name'])->firstOrFail();
+
+    //         if (!$Breeding) {
+    //             return response()->json(['error' => 'Data Breeding tidak ditemukan'], 404);
+    //         }
+    //         $input['begining_population'] = $Breeding->begining_population;
+
+    //         $previousDetail = Breeding_detail::where('id_breeding', $input['id_breeding'])->latest('created_at')->first();
+    //         if (!$previousDetail) {
+    //             $input['last_male'] = $Breeding->jumlah_jantan - $input['male_die'] - $input['male_reject'];
+    //             $input['last_female'] = $Breeding->jumlah_betina - $input['female_die'] - $input['female_reject'];
+    //         } else {
+    //             $calculate_male = $previousDetail->last_male - $input['male_die'] - $input['male_reject'];
+    //             $calculate_female = $previousDetail->last_female - $input['female_die'] - $input['female_reject'];
+    //             $input['last_male'] = $calculate_male;
+    //             $input['last_female'] = $calculate_female;
+    //         }
+    //         if ($input['last_male'] < 0) {
+    //             return response()->json(['error' => 'Female chicken cant be minus quantity!'], 400);
+    //         }
+    //         if ($input['last_female'] < 0) {
+    //             return response()->json(['error' => 'Female chicken cant be minus quantity!'], 400);
+    //         }
+    //         $currentfeed = $pakan->qty - $input['feed'];
+    //         if ($currentfeed < 0) {
+    //             return back()->withErrors('pakan is not enough!! please check pakan stock or call jakarta admin to check the stock!');
+    //         }
+    //         try {
+    //             DB::beginTransaction();
+    //             if ($request->move_to != 0) {
+    //                 $unitCostAsFloat = (float) $Breeding->cost_unit;
+    //                 $datas = $this->moveService->moveTable($input['move_to'], $Breeding->id_pen, $unitCostAsFloat, $input['last_male'], $input['last_female'], $input['total_male_move'], $input['total_female_move']);
+    //                 $new_cost = $datas['new_cost'];
+
+    //                 $input['last_male'] = $datas['last_male'];
+    //                 $input['last_female'] = $datas['last_female'];
+    //             }
+
+    //             $current_cost = $this->countService->costegg($pakan, $input['feed'], $input['total_egg'] + $input['sale']);
+    //             $input['cost_unit'] = $current_cost * $input['total_egg'];
+    //             $input['cost_total'] = $current_cost * ($input['total_egg'] + $input['sale']);
+    //             $pakan->update([
+    //                 'qty' => $currentfeed,
+    //             ]);
+    //             Breeding_detail::create($input);
+    //             if ($input['last_male'] == 0 && $input['last_female'] == 0) {
+    //                 $Breeding->update([
+    //                     'status' => 'inactive',
+    //                 ]);
+    //             }
+    //             DB::commit();
+    //             return redirect()->route('user.breeding')->with('success', 'berhasil membuat kandang Breeding baru');
+    //         } catch (\Throwable $th) {
+    //             DB::rollback();
+    //             return back()->with('error', 'failed input!');
+    //         }
+    //     }
+    // }
 }

@@ -20,7 +20,7 @@ class countService
 
 
     public function costegg(Pakan $pakan , int $food, int $egg):float{
-        if($egg === 0)return 0.0;
+        if($egg === 0)return  $pakan->harga * $food;
         $cost = $pakan->harga * $food;
         $eggCost = $cost/$egg;
         return $eggCost;

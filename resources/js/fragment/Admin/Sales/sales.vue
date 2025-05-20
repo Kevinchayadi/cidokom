@@ -17,6 +17,9 @@
             <button :class="buttonclasses" @click="downloadItem">
                 Download
             </button>
+            <button :class="buttonclasses" @click="downloadItem2">
+                Download(chic)
+            </button>
         </div>
 
         <div class="my-1">
@@ -207,28 +210,59 @@ const handleSubmit = () => {
         end: ended.value,
     });
 };
+const downloadItem1 = () => {
+    console.log(started.value, ended.value)
+    router.get("/download/salesTransaction",{
+        start: started.value,
+        end: ended.value,
+    })
+};
+
 
 // Fungsi untuk download item
 const downloadItem = () => {
     console.log("Download:", selectedId.value);
-    axios
-        .get(`/download/vaksin`, {
-            responseType: "blob",
-        })
-        .then((response) => {
-            // Membuat URL objek untuk file binary
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            // Membuat elemen <a> untuk mendownload file
-            const link = document.createElement("a");
-            link.href = url;
-            link.setAttribute("download", `vaksin.xlsx`); // Nama file
-            document.body.appendChild(link);
-            link.click(); // Memicu unduhan
-            document.body.removeChild(link); // Menghapus link setelah klik
-        })
-        .catch((error) => {
-            console.error("Error downloading file:", error);
-        });
+    axios.get('/download/salesTransaction', {
+  params: {
+    start: started.value, 
+    end: ended.value,     
+  },
+  responseType: 'blob',  
+})
+.then(response => {
+  const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', 'laporan_penjualan.pdf'); 
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+})
+.catch(error => {
+  console.error('Error download PDF:', error);
+});
+};
+const downloadItem2 = () => {
+    console.log("Download:", selectedId.value);
+    axios.get('/download/chickenTransaction', {
+  params: {
+    start: started.value, 
+    end: ended.value,     
+  },
+  responseType: 'blob',  
+})
+.then(response => {
+  const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', 'ayam_untuk_dijual.pdf'); 
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+})
+.catch(error => {
+  console.error('Error download PDF:', error);
+});
 };
 </script>
 

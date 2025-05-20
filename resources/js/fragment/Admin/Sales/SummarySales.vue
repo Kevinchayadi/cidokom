@@ -192,6 +192,13 @@ const handleSubmit = () => {
         end: ended.value,
     })
 };
+const downloadItem = () => {
+    console.log(started.value, ended.value)
+    router.get("/download/salesTransaction",{
+        start: started.value,
+        end: ended.value,
+    })
+};
 
 
 // Table class for styling

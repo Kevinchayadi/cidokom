@@ -87,7 +87,7 @@ class SaleController extends Controller
     {
         $start = $request->input('start');
         $end = $request->input('end');
-        $query = saleTransaction::with(['Customers.sales', 'ChickenSize']);
+        $query = saleTransaction::with(['Customers.sales', 'Customers.residence','ChickenSize']);
         $startDate=null;
         $endDate=null;
 
@@ -98,6 +98,7 @@ class SaleController extends Controller
         }
 
         $saleTransaction = $query->orderByDesc('tanggal_Penjualan')->get();
+        // dd($saleTransaction->toArray());
 
         $sale = Sale::get();
         $totalQtyTransactions = SaleTransaction::sum('jumlah_ayam');

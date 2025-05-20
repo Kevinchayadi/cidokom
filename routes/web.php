@@ -9,6 +9,7 @@ use App\Http\Controllers\CommercialController;
 use App\Http\Controllers\CustHandleController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DownloadController;
 use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\HatcheryController;
 use App\Http\Controllers\KandangController;
@@ -45,6 +46,10 @@ Route::prefix('download')->middleware(['auth','isAdmin'])->group(function(){
     Route::get('/vaksinSchedule', [ExcelController::class, 'exportVaksinScheduleExcel']);
     Route::get('/admin', [ExcelController::class, 'exportAdminExcel']);
     Route::get('/machine', [ExcelController::class, 'exportMachineExcel']);
+    
+    
+    Route::get('/salesTransaction', [DownloadController::class, 'transactionSales']);
+    Route::get('/chickenTransaction', [DownloadController::class, 'chickensales']);
 
 
 });
@@ -103,6 +108,9 @@ Route::prefix('admin')->middleware(['auth','isAdmin'])->group(function(){
 
     
     //sales Functions
+
+
+
 
 
     

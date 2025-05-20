@@ -29,6 +29,9 @@
                     <th class=" bg-blue-300"  :class="classesth">
                         pull chicken date
                     </th>
+                    <th class=" bg-blue-300"  :class="classesth">
+                        DOC Price
+                    </th>
                     <th class=" bg-blue-300"  :class="classesth" style="min-width: 370px;">
                         remark
                     </th>
@@ -85,6 +88,10 @@
                     </td>
                     <td class=""
                         :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white border border-gray-100 ': selectedId !== item.costCenter, [classestd]: true }">
+                        {{ formatRupiah(item . cost) }}
+                    </td>
+                    <td class=""
+                        :class="{ 'bg-gray-300': selectedId === item.costCenter, 'bg-white border border-gray-100 ': selectedId !== item.costCenter, [classestd]: true }">
                         {{ item . remark }}
                     </td>
                     <td class=""
@@ -108,6 +115,7 @@
         defineEmits,
         computed
     } from "vue";
+import formatRupiah from "../../../composables/currency";
 
     const selectedId = ref(null);
     const classesth =
@@ -131,6 +139,7 @@
             settingDate : item.setting_date,
             candlingDate : item.candling_date,
             pullChickenDate : item.pull_chicken_date,
+            cost: (item.cost_total/item.hatchery_details[0].saleable).toFixed(2),
             remark : '',
             inputBy : item.inputBy,
             status : item.status

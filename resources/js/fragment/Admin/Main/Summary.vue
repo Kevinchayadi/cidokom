@@ -424,7 +424,7 @@ const totalStock = computed(() => {
             masuk += item.come || 0;
             mati += item.die || 0;
             keluar += Number(item.sale || 0) + Number(item.out || 0);
-            stock_akhir += item.last_stock || 0;
+            stock_akhir += Number(item.last_stock || 0);
         }
     });
 
