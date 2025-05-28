@@ -37,10 +37,11 @@ class moveService
         $breeding
             ->breedingDetails()
             ->where('created_at', '>=', $date)
-            ->incrementEach([
-                'last_male' => $total_male,
-                'last_female' => $total_female,
-            ]);
+            ->get()
+            ->each(function ($detail) use ($total_male, $total_female) {
+                $detail->increment('last_male', $total_male);
+                $detail->increment('last_female', $total_female);
+            });
         $latestDetail = $breeding->breedingDetails()->orderBy('created_at', 'desc')->first();
         $total_cost = $breeding->cost_Total_induk + $new_cost;
         $cost_induk = $total_cost / ($latestDetail->last_male + $latestDetail->last_female);
@@ -59,14 +60,13 @@ class moveService
         $commercial
             ->commercialDetails()
             ->where('created_at', '>=', $date)
-            ->incrementEach([
-                'last_population' => $total_receive,
-            ]);
-        $commercial->incrementEach([
-            'last_population' => $total_receive,
-            'total_cost' => $total_cost,
-            'unit_cost' => $total_cost,
-        ]);
+            ->get()
+            ->each(function ($detail) use ($total_receive) {
+                $detail->increment('last_population', $total_receive);
+            });
+        $commercial->increment('last_population', $total_receive);
+        $commercial->increment('total_cost', $total_cost);
+        $commercial->increment('unit_cost', $total_cost);
     }
 
     public function createMoveTable(int $current_pen, int $move_pen, int $male, int $female, float $cost_male, float $cost_female, string $status)
@@ -127,12 +127,12 @@ class moveService
     public function CommercialgDestination(int $move_pen, int $current_pen, float $cost, int $new_cost, int $male, int $female, Carbon $date, string $user)
     {
         $commercial = commercial::with(['commercialDetails'])
-        ->where('id_pen', $move_pen)
-        ->where('status', 'active')
-        ->first();
+            ->where('id_pen', $move_pen)
+            ->where('status', 'active')
+            ->first();
         $curr = commercial::where('status', 'active')->where('id_pen', $current_pen)->first();
         $totalPopulation = $male + $female;
-        
+
         if (isset($commercial)) {
             $detailId = $commercial->commercialDetails()->whereDate('created_at', $date)->first();
             if (isset($detailId)) {
@@ -160,13 +160,13 @@ class moveService
 
             Commercial::create([
                 'id_pen' => $move_pen,
-                'entryDate' =>  $dateinput,
+                'entryDate' => $dateinput,
                 'entry_population' => $totalPopulation,
-                'last_population'=>$totalPopulation,
-                'total_cost'=>$new_cost,
+                'last_population' => $totalPopulation,
+                'total_cost' => $new_cost,
                 'unit_Cost' => $new_cost,
                 'age' => $age,
-                'created-at'=>$created,
+                'created-at' => $created,
                 'inputBy' => $user,
             ]);
             Pen::where('id', $move_pen)->update([
@@ -196,7 +196,6 @@ class moveService
 
     public function moveTable(int $move_pen, int $current_pen, float $current_cost, int $last_male, int $last_female, int $male, int $female, ?Carbon $date = null, ?string $user = 'user')
     {
-        
         $date = $date ?? Carbon::now();
         if ($move_pen != 0) {
             $data = Pen::with('kandang')->where('id', $move_pen)->firstorfail();

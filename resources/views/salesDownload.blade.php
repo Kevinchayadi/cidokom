@@ -116,7 +116,7 @@
         @endforeach
             <table>
                 <tr>
-                    <td style="width: 45%; font-weight: bold;">GrandTotal {{ $residenceName }}
+                    <td style="width: 45%; font-weight: bold;">GrandTotal 
                     </td>
                     <td style="width: 40%; font-weight: bold;">{{ $grandqty }} Ekor</td>
                     <td style="width: 15%; font-weight: bold;">Rp {{ number_format($grandTotal, 0, ',', '.') }}</td>

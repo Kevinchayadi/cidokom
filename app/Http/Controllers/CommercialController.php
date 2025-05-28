@@ -124,7 +124,6 @@ class CommercialController extends Controller
     public function createCommercial()
     {
         $pen = Pen::with('kandang')
-            ->where('status', 'active')
             ->whereHas('kandang', function ($query) {
                 $query->where('jenis_kandang', 'commerce');
             })
@@ -139,16 +138,24 @@ class CommercialController extends Controller
             'entryDate' => 'required|date',
             'entry_population' => 'required|integer|min:1',
             'age' => 'required|integer|min:0',
+            'cost' => 'required',
             'inputBy' => 'required',
         ]);
-        $input['last_population'] = $input['entry_population'];
-
-        $input['last_update'] = Carbon::now();
-
-        Commercial::create($input);
-        Pen::where('id', $input['id_pen'])->update([
-            'status' => 'inactive',
-        ]);
+        $commercial = Commercial::where('id_pen', $input['id_pen'])->where('status', 'active')->first();
+        if (isset($commercial)) {
+            $commercial->increment('last_population', $input['entry_population']);
+            $commercial->increment('unit_cost', $input['cost']);
+            $commercial->increment('total_cost', $input['cost']);
+            Commercial_detail::where('id_commercial', $commercial->id_commercial)->latest('created_at')->first()?->increment('last_population', $input['entry_population']);
+        } else {
+            $input['last_population'] = $input['entry_population'];
+            $input['unit_Cost'] = $input['cost'];
+            $input['total_cost'] = $input['cost'];
+            Commercial::create($input);
+            Pen::where('id', $input['id_pen'])->update([
+                'status' => 'inactive',
+            ]);
+        }
 
         return redirect()->route('user.commercial')->with('success', 'berhasil membuat kandang commercial baru');
     }
@@ -612,5 +619,48 @@ class CommercialController extends Controller
         $pdf = Pdf::loadView('invoice', ['invoice' => $invoice])->setPaper('A4', 'landscape');
 
         return $pdf->stream('invoice-' . $invoice->number . '.pdf');
+    }
+
+    public function adjustment(Request $request)
+    {
+        $input = $request->validate([
+            'id' => 'required',
+            'depreciation_die' => 'nullable|integer',
+            'depreciation_panen' => 'nullable|integer',
+            'feed' => 'required|numeric',
+            'feed_name' => 'required',
+        ]);
+        DB::transaction(function () use ($input) {
+            $prev = Commercial_detail::lockForUpdate()->find($input['id']);
+            $feed = Pakan::where('nama_pakan', $input['feed_name'])->first();
+            $prevFeed = Pakan::where('nama_pakan', $prev->feed_name)->increment('qty', $prev->feed);
+
+            $last_population = $prev->last_population + $prev->depreciation_die + $prev->depreciation_panen;
+            $current_cost = $this->countService->costegg($feed, $input['feed'], 0);
+            $prev_cost = $this->countService->costegg($prevFeed, $prev->feed, 0);
+            $input['last_population'] = $last_population - $input['depreciation_die'] - $input['depreciation_panen'];
+
+            Daily_feed::create([
+                'id_pen' => $prev->id_breeding,
+                'id_pakan' => $prevFeed->id,
+                'qty' => $input['feed'],
+                'stock_feed' => $prevFeed->qty,
+            ]);
+
+            $costunit = $prev->unit_Cost + $current_cost - $prev_cost;
+            $prev->update($input);
+            $currfeed = Pakan::where('nama_pakan', $input['feed_name'])->decrement('qty', $input['feed']);
+            Commercial::where('id_commercial', $input['id_commercial'])->update([
+                'last_population' => $input['last_population'],
+                'unit_Cost' => $costunit,
+            ]);
+
+            Daily_feed::create([
+                'id_pen' => $prev->id_breeding,
+                'id_pakan' => $feed->id,
+                'qty' => $input['feed'],
+                'stock_feed' => $currfeed->qty,
+            ]);
+        });
     }
 }

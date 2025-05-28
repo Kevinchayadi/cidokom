@@ -98,7 +98,34 @@ class DashboardController extends Controller
         } else {
             $totalAfkir = 0;
         }
-        $hatchery = Hatchery::with('hatcheryDetails')->whereNotNull('pull_chicken_date')->latest('setting_date')->take(4)->get();
+        $hatchery = Hatchery::with('hatcheryDetails')
+            ->whereNotNull('pull_chicken_date')
+            ->orderByDesc('setting_date')
+            ->get()
+            ->groupBy(function ($item) {
+                return $item->pull_chicken_date;
+            })
+            ->take(4)
+            ->map(function ($group) {
+                $details = $group->flatMap(function ($hatchery) {
+                    return $hatchery->hatcheryDetails;
+                });
+
+                $summedDetail = [];
+
+                foreach ($details as $detail) {
+                    foreach ($detail->getAttributes() as $key => $value) {
+                        if (is_numeric($value)) {
+                            $summedDetail[$key] = ($summedDetail[$key] ?? 0) + $value;
+                        }
+                    }
+                }
+
+                return [
+                    $summedDetail
+                ];
+            });
+        // dd($hatcheries);
 
         return Inertia::render('admin/Dashboard', compact('totalAfkir', 'totalBreeding', 'totalDeath', 'afkir', 'breeds', 'hatchery'));
     }
@@ -250,13 +277,13 @@ class DashboardController extends Controller
         // Ambil parameter jumlah dari request, jika tidak ada, set default 30
         $jumlah = $request->input('jumlah', 30);
         $current = SaleTransaction::latest('tanggal_penjualan')->first();
-        
+
         $start = $request->input('start') ? Carbon::parse($request->input('start')) : Carbon::parse($current->tanggal_Penjualan)->subMonth();
 
         $end = $request->input('end') ? Carbon::parse($request->input('end'))->addDay(1) : Carbon::parse($current->tanggal_Penjualan)->addDay(1);
         // dd($start, $end);
         $saleTransactions = SaleTransaction::where('status', 'pending')
-            ->whereBetween('tanggal_Penjualan', [$start,$end])
+            ->whereBetween('tanggal_Penjualan', [$start, $end])
             ->get();
 
         $dailySales = [];
@@ -295,20 +322,20 @@ class DashboardController extends Controller
 
         // Customer tanpa transaksi terbaru dalam jumlah hari yang ditentukan
         $customersWithoutRecentSales = Customer::with('sales')
-            ->whereDoesntHave('salesTransaction', function ($query) use($start, $end) {
-                $query->whereBetween('tanggal_Penjualan', [$start,$end]);
+            ->whereDoesntHave('salesTransaction', function ($query) use ($start, $end) {
+                $query->whereBetween('tanggal_Penjualan', [$start, $end]);
             })
             ->orderBy('nama_pelanggan')
             ->get()
             ->toArray();
 
         // Customer dengan transaksi terbaru dalam jumlah hari yang ditentukan
-        $customersWithRecentSales = Customer::whereHas('salesTransaction', function ($query) use ($start,$end) {
-            $query->whereBetween('tanggal_Penjualan', [$start,$end]);
+        $customersWithRecentSales = Customer::whereHas('salesTransaction', function ($query) use ($start, $end) {
+            $query->whereBetween('tanggal_Penjualan', [$start, $end]);
         })
             ->with([
                 'salesTransaction' => function ($query) use ($start, $end) {
-                    $query->whereBetween('tanggal_Penjualan', [$start,$end]);
+                    $query->whereBetween('tanggal_Penjualan', [$start, $end]);
                 },
             ])
             ->get()
@@ -319,16 +346,16 @@ class DashboardController extends Controller
             })
             ->sortBy('nama_pelanggan')
             ->toArray();
-            $start = Carbon::parse($start)->format('Y-m-d');
-            $end = Carbon::parse($end)->subDay()->format('Y-m-d');
+        $start = Carbon::parse($start)->format('Y-m-d');
+        $end = Carbon::parse($end)->subDay()->format('Y-m-d');
         // dd([$dailySales,$customersWithoutRecentSales,$customersWithRecentSales->toArray()]);
         // Kirim data ke frontend menggunakan Inertia
         return Inertia::render('admin/sales/Summary', [
             'dailySales' => $dailySales,
             'recentCust' => array_values($customersWithRecentSales),
             'passiveCust' => array_values($customersWithoutRecentSales),
-            'start'=> $start,
-            'end' => $end
+            'start' => $start,
+            'end' => $end,
         ]);
     }
 }

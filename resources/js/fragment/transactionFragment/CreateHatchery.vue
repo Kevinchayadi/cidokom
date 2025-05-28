@@ -53,6 +53,18 @@
                 type="dropdown"
                 :datas="machineList"
             />
+            <InputFragment
+                v-model="buyEgg"
+                name="buyEgg"
+                content="Buy Eggs"
+                type="number"
+            />
+            <InputFragment
+                v-model="price"
+                name="price"
+                content="Total Egg Price"
+                type="number"
+            />
 
             <Showdata
                 v-model="totalSetting"
@@ -134,6 +146,8 @@ const end = ref("");
 const hatcheryMachine = ref("");
 const currSetting = ref(0);
 const anotherSetting = ref(0);
+const buyEgg = ref(0);
+const price = ref(0);
 // const totalSetting = ref(0);
 
 // watch(pen, async (newPenValue, oldPenValue) => {
@@ -167,7 +181,7 @@ const anotherSetting = ref(0);
 //     }
 // });
 const totalSetting = computed(() => {
-  return currSetting.value + anotherSetting.value;
+  return currSetting.value + anotherSetting.value +buyEgg.value;
 });
 
 
@@ -184,6 +198,7 @@ const handleSubmit = () => {
         end: end.value,
         id_machine: hatcheryMachine.value,
         total_setting: totalSetting.value,
+        price: price.value,
         inputBy : store.getters.user.name
     },
     {

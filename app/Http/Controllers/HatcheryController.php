@@ -98,7 +98,7 @@ class HatcheryController extends Controller
     }
     public function adminIndex()
     {
-        $hatchery = Hatchery::with('hatcheryDetails', 'machine', 'pen')->orderBy('status')->get()->toArray();
+        $hatchery = Hatchery::with('hatcheryDetails', 'machine', 'pen')->orderBy('status')->orderByDesc('setting_date')->get()->toArray();
 
         return Inertia::render('admin/hatchery', compact('hatchery'));
     }
@@ -131,6 +131,7 @@ class HatcheryController extends Controller
             'another_pen' => 'nullable|integer',
             'id_machine' => 'required|integer',
             'total_setting' => 'required|integer',
+            'price' => 'required|integer',
             'inputBy' => 'required',
         ]);
 
@@ -147,6 +148,7 @@ class HatcheryController extends Controller
             'id_pen' => 'required',
             'another_pen' => 'nullable|integer',
             'id_machine' => 'required|integer',
+            'price' => 'required|integer',
             'inputBy' => 'required',
         ]);
 
@@ -237,7 +239,8 @@ class HatcheryController extends Controller
                 'cost_egg' => $curr_cost,
             ]);
         }
-
+        $input['cost_total'] += $input['price'];
+        // dd($input);
         $hatchery = Hatchery::create($input);
 
         $input2['id_hatchery'] = $hatchery->id_hatchery;

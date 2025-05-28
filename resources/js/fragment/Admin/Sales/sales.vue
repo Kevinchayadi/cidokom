@@ -165,6 +165,7 @@ const props = defineProps({
     },
 });
 
+
 // Computed property untuk memproses data dari props
 const SalesData = computed(() =>
     props.saleTransaction.map((item) => ({

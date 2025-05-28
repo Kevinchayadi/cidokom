@@ -19,9 +19,11 @@ use App\Http\Controllers\PenController;
 use App\Http\Controllers\ResidentController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\VaksinController;
+use App\Models\Commercial;
 use App\Models\CustHandle;
 use App\Models\Hatchery;
 use App\Models\Machine;
+use App\Models\Pakan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -83,6 +85,7 @@ Route::prefix('admin')->middleware(['auth','isAdmin'])->group(function(){
         Route::put('/editCustHandle/{id}', [CustHandleController::class, 'editSales'])->name('admin.CustHandle.edit');
     
         Route::get('/Customer', [CustomerController::class, 'CustomerIndex'])->name('admin.Customer');
+        Route::get('/CustomerTransaction', [SaleController::class, 'getAllSales'])->name('admin.CustomerTransaction');
         Route::post('/createCustomer', [CustomerController::class, 'storeCustomer'])->name('admin.Customer.create');
         Route::put('/editCustomer/{id}', [CustomerController::class, 'editCustomer'])->name('admin.Customer.edit');
         
@@ -105,6 +108,11 @@ Route::prefix('admin')->middleware(['auth','isAdmin'])->group(function(){
     Route::put('/addPakan/{id}', [PakanController::class, 'addPakan'])->name('admin.pakan.created');
     Route::post('/createVaksin', [VaksinController::class, 'storevaksin'])->name('admin.vaksin.create');
     Route::put('/addVaksin/{id}', [VaksinController::class, 'addvaksin'])->name('admin.vaksin.created');
+    
+    Route::put('/breedingadjustment', [BreedingController::class, 'adjustment'])->name('admin.breeding.adjustment');
+    Route::put('/commercialadjustment', [CommercialController::class, 'adjustment'])->name('admin.breeding.adjustment');
+    Route::get('/getpakan',[PakanController::class, 'getpakan'])->name('admin.getpakan');
+
 
     
     //sales Functions

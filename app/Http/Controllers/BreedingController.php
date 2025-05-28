@@ -551,13 +551,13 @@ class BreedingController extends Controller
         return $pdf->stream('invoice-' . $invoice->number . '.pdf');
     }
 
-    public function adjustment(Request $request,){
+    public function adjustment(Request $request){
         $input = $request->validate([
             'id' => 'required',
-            'female_die' => 'required|integer|min:0',
-            'female_reject' => 'required|integer|min:0',
-            'male_die' => 'required|integer|min:0',
-            'male_reject' => 'required|integer|min:0',
+            'female_die' => 'required|integer',
+            'female_reject' => 'required|integer',
+            'male_die' => 'required|integer',
+            'male_reject' => 'required|integer',
             'egg_morning' => 'required|integer|min:0',
             'egg_afternoon' => 'required|integer|min:0',
             'broken' => 'required|integer|min:0',
@@ -566,29 +566,34 @@ class BreedingController extends Controller
             'total_egg' => 'required',
             'feed' => 'required|numeric|min:0',
             'feed_name' => 'required|string',
-            'inputBy' => 'required',
-            'remark' => 'required|string',
         ]);
         DB::transaction(function () use ($input) {
 
             $prev = Breeding_detail::lockForUpdate()->find($input['id']);
             $feed = Pakan::where('nama_pakan', $input['feed_name'])->first();
+            
     
             $lastMale = $prev->last_male + $prev->male_die + $prev->male_reject;
             $lastFemale = $prev->last_female + $prev->female_die + $prev->female_reject;
             $current_cost = $this->countService->costegg($feed, $input['feed'], $input['total_egg'] + $input['sale']);
             $input['last_male'] = $lastMale - $input['male_die'] - $input['male_reject'];
             $input['last_female'] = $lastFemale - $input['female_die'] - $input['female_reject'];
-    
-            if($prev->feed_name != $input['feed_name']){
-                $prevFeed = Pakan::where('nama_pakan', $input['feed_name'])->increment('qty', $prev->feed);
-                Daily_feed::create([
-                    'id_pen' => $prev->id_breeding,
-                    'id_pakan' => $prevFeed->id,
-                    'qty' => $input['feed'],
-                    'stock_feed' => $prevFeed->qty,
-                ]);
+            if ($input['last_male'] < 0) {
+                return back()->withErrors('Female chicken cant be minus quantity!');
             }
+            if ($input['last_female'] < 0) {
+                return back()->withErrors('Female chicken cant be minus quantity!');
+            }
+    
+            $prevFeed = Pakan::where('nama_pakan', $prev->feed_name)->first();
+            $prevFeed->increment('qty', $prev->feed);
+            $Breeding = Breeding::find($prev->id_breeding);
+            Daily_feed::create([
+                'id_pen' => $Breeding->id_pen,
+                'id_pakan' => $prevFeed->id,
+                'qty' => $input['feed'],
+                'stock_feed' => $prevFeed->qty,
+            ]);
     
     
             if(($input['total_egg'] + $input['sale']) == 0){
@@ -600,11 +605,15 @@ class BreedingController extends Controller
             }
     
             $prev->update($input);
-            $currfeed = Pakan::where('nama_pakan', $input['feed_name'])->decrement('qty', $input['feed']);
+            $currfeed = Pakan::where('nama_pakan', $input['feed_name'])->first();
+            if($currfeed->qty < $input['feed']){
+                return back()->withErrors('Feed Stock cant be minus quantity!');
+            }
+            $currfeed->decrement('qty', $input['feed']);
             
             Daily_feed::create([
-                'id_pen' => $prev->id_breeding,
-                'id_pakan' => $feed->id,
+                'id_pen' => $Breeding->id_pen,
+                'id_pakan' => $currfeed->id,
                 'qty' => $input['feed'],
                 'stock_feed' => $currfeed->qty,
             ]);
@@ -612,116 +621,4 @@ class BreedingController extends Controller
     }
 
 
-        // public function dailyStoreBulk(Request $request)
-    // {
-    //     $request->validate([
-    //         'file' => 'required|file|mimes:xlsx,xls,csv',
-    //     ]);
-
-    //     $data = \Maatwebsite\Excel\Facades\Excel::toArray([], $request->file('file'));
-
-    //     $rows = $data[0];
-
-    //     $rows = array_slice($rows, 1);
-
-    //     foreach ($rows as $row) {
-    //         $data = [
-    //             'id_breeding' => $row[0],
-    //             'female_die' => $row[1],
-    //             'female_reject' => $row[2],
-    //             'male_die' => $row[3],
-    //             'male_reject' => $row[4],
-    //             'egg_morning' => $row[5],
-    //             'egg_afternoon' => $row[6],
-    //             'broken' => $row[7],
-    //             'abnormal' => $row[8],
-    //             'sale' => $row[9],
-    //             'total_egg' => $row[10],
-    //             'move_to' => $row[11],
-    //             'total_female_move' => $row[12],
-    //             'total_male_move' => $row[13],
-    //             'feed' => $row[14],
-    //             'feed_name' => $row[15],
-    //             'inputBy' => $row[16],
-    //         ];
-
-    //         $input = Validator::make($data, [
-    //             'id_breeding' => 'required',
-    //             'female_die' => 'required|integer|min:0',
-    //             'female_reject' => 'required|integer|min:0',
-    //             'male_die' => 'required|integer|min:0',
-    //             'male_reject' => 'required|integer|min:0',
-    //             'egg_morning' => 'required|integer|min:0',
-    //             'egg_afternoon' => 'required|integer|min:0',
-    //             'broken' => 'required|integer|min:0',
-    //             'abnormal' => 'required|integer|min:0',
-    //             'sale' => 'required|integer',
-    //             'total_egg' => 'required',
-    //             'move_to' => 'integer',
-    //             'total_female_move' => 'integer',
-    //             'total_male_move' => 'integer',
-    //             'feed' => 'required|numeric|min:0',
-    //             'feed_name' => 'required|string',
-    //             'inputBy' => 'required',
-    //         ])->validate();
-
-    //         $Breeding = Breeding::find($input['id_breeding']);
-    //         $pakan = Pakan::where('nama_pakan', $input['feed_name'])->firstOrFail();
-
-    //         if (!$Breeding) {
-    //             return response()->json(['error' => 'Data Breeding tidak ditemukan'], 404);
-    //         }
-    //         $input['begining_population'] = $Breeding->begining_population;
-
-    //         $previousDetail = Breeding_detail::where('id_breeding', $input['id_breeding'])->latest('created_at')->first();
-    //         if (!$previousDetail) {
-    //             $input['last_male'] = $Breeding->jumlah_jantan - $input['male_die'] - $input['male_reject'];
-    //             $input['last_female'] = $Breeding->jumlah_betina - $input['female_die'] - $input['female_reject'];
-    //         } else {
-    //             $calculate_male = $previousDetail->last_male - $input['male_die'] - $input['male_reject'];
-    //             $calculate_female = $previousDetail->last_female - $input['female_die'] - $input['female_reject'];
-    //             $input['last_male'] = $calculate_male;
-    //             $input['last_female'] = $calculate_female;
-    //         }
-    //         if ($input['last_male'] < 0) {
-    //             return response()->json(['error' => 'Female chicken cant be minus quantity!'], 400);
-    //         }
-    //         if ($input['last_female'] < 0) {
-    //             return response()->json(['error' => 'Female chicken cant be minus quantity!'], 400);
-    //         }
-    //         $currentfeed = $pakan->qty - $input['feed'];
-    //         if ($currentfeed < 0) {
-    //             return back()->withErrors('pakan is not enough!! please check pakan stock or call jakarta admin to check the stock!');
-    //         }
-    //         try {
-    //             DB::beginTransaction();
-    //             if ($request->move_to != 0) {
-    //                 $unitCostAsFloat = (float) $Breeding->cost_unit;
-    //                 $datas = $this->moveService->moveTable($input['move_to'], $Breeding->id_pen, $unitCostAsFloat, $input['last_male'], $input['last_female'], $input['total_male_move'], $input['total_female_move']);
-    //                 $new_cost = $datas['new_cost'];
-
-    //                 $input['last_male'] = $datas['last_male'];
-    //                 $input['last_female'] = $datas['last_female'];
-    //             }
-
-    //             $current_cost = $this->countService->costegg($pakan, $input['feed'], $input['total_egg'] + $input['sale']);
-    //             $input['cost_unit'] = $current_cost * $input['total_egg'];
-    //             $input['cost_total'] = $current_cost * ($input['total_egg'] + $input['sale']);
-    //             $pakan->update([
-    //                 'qty' => $currentfeed,
-    //             ]);
-    //             Breeding_detail::create($input);
-    //             if ($input['last_male'] == 0 && $input['last_female'] == 0) {
-    //                 $Breeding->update([
-    //                     'status' => 'inactive',
-    //                 ]);
-    //             }
-    //             DB::commit();
-    //             return redirect()->route('user.breeding')->with('success', 'berhasil membuat kandang Breeding baru');
-    //         } catch (\Throwable $th) {
-    //             DB::rollback();
-    //             return back()->with('error', 'failed input!');
-    //         }
-    //     }
-    // }
 }

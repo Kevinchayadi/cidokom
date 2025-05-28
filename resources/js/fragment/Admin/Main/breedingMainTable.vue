@@ -4,9 +4,9 @@
             :disabled="!selectedId">
             Select
         </button>
-        <!-- <button :class="[buttonclasses, { 'text-primary-text-light-hover': !selectedId }]" @click="editItem" :disabled="!selectedId">
+        <button :class="[buttonclasses, { 'text-primary-text-light-hover': !selectedId }]" @click="editItem" :disabled="!selectedId">
             Edit
-        </button> -->
+        </button>
         <!-- <button :class="[buttonclasses, { 'text-primary-text-light-hover': !selectedId }]" @click="deleteItem" :disabled="!selectedId">
             Delete
         </button> -->
@@ -54,6 +54,12 @@
 
         </div>
     </div>
+    <ModalComp
+         :isVisible="isModalOpened"
+         @update:isVisible="isModalOpened = $event"   
+    >
+        <BreedingAdjustment :data="selectedData.breeding_details[0]"/>
+    </ModalComp>
 </template>
 
 
@@ -66,10 +72,13 @@
     import axios from 'axios';
     import BreedingHeaderTable from './breedingHeaderTable.vue';
     import BreedingBotomTable from './breedingBotomTable.vue';
+import ModalComp from '../../../components/displayComponent/ModalComp.vue';
+import BreedingAdjustment from '../../addFragment/operational/BreedingAdjustment.vue';
 
     const selectedId = ref(null);
     const buttonclasses = '  text-primary-text-light rounded hover:text-primary-text-light-hover sticky top-0 px-2'
-    const breedingDetail = ref([])
+    const breedingDetail = ref([]);
+    const isModalOpened = ref(false);
     const showdata = ref(null);
     const selectedRow = (id) => {
         selectedId.value = id;
@@ -109,6 +118,14 @@
     };
 
     const editItem = () => {
+        const item = props.breeding.find(b => b.id_breeding === selectedId.value);
+        if (item) {
+            selectedData.value = item; // Menyimpan data yang ditemukan ke selectedData
+            console.log("Selected data:", selectedData.value.breeding_details[0]);
+        } else {
+            console.error("No data found for id_breeding:", selectedId.value);
+        }
+        isModalOpened.value = true
         console.log("Edit:", selectedId.value);
     };
 

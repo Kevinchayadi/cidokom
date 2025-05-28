@@ -11,6 +11,10 @@ use Inertia\Inertia;
 
 class PakanController extends Controller
 {
+    function getpakan(){
+        $pakan = Pakan::get()->toArray();
+        return $pakan;
+    }
     function userIndex()
     {
         $pakan = Pakan::get();

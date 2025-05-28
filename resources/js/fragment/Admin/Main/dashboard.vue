@@ -222,42 +222,34 @@ const formatDate = (date) => {
 //     });
 // });
 const chickIn = computed(() => {
-    return props.hatchery.map((hatcheryItem) => {
-        const createdAt = hatcheryItem.pull_chicken_date;
-        const saleable = Number(hatcheryItem.hatchery_details?.[0]?.saleable ?? 0);
-
-        const timestamp = createdAt ? new Date(createdAt).getTime() : null;
-
+    return Object.entries(props.hatchery).map(([date, dataArray]) => {
+        const timestamp = new Date(date).getTime();
+        const saleable = Number(dataArray[0]?.saleable ?? 0); // karena sudah dijumlah di backend
         return [timestamp, saleable];
-    }).filter(item => item[0]); // filter yang null (jika ada)
+    });
 });
 
 const afkir = computed(() => {
-    return props.hatchery.map((hatcheryItem) => {
-        const createdAt = hatcheryItem.pull_chicken_date;
-        const afkirQty = Number(hatcheryItem.hatchery_details?.[0]?.doc_afkir ?? 0) ;
-
-        const timestamp = createdAt ? new Date(createdAt).getTime() : null;
-
+    return Object.entries(props.hatchery).map(([date, dataArray]) => {
+        const timestamp = new Date(date).getTime();
+        const afkirQty = Number(dataArray[0]?.doc_afkir ?? 0); // Sudah dijumlah di backend
         return [timestamp, afkirQty];
-    }).filter(item => item[0]);
+    });
 });
 
 const death = computed(() => {
-    return props.hatchery.map((hatcheryItem) => {
-        const details = hatcheryItem.hatchery_details?.[0] || {};
-        const createdAt = hatcheryItem.pull_chicken_date;
-        console.log('detail:', details);
+    return Object.entries(props.hatchery).map(([date, dataArray]) => {
+        const detail = dataArray[0] || {};
 
         const chickinDeath =
-        Number(details.dead_in_egg || 0) +
-        Number(details.explode || 0) +
-        Number(details.infertile || 0);
+            Number(detail.dead_in_egg || 0) +
+            Number(detail.explode || 0) +
+            Number(detail.infertile || 0);
 
-        const timestamp = createdAt ? new Date(createdAt).getTime() : null;
+        const timestamp = new Date(date).getTime();
 
         return [timestamp, chickinDeath];
-    }).filter(item => item[0]);
+    });
 });
 
 

@@ -57,7 +57,7 @@ class SaleController extends Controller
     function editSales(Request $request, $id)
     {
         $input = $request->validate([
-            'jumlah_ayam' => 'required|integer|min:1',
+            'jumlah_ayam' => 'required|integer|min:0',
             'id_ayam' => 'required|integer|min:1',
             'diskon' => 'required|numeric',
             'description' => 'nullable|string|max:255',
@@ -111,5 +111,11 @@ class SaleController extends Controller
         $end = $endDate!=null?Carbon::parse($endDate)->format('Y-m-d'):null;
 
         return Inertia::render('admin/sales/sales', ['sale' => $sale, 'saleTransaction' => $saleTransaction, 'stockLeft' => $stockLeft, 'customer' => $customer, 'chickenSize' => $chickenSize, 'start'=>$start, 'end' =>$end]);
+    }
+
+    function getAllSales(Request $request){
+        // return $request->id;
+        $data = saleTransaction::with(['Customers.sales', 'Customers.residence','ChickenSize'])->where('id_pembeli',$request->id)->orderByDesc('tanggal_Penjualan')->get()->toArray();
+        return $data;
     }
 }

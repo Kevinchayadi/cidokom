@@ -28,6 +28,12 @@
                 type="number"
 
             />
+            <InputFragment
+                v-model="cost"
+                name="cost"
+                content="price (fill with 0, if its from our chick in)"
+                type="number"
+            />
 
             <div class="w-full flex text-center justify-center">
                 <FormButton
@@ -66,6 +72,7 @@ const id_pen = ref("");
 const entryDate = ref("");
 const entry_population = ref("");
 const umur = ref(0);
+const cost = ref(0);
 const status = ref("active");
 const loading = ref(false);
 const handleSubmit = () => {
@@ -75,6 +82,7 @@ const handleSubmit = () => {
         entryDate: entryDate.value,
         entry_population: entry_population.value,
         age: umur.value,
+        cost: cost.value,
         inputBy : store.getters.user.name
     },{
         onError: (errors) => {
